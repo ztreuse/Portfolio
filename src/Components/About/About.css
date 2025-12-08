@@ -44,7 +44,7 @@
     position: relative;
 }
 .about-title h1{
-    font-size: 55px;
+    font-size: 100px;
     font-weight: 600;
 }
 .about-para{
@@ -55,4 +55,5 @@
     font-size: 20px;
     line-height: 30px;
     color: gray;
+    text-align: justify;
 }

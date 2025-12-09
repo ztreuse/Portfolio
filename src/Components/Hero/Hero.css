@@ -1,12 +1,13 @@
 .hero{
     display: flex;
     /* background: #161513; */
-    background-image: linear-gradient(rgba(22, 21, 19, 1), rgba(22, 21, 19, 0.8)),url('../../assets/bg_pic.jpg');
+    background-image: linear-gradient(rgba(22, 21, 19, 0.7), rgba(45, 41, 37, 1)),url('../../assets/bg_pic.jpg');
     background-size: cover;
     background-position: center;
     align-items: start;
     justify-content: center;
     min-height: 100vh;
+    overflow: hidden;
 }
 .hero-content {
     width: 80%;
@@ -113,7 +114,7 @@
 }
 .hero-connect:hover{
     transform: scale(1.05);
-    background: linear-gradient(240deg, #6a6c4e 27.16%, #9f8f81 100.06%);
+    background: linear-gradient(240deg, #614d35 27.16%, #9f8f81 100.06%);
 }
 /* .hero img{
     width: 30%;

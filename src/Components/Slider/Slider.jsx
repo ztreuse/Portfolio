@@ -58,8 +58,8 @@ const Slider = () => {
             pagination={{ clickable: true }}
             spaceBetween={20}
             breakpoints={{
-              320: { spaceBetween: 40 },
-              650: { spaceBetween: 30 },
+              320: { spaceBetween: 20 },
+              650: { spaceBetween: 20 },
               1000: { spaceBetween: 20 },
             }}
             observer={true}

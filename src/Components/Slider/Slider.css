@@ -45,6 +45,7 @@ main {
     gap: var(--gap);
 }
 .swiper-slide {
+    width: 100%;
     display: flex !important;
     flex-direction: row;
     position: relative;
@@ -77,6 +78,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: white;
 }
 
 .slide-right img {
@@ -85,8 +87,8 @@ main {
     object-fit: cover;
     border-radius: 0 10px 10px 0;
     opacity: 0;
-    padding: 20px 20px 20px 0px;
-
+    padding: 30px 30px 30px 20px;
+    background: white;
 }
 .swiper-slide-active .slide-right img {
     opacity: 1;
@@ -105,11 +107,13 @@ main {
 
 }
 .swiper-slide-active .title {
-    opacity: 1; /* show title when slide is active */
+    width: 100%;
+    opacity: 1;
     transition: opacity 1s ease 0.8s;
 }
 .title h1 {
-    font-size: 4rem;
+    width: 100%;
+    font-size: clamp(20px, 4vw, 65px);
     font-weight: 800;
     color: var(--primary-clr);
     opacity: 1;
@@ -117,6 +121,8 @@ main {
     transition-delay: 1s;
 }
 .swiper-slide-active .title h1 {
+    width: 100%;
+    font-size: clamp(20px, 4vw, 65px);
     transition-delay: -200ms;
     opacity: 1;
 }
@@ -128,7 +134,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: end;
-    padding: 0px 30px 30px 0px;
+    padding: 0px 30px 0px 0px;
     color: var(--primary-clr);
     opacity: 0;
     z-index: 1;
@@ -150,7 +156,7 @@ main {
     transition-delay: 1s;
 }
 .text-box p {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 1.2vw, 1.5rem);
     font-weight: 400;
     line-height: 1.5rem;
     transform: translateY(100%);
@@ -194,7 +200,7 @@ button {
 }
 .label {
     font-weight: 600;
-    font-size: 17px;
+    font-size: clamp(14px, 1.2vw, 17px);
 }
 .swiper-slide-active button {
     opacity: 1;
@@ -236,4 +242,80 @@ button:hover .label {
     border-radius: 14px;
     background-color: var(--accent-clr);
     transition: all 0.8 ease-in-out;
+}
+
+@media (max-width: 1940px) {
+    .slide-left {
+        width: 50%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .slide-right {
+        width: 50%;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .slide-right img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 0 10px 10px 0;
+        opacity: 0;
+        padding: 30px 20px 30px 20px;
+    }
+    .swiper-slide-active .slide-right img {
+        transform: scale(1);
+    }
+    .title h1 {
+        width: 100%;
+        font-size: clamp(15px, 4vw, 50px);
+
+    }
+    .swiper-slide-active .title h1 {
+        width: 100%;
+        font-size: clamp(15px, 3vw, 50px);
+    }
+}
+@media (max-width: 900px) {
+    .cert {
+        padding-top: 200px;
+    }
+    .swiper-slide {
+        flex-direction: column;
+    }
+    .slide-right, .slide-left {
+        width: 100%;
+        height: auto;
+    }
+    .slide-right {
+        order: 1;
+    }
+    .slide-left {
+        height: 300px;
+        order: 2;
+        justify-content: flex-start;
+        padding: 20px 20px 20px 20px;
+        margin-right: 0px;
+    }
+    .text-box p {
+        font-size: clamp(0.6rem, 0.8vw, 1rem);
+        font-weight: 400;
+        line-height: clamp(1rem, 1vw, 1.5rem);
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    .swiper-slide-active .text-box p {
+        transform: translateY(0);
+        opacity: 1;
+        transition: 0.5s ease;
+        transition-delay: 0.5s;
+    }
+}
+@media (max-width: 650px) {
+    .swiper {
+    }
 }

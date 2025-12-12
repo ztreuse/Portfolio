@@ -18,6 +18,8 @@ main {
     justify-content: center;
     height: 100vh;
     overflow: hidden;
+    padding-top: 90px;
+    margin-top: -90px;
 }
 .cert {
     width: 80%;
@@ -249,7 +251,6 @@ button:hover .label {
         width: 50%;
         height: auto;
         display: flex;
-        flex-direction: column;
         justify-content: space-between;
     }
     .slide-right {
@@ -281,10 +282,20 @@ button:hover .label {
     }
 }
 @media (max-width: 900px) {
+    main {
+        height: auto;
+        overflow: visible;
+    }
     .cert {
-        padding-top: 200px;
+        width: 80%;
+        height: 100%;
+        padding-top: 20px;
+    }
+    .cert h3 {
+        font-size: clamp(30px, 6vw, 50px);
     }
     .swiper-slide {
+        height: auto;
         flex-direction: column;
     }
     .slide-right, .slide-left {
@@ -295,14 +306,17 @@ button:hover .label {
         order: 1;
     }
     .slide-left {
-        height: 300px;
+        height: 250px;
         order: 2;
         justify-content: flex-start;
         padding: 20px 20px 20px 20px;
         margin-right: 0px;
     }
+    .text-box {
+        margin-top: 20px;
+    }
     .text-box p {
-        font-size: clamp(0.6rem, 0.8vw, 1rem);
+        font-size: clamp(0.7rem, 0.8vw, 1rem);
         font-weight: 400;
         line-height: clamp(1rem, 1vw, 1.5rem);
         transform: translateY(100%);
@@ -317,5 +331,37 @@ button:hover .label {
 }
 @media (max-width: 650px) {
     .swiper {
+        padding: 0px 20px 50px 20px;
+    }
+    .container {
+        height: auto;
+    }
+    .title {
+        height: auto;
+    }
+    .slide-left {
+        height: clamp(230px, 3vh, 270px);
+        margin: 0;
+    }
+    .label {
+        font-size: clamp(12px, 1.5vw, 15px);
+    }
+}
+@media (max-width: 450px) {
+    .swiper {
+        width: 100%;
+        padding: 0px 10px 40px 10px;
+    }
+    .swiper-pagination-bullet {
+        width: 10px;
+        height: 10px;
+        background-color: var(--primary-clr);
+        border-radius: 50%;
+    }
+    .swiper-pagination-bullet-active {
+        width: 20px;
+        border-radius: 14px;
+        background-color: var(--accent-clr);
+        transition: all 0.8 ease-in-out;
     }
 }

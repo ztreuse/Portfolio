@@ -44,7 +44,7 @@ const Slider = () => {
 
   return (
     <main>
-      <div className="cert">
+      <div className="cert" id="certifications">
         <h3>Certifications</h3>
         <div className="container">
           <Swiper 

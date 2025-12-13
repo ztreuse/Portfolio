@@ -4,6 +4,7 @@ import Navbar from './Components/Navbar/Navbar'
 import Hero from './Components/Hero/Hero'
 import About from './Components/About/About'
 import Slider from './Components/Slider/Slider'
+import Skills from './Components/Skills/Skills'
 
 const App = () => {
   return (
@@ -18,7 +19,8 @@ const App = () => {
             <Hero />
             <About />
             <Slider />
-            {/* If you have a Contact component, you would put it here too */}
+            <Skills />
+            <Slider />
           </>
         } />
       </Routes>

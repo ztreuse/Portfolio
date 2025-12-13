@@ -49,6 +49,7 @@ const Navbar = () => {
                       <ul className={`dropdown-menu ${menuOpen ? 'open' : ''}`}> 
                           <li><HashLink to="/#about" smooth onClick={closeMenu}>About Me</HashLink></li>
                           <li><HashLink to="/#certifications" smooth onClick={closeMenu}>Certifications</HashLink></li> 
+                          <li><HashLink to="/#skills" smooth onClick={closeMenu}>Skills</HashLink></li> 
                       </ul>
                   </li>
                   <li><HashLink to="/#projects" smooth onClick={closeMenu}>Projects</HashLink></li>

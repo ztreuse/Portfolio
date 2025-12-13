@@ -312,6 +312,9 @@ button:hover .label {
         padding: 20px 20px 20px 20px;
         margin-right: 0px;
     }
+    .title {
+        height: auto;
+    }
     .text-box {
         margin-top: 20px;
     }

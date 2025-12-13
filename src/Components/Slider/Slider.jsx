@@ -44,7 +44,19 @@ const Slider = () => {
 
   return (
     <main>
-      <div className="cert" id="certifications">
+      <div className="cert">
+        <div 
+                    id="certifications" 
+                    className="scroll-target-buffer" 
+                    aria-hidden="true"
+                    style={{
+                        marginTop: `90px`, 
+                        paddingTop: '120px',       
+                        visibility: 'hidden',               
+                        pointerEvents: 'none',              
+                        height: '0'                         
+                    }}>
+        </div>
         <h3>Certifications</h3>
         <div className="container">
           <Swiper 

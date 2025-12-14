@@ -22,72 +22,18 @@ const skillData = [
     // -----------------------------------------------------
     { 
         id: 1, 
-        title: "HTML", 
+        title: "HTML, CSS, Javascript, React, React Native, PHP, Python, PostgreSQL", 
         icon: htmlLogo,
         category: "Core"
     },
-    { 
-        id: 2, 
-        title: "CSS", 
-        icon: cssLogo,
-        category: "Core"
-    },
-    { 
-        id: 3, 
-        title: "JavaScript", 
-        icon: jsLogo,
-        category: "Core"
-    },
-    { 
-        id: 4, 
-        title: "React", 
-        icon: reactLogo,
-        category: "Core"
-    },
-    { 
-        id: 5, 
-        title: "React Native", 
-        icon: reactNativeLogo,
-        category: "Core"
-    },
-    { 
-        id: 6, 
-        title: "PHP", 
-        icon: phpLogo,
-        category: "Core"
-    },
-    { 
-        id: 7, 
-        title: "Python", 
-        icon: pythonLogo,
-        category: "Core"
-    },
-    { 
-        id: 8, 
-        title: "PostgreSQL", 
-        icon: postgresqlLogo,
-        category: "Core"
-  },
     
     // -----------------------------------------------------
     // 🌐 FRAMEWORKS, LIBRARIES & STYLING
     // -----------------------------------------------------
     { 
         id: 9, 
-        title: "Tailwind CSS", 
+        title: "Tailwind CSS, Bootstrap, CodeIgniter", 
         icon: tailwindLogo,
-        category: "Frameworks"
-    },
-    { 
-        id: 10, 
-        title: "Bootstrap", 
-        icon: bootstrapLogo,
-        category: "Frameworks"
-    },
-    { 
-        id: 11, 
-        title: "CodeIgniter", 
-        icon: codeIgniterLogo,
         category: "Frameworks"
     },
     
@@ -96,32 +42,8 @@ const skillData = [
     // -----------------------------------------------------
     { 
         id: 12, 
-        title: "Git", 
+        title: "Git, Figma, Adobe Photoshop, Capcut, Expo", 
         icon: gitLogo,
-        category: "Tools"
-    },
-    { 
-        id: 13, 
-        title: "Figma", 
-        icon: figmaLogo,
-        category: "Tools"
-    },
-    { 
-        id: 14, 
-        title: "Adobe Photoshop", 
-        icon: photoshopLogo,
-        category: "Tools"
-    },
-    { 
-        id: 15, 
-        title: "Capcut", 
-        icon: capcutLogo,
-        category: "Tools"
-    },
-    { 
-        id: 16, 
-        title: "Expo", 
-        icon: expoLogo,
         category: "Tools"
     },
 

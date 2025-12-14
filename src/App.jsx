@@ -20,7 +20,6 @@ const App = () => {
             <About />
             <Slider />
             <Skills />
-            <Slider />
           </>
         } />
       </Routes>

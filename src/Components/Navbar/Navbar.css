@@ -54,7 +54,7 @@
     background-color: rgba(22, 21, 19, 0.9); 
     min-width: 150px;
     padding: 20px 20px;
-    margin-top: 25px; /* Little space from parent */
+    margin-top: 25px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     
@@ -62,7 +62,7 @@
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    z-index: 1050; /* Ensure it is above other content */
+    z-index: 1050;
 }
 
 .nav-dropdown:hover .dropdown-menu {
@@ -85,16 +85,12 @@
 .menu-icon {
     display: none;
     cursor: pointer;
-    flex-direction: column;
-    justify-content: space-around;
     width: 30px;
-    height: 25px;
+    height: 30px;
 }
-.bar {
+.menu-image {
     width: 100%;
-    height: 3px;
-    background-color: white;
-    transition: 0.3s;
+    height: 100%;
 }
 .nav-menu a {
     text-decoration: none;
@@ -103,7 +99,153 @@
     width: 100%;
     height: 100%;
 }
+.dropdown-toggle-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    /* Ensure cursor matches li/link */
+    cursor: pointer; 
+    height: 100%;
+}
+.dropdown-toggle-container .dropdown-toggle {
+    /* Set flex basis to allow the link to take necessary space, leaving room for the icon */
+    flex-grow: 1; 
+    flex-shrink: 1;
+    display: inline; 
+}
+
+/* New: Style for the dropdown arrow icon (only visible on mobile) */
+.dropdown-arrow {
+    display: none; /* Hidden by default (desktop) */
+    width: 12px; 
+    height: 12px;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
 
 @media (max-width: 768px) {
+    .menu-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Collapse the nav-menu for mobile */
+    .nav-menu {
+        flex-direction: column;
+        align-items: flex-start; /* Align text to the left */
+        gap: 0;
+        position: absolute;
+        top: 100%;
+        right: 10%;
+        width: 80%; /* Takes 80% of the screen width */
+        max-width: 300px; /* Optional: Limit max width */
+        margin-top: 5px; /* Slight gap from the header */
+
+        background-color: rgba(22, 21, 19, 0.95); 
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+        /* Hide by default (off-screen or invisible) */
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-10px); /* Slightly move up when hidden */
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        z-index: 999;
+    }
+    .nav-menu.open {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .nav-menu li {
+        width: 100%;
+        padding: 10px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .nav-menu li > .dropdown-toggle-container,
+    .nav-menu li > a {
+        padding: 20px 20px;
+        display: flex;
+        width: 100%;
+        border-radius: 10px;
+
+    }
+    .nav-menu li:first-child {
+        margin-top: 10px;
+    }
+    .nav-menu li:hover > .dropdown-toggle-container{
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    .nav-menu li:last-child {
+        border-bottom: none;
+    }
+
+    /* Reset desktop-specific dropdown styles for mobile main links */
+    .nav-dropdown {
+        /* This li is now a main item in the mobile menu */
+        position: static; 
+    }
+    .nav-dropdown {
+        position: static; 
+    }
+    .dropdown-arrow {
+        display: inline-block;
+    }
+    .nav-dropdown .dropdown-menu {
+        position: static; /* Stack beneath the parent link */
+        transform: none; /* Remove horizontal centering */
+        background-color: transparent; 
+        box-shadow: none; /* No shadow */
+        min-width: auto;
+        padding: 0; /* Remove internal padding */
+        margin-top: 0;
+
+        visibility: visible;
+        opacity: 1;
+        max-height: 0; 
+        overflow: hidden;
+        transition: max-height 0.4s ease-out;
+        z-index: auto;
+    }
+
+    .nav-dropdown.open .dropdown-menu {
+         max-height: 500px; /* Sufficient height to show all items */
+    }
+
+    .nav-dropdown .dropdown-menu li {
+        padding: 10px 20px 10px 40px; /* Increased left padding for indentation */
+        font-size: 14px;
+        border-bottom: none;
+    }
     
+    .nav-dropdown.open {
+        /* This ensures the bottom border is preserved when the sub-menu is open */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .nav-dropdown.open ~ li:last-child {
+        /* Fixes the border of the next element */
+        border-bottom: none; 
+    }
+    .nav-dropdown:last-child {
+        /* Ensure the main dropdown element itself doesn't have a border if it's the last item */
+        border-bottom: none;
+    }
+    /* Remove the hover effect on the parent dropdown item since it's now a link */
+    .nav-dropdown:hover .dropdown-menu {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* Revert the `dropdown-toggle` back to a simple link appearance */
+    .nav-dropdown .dropdown-toggle {
+         /* The dropdown toggle is now a full link in mobile */
+         display: block; 
+    }
 }

@@ -49,9 +49,7 @@ const Slider = () => {
                     id="certifications" 
                     className="scroll-target-buffer" 
                     aria-hidden="true"
-                    style={{
-                        marginTop: `90px`, 
-                        paddingTop: '120px',       
+                    style={{     
                         visibility: 'hidden',               
                         pointerEvents: 'none',              
                         height: '0'                         

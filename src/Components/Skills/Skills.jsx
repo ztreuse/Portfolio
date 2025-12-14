@@ -18,7 +18,7 @@ const Skills = () => {
         };
     }, []); 
     const parallaxStyle = {
-        transform: `translateY(${offsetY * 0.3}px)`,
+        transform: `translateY(${offsetY * 0.2}px)`,
     };
     const groupSkillsByCategory = (skills) => {
         return skills.reduce((acc, skill) => {
@@ -71,6 +71,7 @@ const Skills = () => {
             <div className="skills-content-overlay">
                 <h2>My Core Skills & Expertise</h2>
                 <p className="skills-subtitle">Bringing ideas to life with modern web technologies.</p>
+                <div className="category-grid-wrapper">
                 {Object.keys(categorizedSkills).map((categoryKey) => (
                     <div key={categoryKey} className="skill-category-group">
                         <h3 className="category-heading">
@@ -78,14 +79,13 @@ const Skills = () => {
                         </h3>
                         <div className="skills-card-container">
                             {categorizedSkills[categoryKey].map(skill => (
-                                <div key={skill.id} className="skill-card">
-                                    <div className="skill-icon"><img src={skill.icon} alt={`${skill.title} Logo`} /></div>
-                                    <h3>{skill.title}</h3>
-                                </div>
+                                <p className='skills-title'>{skill.title}</p>
                             ))}
                         </div>
                     </div>
+                    
                 ))}
+                </div>
             </div>
         </section>
     );

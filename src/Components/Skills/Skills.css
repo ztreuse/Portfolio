@@ -6,6 +6,8 @@
     color: #fff;
     padding-top: 50px; 
     padding-bottom: 50px;
+    display: flex;
+    align-items: center;
 }
 .scroll-target-buffer {
     padding-top: 90px;
@@ -36,14 +38,17 @@
     border-radius: 10px;
 }
 .skills-content-overlay h2 {
-    font-size: clamp(1.7rem, 4vw, 3rem);
+    font-size: clamp(2rem, 2vw, 3rem);
     margin-bottom: 10px;
     color: #fff; 
 }
+.skills-content-overlay h3 {
+    font-weight: 600;
+}
 .skills-content-overlay p {
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    font-size: clamp(0.8rem, 1vw, 1.2rem);
     margin-bottom: 10px;
-    color: #fff; 
+    color: #fff;
 }
 .skills-subtitle {
     font-size: 1.2em;
@@ -78,7 +83,7 @@
     width: 100%;
     margin-bottom: 40px; 
     background-color: rgba(255, 255, 255, 0.3);
-    padding: clamp(5px, 2vw, 20px);
+    padding: clamp(15px, 2vw, 20px);
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(5px);
@@ -90,11 +95,6 @@
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 15px;
     padding: 0;
-}
-.skills-title {
-    font-size: clamp(0.5rem, 1vw, 2rem);
-    margin-bottom: 5px;
-    color: #fff; 
 }
 @media (max-width: 1200px) {
     .category-grid-wrapper {
@@ -130,7 +130,7 @@
         top: -100vh;
         left: 0;
         width: 100%;
-        height: 100vh;  
+        height: 150vh;  
         z-index: -1;
         background-image: url('../../assets/skills_bg.webp');
     }
@@ -142,7 +142,7 @@
 }
 @media (max-width: 590px) {
     .skills-parallax-bg {
-        height: 110vh;  
+        height: 130vh;  
     }
 }
 @media (max-width: 480px) {

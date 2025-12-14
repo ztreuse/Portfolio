@@ -100,9 +100,15 @@ const Slider = () => {
                     </div>
                   </div>
                   <div className="footer">
-                    <button>
-                      <span className="label">See More...</span>
-                    </button>
+                    <a 
+                        href={cert.c_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                    >
+                      <button>
+                        <span className="label">See More...</span>
+                      </button>
+                    </a>
                   </div>
                 </div>
                 <div className="slide-right">

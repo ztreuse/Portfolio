@@ -52,7 +52,7 @@ const Slider = () => {
                     style={{     
                         visibility: 'hidden',               
                         pointerEvents: 'none',              
-                        height: '0'                         
+                        height: '0',                    
                     }}>
         </div>
         <h3>Certifications</h3>

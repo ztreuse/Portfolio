@@ -37,8 +37,23 @@
     font-weight: 700;
     color: #fff;
     line-height: clamp(60px, 14vw, 120px);
+    /* Set overflow hidden to prevent any text that might accidentally type 
+       outside of this forced container size from interfering. */
+    overflow: hidden;
 }
-.hero h1 span{
+.typing-gradient {
+    font-weight: 700; 
+    font-size: clamp(50px, 12vw, 100px);
+    background: linear-gradient(270deg, #9f8f81 27.16%, #fff 100.06%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.typing-gradient + .Typewriter__cursor {
+    color: #fff;
+    opacity: 1;
+}
+.typing-text {
     font-weight: 700;
     font-size: clamp(50px, 12vw, 100px);
     background: linear-gradient(270deg, #9f8f81 27.16%, #9f8f81 100.06%);
@@ -114,4 +129,10 @@
 .hero-connect:hover{
     transform: scale(1.05);
     background: linear-gradient(240deg, #614d35 27.16%, #9f8f81 100.06%);
+}
+@media (max-width: 1074px) {
+    .hero h1 {
+        min-height: clamp(120px, 28vw, 240px);
+    }
+
 }

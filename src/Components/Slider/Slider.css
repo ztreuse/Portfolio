@@ -5,7 +5,6 @@
     --tertiary-clr: #161513;
     --no-clr: transparent;
     --accent-clr: #9f8f81;
-
 }
 *, *::before, *::after {
     box-sizing: border-box;
@@ -18,6 +17,7 @@ main {
     justify-content: center;
     height: auto;
     overflow: hidden;
+
 }
 .cert {
     width: 80%;

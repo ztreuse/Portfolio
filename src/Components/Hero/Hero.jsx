@@ -1,6 +1,7 @@
+// Hero.jsx
 import React from 'react'
+import { TypeAnimation } from 'react-type-animation'
 import './Hero.css'
-import profile_img from '../../assets/profile_img.png'
 import download_img from '../../assets/download.svg'
 import instagram from '../../assets/instagram.svg'
 import facebook from '../../assets/facebook.svg'
@@ -12,7 +13,23 @@ const Hero = () => {
     <div className='hero' id='hero'>
       <div className="hero-content">
         <h3>HELLO THERE !</h3>
-        <h1>I'M TROY <span>BAY</span></h1>
+        <h1>
+            I'M 
+            <TypeAnimation
+                sequence={[
+                    ' TROY BAY',
+                    2000,
+                    '',
+                    100,
+                ]}
+                wrapper="span" 
+                speed={50} 
+                deletionSpeed={50}
+                repeat={Infinity}
+                cursor={true}
+                className='typing-gradient' 
+            />
+        </h1>
         <p>FRONT-END DEVELOPER AND UI/UX DESIGNER </p>
         <div className="socials">
           <a href="https://www.instagram.com/tjzbay13/" className="insta-icon"><img src={instagram} alt="" /></a>

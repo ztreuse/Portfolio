@@ -62,9 +62,13 @@
     padding: 20px 0;
 }
 .category-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
     width: 100%;
     color: #fff; 
-    font-size: clamp(1rem, 1.6vw, 1.8rem);
+    font-size: clamp(1rem, 1.6vw, 1.6rem);
     margin-top: 0;
     margin-bottom: 20px;
     padding-bottom: 10px;

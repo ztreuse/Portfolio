@@ -1,5 +1,5 @@
 import tipsytavern from './projects/tipsy.png';
-import ticap from './projects/ticap.png';
+import ticap from './projects/tcp2.png';
 
 const Projects_Data = [
     {

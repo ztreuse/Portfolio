@@ -44,7 +44,7 @@
     background: rgba(35, 34, 32, 1);
     cursor: pointer;
     color: #fff;
-    border-radius: 15px;
+    border-radius: 10px;
     font-size: 16px;
     display: flex;
     height: fit-content;
@@ -69,8 +69,9 @@
 .projects-container.grid {
     width: 80%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(max(250px, 30%), 1fr));
     gap: clamp(20px, 2vw, 30px);
+    padding-bottom: 20px;
 }
 
 /* Column (List) Layout */
@@ -116,9 +117,10 @@
     }
 }
 .project-img-container {
+    width: 100%;
     overflow: hidden;
     border-radius: 20px;
-    height: clamp(200px, 18vw, 350px);
+    height: clamp(200px, 20vw, 350px);
 }
 .projects-container.column .project-img-container {
     width: 150%;

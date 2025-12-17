@@ -38,7 +38,7 @@
     border-radius: 10px;
 }
 .skills-content-overlay h2 {
-    font-size: clamp(2rem, 2vw, 3rem);
+    font-size: clamp(2rem, 3vw, 5rem);
     margin-bottom: 10px;
     color: #fff; 
 }

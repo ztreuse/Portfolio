@@ -110,9 +110,8 @@
     font-size: 15px;
     font-weight: 500;
     margin-bottom: 50px;
-    /* border: 2px solid red; */
 }
-.hero-connect{
+.hero-connect {
     display: flex;
     padding: 15px 35px;
     border-radius: 50px;
@@ -129,6 +128,10 @@
 .hero-connect:hover{
     transform: scale(1.05);
     background: linear-gradient(240deg, #614d35 27.16%, #9f8f81 100.06%);
+}
+.resume-btn {
+    text-decoration: none;
+    color: #fff;
 }
 @media (max-width: 1074px) {
     .hero h1 {

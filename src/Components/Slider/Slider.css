@@ -186,7 +186,7 @@ main {
 }
 
 /** Footer -> Button */
-button {
+.cert-btn {
     position: relative;
     font-size: 0.85rem;
     font-weight: 500;
@@ -203,7 +203,7 @@ button {
     font-weight: 600;
     font-size: clamp(14px, 1.2vw, 17px);
 }
-.swiper-slide-active button {
+.swiper-slide-active .cert-btn {
     opacity: 1;
     transition: 0.5s ease;
     transition-delay: 1s;
@@ -211,7 +211,7 @@ button {
 .label {
     position: relative;
 }
-button:before {
+.cert-btn:before {
     content: "";
     position: absolute;
     left: 50%;
@@ -223,11 +223,11 @@ button:before {
     background-color: var(--accent-clr);
     border-radius: 50%;
 }
-button:hover:before {
+.cert-btn:hover:before {
     width: 200px;
     height: 200px;
 }
-button:hover .label {
+.cert-btn:hover .label {
     color: var(--primary-clr);
 }
 

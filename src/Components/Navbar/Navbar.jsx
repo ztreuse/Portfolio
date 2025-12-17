@@ -67,7 +67,8 @@ const Navbar = () => {
     const DEFAULT_OFFSET = 90;
     const ABOUT_OFFSET = 0;
     const CERTIFICATIONS_OFFSET = 30;
-    const SKILLS_OFFSET = 300;
+    const SKILLS_OFFSET = 480;
+    const CONTACT_OFFSET = 0;
     // -----------------------------------------------------------------
 
 
@@ -146,7 +147,7 @@ const Navbar = () => {
                   </li>
                   <li>
                       {/* Contact Link - Standard Offset */}
-                      <HashLink to="/#contact" smooth scroll={(el) => customScroll(el, DEFAULT_OFFSET)} onClick={closeMenu}>Contact</HashLink>
+                      <HashLink to="/#contact" smooth scroll={(el) => customScroll(el, CONTACT_OFFSET)} onClick={closeMenu}>Contact</HashLink>
                   </li>
               </ul>
         </div>

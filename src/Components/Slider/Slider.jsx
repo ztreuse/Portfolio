@@ -105,7 +105,7 @@ const Slider = () => {
                         target="_blank" 
                         rel="noopener noreferrer"
                     >
-                      <button>
+                      <button className="cert-btn">
                         <span className="label">See More...</span>
                       </button>
                     </a>

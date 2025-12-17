@@ -7,6 +7,7 @@ import Slider from './Components/Slider/Slider'
 import Skills from './Components/Skills/Skills'
 import Projects from './Components/Projects/Projects'
 import Footer from './Components/Footer/Footer'
+import Contact from './Components/Contact/Contact';
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
             <Slider />
             <Skills />
             <Projects />
+            <Contact />
             <Footer />
           </>
         } />

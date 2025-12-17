@@ -38,7 +38,13 @@ const Hero = () => {
           <a href="https://github.com/ztreuse" className="github-icon"><img src={github} alt="" /></a>
         </div>
         <div className="hero-action">
-          <div className="hero-connect"><img src={download_img} alt="" />Download Resume</div>
+            <div className="hero-connect"><img src={download_img} alt="view" /><a 
+            href="/resume.pdf" 
+            target="_blank"
+            className="resume-btn"
+          >
+          Download Resume
+        </a></div>
         </div>
       </div>
     </div>

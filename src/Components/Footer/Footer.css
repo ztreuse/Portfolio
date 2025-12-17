@@ -14,12 +14,12 @@
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 5fr 1fr 1fr;
     gap: 50px;
     margin-bottom: 40px;
 }
 
-.footer-section h3 {
+.footer-section-links h3, .footer-section-socials h3 {
     color: #9f8f81; /* Accent color from your project-links */
     font-size: 20px;
     margin-bottom: 20px;
@@ -31,6 +31,7 @@
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 15px;
+    border: 2px solid red;
 }
 .footer-logo span {
     color: #9f8f81;
@@ -42,19 +43,25 @@
 }
 
 /* Links Section */
-.footer-section ul {
+.footer-section-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.footer-section-links ul {
     list-style: none;
     padding: 0;
+    align-items: flex-end;
 }
-.footer-section ul li {
+.footer-section-links ul li {
     margin-bottom: 10px;
 }
-.footer-section ul li a {
+.footer-section-links ul li a {
     color: gray;
     text-decoration: none;
     transition: 0.3s;
 }
-.footer-section ul li a:hover {
+.footer-section-links ul li a:hover {
     color: #fff;
     padding-left: 5px;
 }
@@ -63,17 +70,19 @@
 .footer-section-socials {
     display: flex;
     flex-direction: column;
-
+    align-items: flex-end;
 }
 .social-icons {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: flex-start;
 }
 .social-icons a {
     color: gray;
     text-decoration: none;
     transition: 0.3s;
+    text-align: start;
 }
 .social-icons a:hover {
     color: #9f8f81;

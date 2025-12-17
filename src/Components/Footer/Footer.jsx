@@ -1,5 +1,6 @@
 import React from 'react';
 import './Footer.css';
+import logo from '../../assets/logo.svg';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,18 +9,14 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-content">
-          <div className="footer-section about">
-            <h2 className="footer-logo">PORTFOLIO<span>.</span></h2>
-            <p>
-              Designing and building digital experiences with a focus on 
-              clean code and user-centric design. Let's create something great together.
-            </p>
+          <div className="footer-section-about">
+            <img src={logo} alt="logo" className='nav-logo'/>
           </div>
 
-          <div className="footer-section links">
+          <div className="footer-section-links">
             <h3>Quick Links</h3>
             <ul>
-              <li><a href="#home">Home</a></li>
+              <li><a href="#hero">Home</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#projects">Projects</a></li>
               <li><a href="#contact">Contact</a></li>

@@ -141,6 +141,12 @@
     }
 }
 
+@media (max-width: 900px) {
+    .contact {
+        padding-bottom: 40px;
+    }
+}
+
 @media (max-width: 768px) {
     .contact-container {
         width: 80%;

@@ -94,12 +94,12 @@ const Slider = () => {
                     <h1>{cert.c_name}</h1>
                   </div>
                   <div className="content">
-                    <div className="text-box">
+                    <div className="content-text-box">
                       <p>{cert.c_org}</p>
                       <p>{cert.c_issuedate}</p>
                     </div>
                   </div>
-                  <div className="footer">
+                  <div className="footer-slide">
                     <a 
                         href={cert.c_link} 
                         target="_blank" 

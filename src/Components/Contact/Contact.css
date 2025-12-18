@@ -1,12 +1,12 @@
 .contact {
     width: 100%;
     height: auto;
-    border: 2px solid red;
     background-color: #161513;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-bottom: 20px;
 }
 
 .contact-container {

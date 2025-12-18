@@ -1,6 +1,7 @@
 .contact {
     width: 100%;
-    height: 100vh;
+    height: auto;
+    border: 2px solid red;
     background-color: #161513;
     color: #fff;
     display: flex;

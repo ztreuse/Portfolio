@@ -11,7 +11,7 @@ import Contact from './Components/Contact/Contact';
 
 const App = () => {
   return (
-    <BrowserRouter> 
+    <Browser Routerbasename="/Portfolio"> 
       {/* Navbar stays outside the Routes, so it is always visible */}
       <Navbar />
       
@@ -29,7 +29,7 @@ const App = () => {
           </>
         } />
       </Routes>
-    </BrowserRouter>
+    </Browser>
   )
 }
 

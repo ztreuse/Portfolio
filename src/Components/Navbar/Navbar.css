@@ -22,11 +22,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 0px;
+    padding: clamp(10px, 1.5vw + 4.5px, 20px) 0px;
 }
 .nav-logo {
-    width: 140px;
+    width: clamp(100px, 10vw, 140px);
     height: auto;
+    display: flex;
 }
 .nav-menu {
     display: flex;
@@ -86,7 +87,7 @@
 .menu-icon {
     display: none;
     cursor: pointer;
-    width: 30px;
+    width: clamp(30px, 4vw, 40px);
     height: 30px;
 }
 .menu-image {
@@ -145,9 +146,9 @@
         position: absolute;
         top: 100%;
         right: 10%;
-        width: 80%; /* Takes 80% of the screen width */
+        width: 40%; /* Takes 80% of the screen width */
         max-width: 300px; /* Optional: Limit max width */
-        margin-top: -20px; /* Slight gap from the header */
+        margin-top: -10px; /* Slight gap from the header */
 
         background-color: rgba(22, 21, 19, 0.95); 
         border-radius: 10px;
@@ -167,16 +168,16 @@
     }
     .nav-menu li {
         width: 100%;
-        padding: 20px 20px;
+        padding: 10px 10px 10px 10px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .nav-menu li > .dropdown-toggle-container,
     .nav-menu li > a {
-        padding: 20px 20px;
+        padding: clamp(10px, 2vh, 20px) 15px;
         display: flex;
         width: 100%;
         border-radius: 10px;
-
+        font-size: clamp(10px, 2vw, 12px)!important;
     }
     .nav-menu li:hover > .dropdown-toggle-container, 
     .nav-menu li:hover > a{

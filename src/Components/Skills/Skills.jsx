@@ -47,9 +47,8 @@ const Skills = () => {
     };
 
     return (
-        <section className="skills-section">
+        <section id="skills" className="skills-section">
             <div 
-                id="skills" 
                 className="scroll-target-buffer" 
                 aria-hidden="true"
                 style={{

@@ -44,9 +44,8 @@ const Slider = () => {
 
   return (
     <main>
-      <div className="cert">
+      <div id="certifications" className="cert">
         <div 
-                    id="certifications" 
                     className="scroll-target-buffer" 
                     aria-hidden="true"
                     style={{     

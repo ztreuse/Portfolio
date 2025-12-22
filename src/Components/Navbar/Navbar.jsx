@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HashLink } from 'react-router-hash-link'; 
 import './Navbar.css';
 import logo from '../../assets/logo.svg';
@@ -25,6 +25,20 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false); 
+
+    const navRef = useRef(null);
+
+    const autoScroll = (el, extraOffset = 0) => {
+        // Get the current height of the navbar (dynamic based on clamp/screen size)
+        const navHeight = navRef.current ? navRef.current.offsetHeight : 0;
+        
+        const yCoordinate = el.getBoundingClientRect().top + window.scrollY;
+        
+        window.scrollTo({
+            top: yCoordinate - navHeight - extraOffset, 
+            behavior: 'smooth'
+        });
+    };
 
     // Function to close both the main menu and dropdown
     const closeMenu = () => {
@@ -68,12 +82,13 @@ const Navbar = () => {
     const ABOUT_OFFSET = 0;
     const CERTIFICATIONS_OFFSET = 30;
     const SKILLS_OFFSET = 480;
+    const PROJECTS_OFFSET = 90;
     const CONTACT_OFFSET = 0;
     // -----------------------------------------------------------------
 
 
     return (
-      <div className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <div ref={navRef} className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-content">
               {/* Logo Link - Standard Offset */}
               <HashLink to="/#hero" smooth scroll={(el) => customScroll(el, DEFAULT_OFFSET)} onClick={closeMenu}>
@@ -91,7 +106,7 @@ const Navbar = () => {
               <ul className={`nav-menu ${menuOpen ? 'open' : ''}`}>
                   <li>
                       {/* Home Link - Standard Offset */}
-                      <HashLink to="/#hero" smooth scroll={(el) => customScroll(el, DEFAULT_OFFSET)} onClick={closeMenu}>Home</HashLink>
+                      <HashLink to="/#hero" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>Home</HashLink>
                   </li> 
 
                   {/* Dropdown Structure */}
@@ -104,7 +119,7 @@ const Navbar = () => {
                                 smooth 
                                 className="dropdown-toggle"
                                 // Use the default scroll offset for the parent link
-                                scroll={(el) => customScroll(el, DEFAULT_OFFSET)} 
+                                scroll={(el) => autoScroll(el)}
                                 
                                 onClick={(e) => { 
                                     // If desktop (not in mobile menu), allow navigation and close menu
@@ -128,26 +143,26 @@ const Navbar = () => {
                       <ul className={`dropdown-menu ${dropdownOpen ? 'open' : ''}`}> 
                           <li>
                               {/* About Me Link - Standard Offset */}
-                              <HashLink to="/#about" smooth scroll={(el) => customScroll(el, ABOUT_OFFSET)} onClick={closeMenu}>About Me</HashLink>
+                              <HashLink to="/#about" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>About Me</HashLink>
                           </li>
                           <li>
                               {/* Certifications Link - Standard Offset */}
-                              <HashLink to="/#certifications" smooth scroll={(el) => customScroll(el, CERTIFICATIONS_OFFSET)} onClick={closeMenu}>Certifications</HashLink>
+                              <HashLink to="/#certifications" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>Certifications</HashLink>
                           </li> 
                           <li>
                               {/* SKILLS Link - LARGE 300px OFFSET APPLIED HERE */}
-                              <HashLink to="/#skills" smooth scroll={(el) => customScroll(el, SKILLS_OFFSET)} onClick={closeMenu}>Skills</HashLink>
+                              <HashLink to="/#skills" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>Skills</HashLink>
                           </li> 
                       </ul>
                   </li>
 
                   <li>
                       {/* Projects Link - Standard Offset */}
-                      <HashLink to="/#projects" smooth scroll={(el) => customScroll(el, DEFAULT_OFFSET)} onClick={closeMenu}>Projects</HashLink>
+                      <HashLink to="/#projects" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>Projects</HashLink>
                   </li>
                   <li>
                       {/* Contact Link - Standard Offset */}
-                      <HashLink to="/#contact" smooth scroll={(el) => customScroll(el, CONTACT_OFFSET)} onClick={closeMenu}>Contact</HashLink>
+                      <HashLink to="/#contact" smooth scroll={(el) => autoScroll(el)} onClick={closeMenu}>Contact</HashLink>
                   </li>
               </ul>
         </div>

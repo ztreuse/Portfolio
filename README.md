@@ -1,16 +1,58 @@
-# React + Vite
+# Troy Bay — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal portfolio built with React, Vite, and Tailwind CSS v4. Deployed to GitHub Pages at https://ztreuse.github.io/Portfolio/.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm run dev      # start the dev server
+npm run build    # production build into dist/
+npm run lint     # ESLint
+npm run deploy   # build and publish dist/ to GitHub Pages
+```
 
-## React Compiler
+## Project structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+src/
+├── main.jsx                 # entry point
+├── App.jsx                  # page composition (Navbar → sections → Footer)
+├── index.css                # Tailwind import + design tokens (@theme) + base styles
+├── sections/                # one file per page section
+│   ├── Hero.jsx
+│   ├── About.jsx
+│   ├── Certifications.jsx
+│   ├── Skills.jsx
+│   ├── Projects.jsx
+│   └── Contact.jsx
+├── components/
+│   ├── layout/              # Navbar, Footer
+│   └── ui/                  # shared building blocks: Section, SectionHeading, Container, Button, Tag
+├── hooks/                   # useActiveSection (navbar highlight)
+├── data/                    # all content lives here: site, projects, certifications, skills
+└── assets/
+    ├── images/              # logo, profile, section backgrounds
+    ├── certifications/
+    └── projects/
+```
 
-## Expanding the ESLint configuration
+## Editing content
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Content is separated from layout. To add a project, certificate, or skill, edit the matching file in `src/data/`. Name, contact details, social links, and nav links are in `src/data/site.js`.
+
+## Design system
+
+Colors and fonts are defined once as Tailwind theme tokens in `src/index.css`:
+
+| Token           | Value     | Use                     |
+| --------------- | --------- | ----------------------- |
+| `ink`           | `#161513` | page background         |
+| `ink-deep`      | `#0f0e0d` | footer                  |
+| `surface`       | `#1f1d1a` | cards, inputs           |
+| `line`          | `#2d2925` | borders, dividers       |
+| `accent`        | `#9f8f81` | brand accent            |
+| `accent-strong` | `#c9bcaf` | accent text and hovers  |
+
+Fonts: **Zalando Sans Expanded** (headings, nav, buttons and labels; `font-display`) and **Poppins** (body text; `font-sans`).
+
+Every section is wrapped in `<Section>`, which provides the same spacing, max width, and heading style throughout the page.

@@ -1,94 +1,96 @@
-import htmlcssCert from './cert/htmlcss_cert.png';
-import javascriptCert from './cert/javascript_cert.png';
-import networkingCert from './cert/networking_cert.png';
-import pythonCert from './cert/python_cert.png';
-import devnetCert from './cert/devnet_cert.png';
-import cyberopsCert from './cert/cyberops_cert.png';
-import switchCert from './cert/CCNAswitch_cert.png';
-import introCert from './cert/CCNAintro_cert.png';
-import enterpriseCert from './cert/CCNAenterprise_cert.png';
-import certifiedCert from './cert/certified_cert.png';
-import pmiCert from './cert/pmi_cert.png';
+import itSpecialistHtmlAndCss from '../assets/certifications/it-specialist-html-and-css.png';
+import itSpecialistJavascript from '../assets/certifications/it-specialist-javascript.png';
+import itSpecialistNetworking from '../assets/certifications/it-specialist-networking.png';
+import itSpecialistPython from '../assets/certifications/it-specialist-python.png';
+import ccnaIntroductionToNetworks from '../assets/certifications/ccna-introduction-to-networks.png';
+import ccnaSwitchingRoutingAndWirelessEssentials from '../assets/certifications/ccna-switching-routing-and-wireless-essentials.png';
+import ccnaEnterpriseNetworkingSecurityAndAutomation from '../assets/certifications/ccna-enterprise-networking-security-and-automation.png';
+import devnetAssociate from '../assets/certifications/devnet-associate.png';
+import cyberopsAssociate from '../assets/certifications/cyberops-associate.png';
+import ciscoCertifiedSupportTechnicianCybersecurity from '../assets/certifications/cisco-certified-support-technician-cybersecurity.png';
+import pmiProjectManagementReady from '../assets/certifications/pmi-project-management-ready.png';
 
+// Dates are ISO (YYYY-MM-DD) so they can be formatted consistently.
+// `badgeId` is the Credly badge ID from the badge's embed code (data-share-badge-id); it builds the
+// public verification link. `image` is the badge artwork downloaded from Credly (340px).
+const certifications = [
+  {
+    name: 'IT Specialist - HTML and CSS',
+    issuer: 'Certiport',
+    date: '2024-11-28',
+    badgeId: 'fe73abea-d20e-463d-b49d-bab3034a1637',
+    image: itSpecialistHtmlAndCss,
+  },
+  {
+    name: 'IT Specialist - JavaScript',
+    issuer: 'Certiport',
+    date: '2025-11-24',
+    badgeId: 'e0329e81-c1da-485b-9033-ec0d43d40b77',
+    image: itSpecialistJavascript,
+  },
+  {
+    name: 'IT Specialist - Networking',
+    issuer: 'Certiport',
+    date: '2024-07-13',
+    badgeId: 'd22dd3ef-5fa2-4f81-acbd-eefab5360d8e',
+    image: itSpecialistNetworking,
+  },
+  {
+    name: 'IT Specialist - Python',
+    issuer: 'Certiport',
+    date: '2024-03-24',
+    badgeId: '07a6a4d7-6b95-48ae-ba0a-b63df9845726',
+    image: itSpecialistPython,
+  },
+  {
+    name: 'CCNA: Introduction to Networks',
+    issuer: 'Cisco',
+    date: '2024-03-25',
+    badgeId: '5709bd0d-c5cb-41fa-aafa-b50137bdc47c',
+    image: ccnaIntroductionToNetworks,
+  },
+  {
+    name: 'CCNA: Switching, Routing, and Wireless Essentials',
+    issuer: 'Cisco',
+    date: '2024-07-19',
+    badgeId: '37abfb9e-58d8-4bb0-81a4-edf7585f31c3',
+    image: ccnaSwitchingRoutingAndWirelessEssentials,
+  },
+  {
+    name: 'CCNA: Enterprise Networking, Security, and Automation',
+    issuer: 'Cisco',
+    date: '2025-01-22',
+    badgeId: '8d992827-fd7b-492a-8ff6-e1179b0a7979',
+    image: ccnaEnterpriseNetworkingSecurityAndAutomation,
+  },
+  {
+    name: 'DevNet Associate',
+    issuer: 'Cisco',
+    date: '2025-03-21',
+    badgeId: '68a249b5-0b6f-4fd3-ae66-8b146527a484',
+    image: devnetAssociate,
+  },
+  {
+    name: 'CyberOps Associate',
+    issuer: 'Cisco',
+    date: '2025-11-17',
+    badgeId: 'b43a3f4e-a016-4ee6-9d82-7ecab1a8e7c5',
+    image: cyberopsAssociate,
+  },
+  {
+    name: 'Cisco Certified Support Technician Cybersecurity',
+    issuer: 'Cisco',
+    date: '2025-11-25',
+    badgeId: '044f157a-8e26-47e0-baaa-fb9e66ced734',
+    image: ciscoCertifiedSupportTechnicianCybersecurity,
+  },
+  {
+    name: 'PMI Project Management Ready™',
+    issuer: 'Project Management Institute',
+    date: '2025-03-13',
+    badgeId: '62de8119-ad6d-4e6d-91e8-fc7c2ca64f77',
+    image: pmiProjectManagementReady,
+  },
+];
 
-const Certifications_Data = [
-    {
-        c_img: htmlcssCert,
-        c_name:"IT Specialist - HTML and CSS",
-        c_org:"Issued by Certiport",
-        c_issuedate:"11/28/2024",
-        c_link: "https://www.credly.com/earner/earned/badge/fe73abea-d20e-463d-b49d-bab3034a1637"
-    },
-    {
-        c_img: javascriptCert,
-        c_name:"IT Specialist - Javascript",
-        c_org:"Issued by Certiport",
-        c_issuedate:"11/24/2025",
-        c_link: "https://www.credly.com/earner/earned/badge/e0329e81-c1da-485b-9033-ec0d43d40b77"
-    },
-    {
-        c_img: networkingCert,
-        c_name:"IT Specialist - Networking",
-        c_org:"Issued by Certiport",
-        c_issuedate:"7/13/2024",
-        c_link:"https://www.credly.com/earner/earned/badge/d22dd3ef-5fa2-4f81-acbd-eefab5360d8e"
-    },
-    {
-        c_img: pythonCert,
-        c_name:"IT Specialist - Python",
-        c_org:"Issued by Certiport",
-        c_issuedate:"3/24/2024",
-        c_link:"https://www.credly.com/earner/earned/badge/07a6a4d7-6b95-48ae-ba0a-b63df9845726"
-    },
-    {
-        c_img: introCert,
-        c_name:"CCNA: Introduction to Networks",
-        c_org:"Issued by Cisco",
-        c_issuedate:"3/25/2024",
-        c_link:"https://www.credly.com/earner/earned/badge/5709bd0d-c5cb-41fa-aafa-b50137bdc47c"
-    },
-    {
-        c_img: switchCert,
-        c_name:"CCNA: Switching, Routing, and Wireless Essentials",
-        c_org:"Issued by Cisco",
-        c_issuedate:"7/19/2024",
-        c_link:"https://www.credly.com/earner/earned/badge/37abfb9e-58d8-4bb0-81a4-edf7585f31c3"
-    },
-    {
-        c_img: enterpriseCert,
-        c_name:"CCNA: Enterprise Networking, Security, and Automation",
-        c_org:"Issued by Cisco",
-        c_issuedate:"1/22/2025",
-        c_link:"https://www.credly.com/earner/earned/badge/8d992827-fd7b-492a-8ff6-e1179b0a7979"
-    },
-    {
-        c_img: devnetCert,
-        c_name:"DevNet Associate",
-        c_org:"Issued by Cisco",
-        c_issuedate:"3/21/2025",
-        c_link:"https://www.credly.com/earner/earned/badge/68a249b5-0b6f-4fd3-ae66-8b146527a484"
-    },
-    {
-        c_img: cyberopsCert,
-        c_name:"CyberOps Associate",
-        c_org:"Issued by Cisco",
-        c_issuedate:"11/17/2025",
-        c_link:"https://www.credly.com/earner/earned/badge/b43a3f4e-a016-4ee6-9d82-7ecab1a8e7c5"
-    },
-    {
-        c_img: certifiedCert,
-        c_name:"Cisco Certified Support Technician Cybersecurity (CCST Cybersecurity)",
-        c_org:"Issued by Cisco",
-        c_issuedate:"11/25/2025",
-        c_link:"https://www.credly.com/earner/earned/badge/044f157a-8e26-47e0-baaa-fb9e66ced734"
-    },
-    {
-        c_img: pmiCert,
-        c_name:"PMI Project Management Ready™",
-        c_org:"Issued by Project Management Institute",
-        c_issuedate:"3/13/2025",
-        c_link:"https://www.credly.com/earner/earned/badge/62de8119-ad6d-4e6d-91e8-fc7c2ca64f77"
-    },
-]
- 
-export default Certifications_Data;
+export default certifications;

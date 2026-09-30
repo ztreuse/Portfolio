@@ -1,37 +1,45 @@
-import tipsytavern from './projects/tipsy.png';
-import ticap from './projects/tcp2.png';
-import tourisla from './projects/tourisla.png';
-import ecocool from './projects/ecocool.png';
+import tipsyTavern from '../assets/projects/tipsy-tavern.png';
+import ticap from '../assets/projects/ticap.png';
+import tourisla from '../assets/projects/tourisla.png';
+import ecocool from '../assets/projects/ecocool.png';
 
-const Projects_Data = [
-    {
-        p_img: tipsytavern,
-        p_name:"Tipsy Tavern",
-        p_desc:"Displays a modern and visually engaging liquor website developed for our Advanced Web Design course, showcasing a curated selection of whiskey, wine, beer, and other premium spirits.",
-        p_tools: ["HTML", "CSS", "JavaScript"],
-        p_link:"https://seeejaay.github.io/TroyKingdom-FEUTECH-AWD-TW24/index.html"
-    },
-    {
-        p_img: ticap,
-        p_name:"TICAP 20 Awards Night Certification",
-        p_desc:"Designed an elegant and modern certificate of recognition template for the TiCap(Technology Innovation in Capstone Project) 20 Awards Night, catering to both FEU Institute of Technology and FEU Diliman participants.",
-        p_tools: ["Canva"],
-        p_link:"https://www.canva.com/design/DAG0Jpo9hYg/irqoPNDgeEOC7DlISoi4eA/edit"
-    },
-    {
-        p_img: tourisla,
-        p_name:"Tourisla",
-        p_desc:"A Web Platform for Tourism Management with an Interactive Map and a Mobile App for Booking Tour Guides and Local Culture Promotion to Enhance Visitor Experience in Bantayan, Cebu.",
-        p_tools: ["React.js", "React Native", "PostgreSQL", "Node.js", "Express.js", "Tailwind CSS", "ShadCN/ui"],
-        p_link:"https://tourisla.space/"
-    },
-    {
-        p_img: ecocool,
-        p_name:"Eco-Cool",
-        p_desc:"Developed a high-fidelity Figma mockup for Eco Cool, an eco-conscious brand that provides cooling relief in the Philippines while promoting reforestation through mini fans equipped with plant seeds.",
-        p_tools: ["Figma", "Photoshop", "Canva"],
-        p_link:"https://www.figma.com/proto/HLNCpuLjMihp36PbUrBKOo/ECO-COOL-DRAFT?node-id=77-720&p=f&t=Q0pHWvJxtKTeO1QA-0&scaling=contain&content-scaling=fixed&page-id=0%3A1"
-    },
-]
- 
-export default Projects_Data;
+const projects = [
+  {
+    name: 'Tourisla',
+    role: 'Project Manager & Mobile Developer',
+    image: tourisla,
+    description:
+      'A web and mobile tourism platform for Bantayan, Cebu. It features an interactive map with Google Maps routing, visitor registration with PayMongo payments, QR-code check-ins at tourist spots, an accreditation workflow for tour operators and guides with Google Calendar sync, safety advisories, incident reporting, and a digital archive of local culture.',
+    tools: ['React.js', 'React Native', 'PostgreSQL', 'Node.js', 'Express.js', 'Tailwind CSS', 'shadcn/ui'],
+    link: 'https://tourisla.net/',
+  },
+  {
+    name: 'Eco-Cool',
+    role: 'UI/UX Designer',
+    image: ecocool,
+    description:
+      'A high-fidelity Figma prototype for an eco-friendly brand. Users can buy mini fans with seed pockets, customize seed choices, donate seeds to environmental NGOs, find NGO-verified planting areas on a map, and track their personal reforestation contributions.',
+    tools: ['Figma', 'Photoshop', 'Canva'],
+    link: 'https://www.figma.com/proto/HLNCpuLjMihp36PbUrBKOo/ECO-COOL-DRAFT?node-id=77-720&p=f&t=Q0pHWvJxtKTeO1QA-0&scaling=contain&content-scaling=fixed&page-id=0%3A1',
+  },
+  {
+    name: 'Tipsy Tavern',
+    role: 'Front-End Developer',
+    image: tipsyTavern,
+    description:
+      'A responsive liquor retail website built for our Advanced Web Design course, showcasing whiskey, wine, beer, and other spirits, with a working add-to-cart system and a custom dark mode toggle.',
+    tools: ['HTML', 'CSS', 'JavaScript'],
+    link: 'https://seeejaay.github.io/TroyKingdom-FEUTECH-AWD-TW24/index.html',
+  },
+  {
+    name: 'TICAP 20 Awards Night Certificate',
+    role: 'Graphic Designer',
+    image: ticap,
+    description:
+      'An elegant certificate of recognition for the TICAP (Technology Innovation in Capstone Project) 20 Awards Night, designed for both FEU Institute of Technology and FEU Diliman.',
+    tools: ['Canva', 'Photoshop'],
+    link: 'https://www.canva.com/design/DAG0Jpo9hYg/irqoPNDgeEOC7DlISoi4eA/edit',
+  },
+];
+
+export default projects;

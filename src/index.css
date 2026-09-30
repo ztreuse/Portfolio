@@ -1,11 +1,56 @@
-*{
-  margin: 0;
-  padding: 0;
-  font-family: 'Zalando Sans Expanded', sans-serif;
+@import 'tailwindcss';
+
+/* Design tokens — every color and font in the site comes from here. */
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Zalando Sans Expanded', 'Poppins', ui-sans-serif, sans-serif;
+
+  --color-ink: #161513;
+  --color-ink-deep: #0f0e0d;
+  --color-surface: #1f1d1a;
+  --color-line: #2d2925;
+  --color-accent: #9f8f81;
+  --color-accent-strong: #c9bcaf;
 }
-body{
-  height: 100vh;
-  background: #161513;
-  color: white;
-  font-family: 'outfit';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem; /* clears the fixed navbar on anchor jumps */
+  }
+
+  body {
+    @apply bg-ink font-sans text-stone-300 antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent text-ink;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/*
+ * Swiper pagination overrides. Kept unlayered on purpose: Swiper's own CSS is
+ * unlayered, so layered rules would always lose to it.
+ */
+.certs-pagination {
+  --swiper-pagination-color: var(--color-accent);
+  --swiper-pagination-bullet-inactive-color: #fff;
+  --swiper-pagination-bullet-inactive-opacity: 0.25;
+  --swiper-pagination-bullet-size: 8px;
+  --swiper-pagination-bullet-horizontal-gap: 4px;
+}
+
+.certs-pagination .swiper-pagination-bullet {
+  transition: width 0.3s ease;
+}
+
+.certs-pagination .swiper-pagination-bullet-active {
+  width: 24px;
+  border-radius: 9999px;
 }

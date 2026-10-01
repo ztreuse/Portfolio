@@ -15,15 +15,19 @@ const background = (
   </>
 );
 
-/** One skill: brand-colored icon in a tinted box, name, and a short description. */
-const SkillTile = ({ name, description, icon: Icon, color }) => (
+/** One skill: original brand logo (or a generic icon) in a tinted box, name, and a short description. */
+const SkillTile = ({ name, description, logo, icon: Icon, color }) => (
   <RevealItem
     as="li"
     style={{ '--brand': color }}
     className="group flex items-center gap-4 rounded-xl border border-line bg-surface/80 p-3 pr-4 backdrop-blur-sm transition-[translate,border-color] duration-300 hover:-translate-y-0.5 hover:border-white/15"
   >
     <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-white/5 bg-[color-mix(in_srgb,var(--brand)_12%,transparent)] transition-shadow duration-300 group-hover:shadow-[0_0_22px_-4px_var(--brand)]">
-      <Icon aria-hidden className="size-6" style={{ color }} />
+      {logo ? (
+        <img src={logo} alt="" className="size-6 object-contain" />
+      ) : (
+        <Icon aria-hidden className="size-6" style={{ color }} />
+      )}
     </span>
     <span className="min-w-0">
       <span className="block font-display text-sm font-semibold text-white">{name}</span>

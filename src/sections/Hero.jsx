@@ -8,6 +8,7 @@ import SocialIcon from '../components/ui/SocialIcon';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { profile, socials } from '../data/site';
 import heroBg from '../assets/images/hero-bg.jpg';
+import { sectionLink } from '../hooks/useCleanAnchorLinks';
 
 // Slow drifting glows; each loops on its own timing so the pattern never visibly repeats.
 const glows = [
@@ -63,7 +64,7 @@ const HeroBackground = ({ bgY, spotlight }) => (
 
 const ScrollCue = () => (
   <motion.a
-    href="#about"
+    {...sectionLink('about')}
     aria-label="Scroll to About"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
@@ -83,7 +84,7 @@ const ScrollCue = () => (
 
 const [firstName, ...otherNames] = profile.name.split(' ');
 
-const Hero = () => {
+const Hero = ({ ready }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
 
@@ -114,7 +115,7 @@ const Hero = () => {
 
       <motion.div style={{ y: contentY, opacity: contentOpacity }} className="w-full">
         <Container className="py-20">
-          <RevealGroup onMount delay={0.2} stagger={0.12}>
+          <RevealGroup play={ready} delay={0.35} stagger={0.12}>
             <RevealItem as="p" className="font-display text-sm font-semibold tracking-[0.14em] text-accent uppercase sm:text-base">
               Hello there, I'm
             </RevealItem>
@@ -142,16 +143,12 @@ const Hero = () => {
               />
             </RevealItem>
 
-            <RevealItem as="p" className="mt-5 max-w-xl text-base leading-relaxed text-stone-400 sm:text-lg">
-              {profile.intro}
-            </RevealItem>
-
             <RevealItem className="mt-10 flex flex-wrap gap-4">
               <Button href={profile.resume} target="_blank" rel="noopener noreferrer">
                 <LuDownload aria-hidden className="size-4" />
                 Download Resume
               </Button>
-              <Button href="#contact" variant="outline">
+              <Button {...sectionLink('contact')} variant="outline">
                 Get in Touch
                 <LuArrowRight aria-hidden className="size-4" />
               </Button>

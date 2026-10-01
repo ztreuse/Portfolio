@@ -1,4 +1,3 @@
-import { LuMapPin } from 'react-icons/lu';
 import Section from '../components/ui/Section';
 import SectionHeading from '../components/ui/SectionHeading';
 import Reveal from '../components/ui/Reveal';
@@ -18,11 +17,6 @@ const About = () => (
 
       <div className="md:col-span-7">
         <SectionHeading eyebrow="01 — About" title="About me" description={profile.about} />
-
-        <Reveal as="p" delay={0.2} className="mt-6 flex items-center gap-2 text-stone-300">
-          <LuMapPin aria-hidden className="size-4.5 text-accent" />
-          Based in {profile.locationShort}
-        </Reveal>
       </div>
     </div>
   </Section>

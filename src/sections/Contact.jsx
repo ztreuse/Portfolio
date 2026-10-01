@@ -1,16 +1,17 @@
 import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
-import { LuMail, LuMapPin, LuPhone, LuSend } from 'react-icons/lu';
+import { LuArrowUpRight, LuMail, LuPhone, LuSend } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import IconBadge from '../components/ui/IconBadge';
 import Section from '../components/ui/Section';
 import Reveal from '../components/ui/Reveal';
-import { emailjsConfig, profile } from '../data/site';
+import { emailjsConfig, profile, socials } from '../data/site';
 
 const contactDetails = [
   { label: 'Email', value: profile.email, href: `mailto:${profile.email}`, icon: LuMail },
   { label: 'Phone', value: profile.phone, href: `tel:${profile.phone.replace(/[^+\d]/g, '')}`, icon: LuPhone },
-  { label: 'Location', value: profile.location, icon: LuMapPin },
+  // Professional profiles sit alongside the direct contact details and open in a new tab.
+  ...socials.map(({ label, handle, href, icon, logo }) => ({ label, value: handle, href, icon, logo, external: true })),
 ];
 
 const statusMessages = {
@@ -58,15 +59,25 @@ const Contact = () => {
       description="Have a project in mind or just want to say hi? I'm always open to discussing new opportunities and creative ideas."
     >
       <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
-        <Reveal as="ul" x={-32} y={0} className="space-y-6 lg:col-span-2">
-          {contactDetails.map(({ label, value, href, icon: Icon }) => (
+        <Reveal as="ul" x={-32} y={0} className="space-y-5 lg:col-span-2">
+          {contactDetails.map(({ label, value, href, icon: Icon, logo, external }) => (
             <li key={label} className="group flex gap-4">
-              <IconBadge icon={Icon} />
+              <IconBadge icon={Icon} logo={logo} />
               <div className="min-w-0">
                 <p className="font-display text-xs font-semibold tracking-[0.14em] text-accent uppercase">{label}</p>
                 {href ? (
-                  <a href={href} className="mt-1 block break-words text-white transition-colors hover:text-accent-strong">
+                  <a
+                    href={href}
+                    {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
+                    className="mt-1 inline-flex items-center gap-1.5 break-words text-white transition-colors hover:text-accent-strong"
+                  >
                     {value}
+                    {external && (
+                      <LuArrowUpRight
+                        aria-hidden
+                        className="size-4 text-accent transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      />
+                    )}
                   </a>
                 ) : (
                   <p className="mt-1 text-white">{value}</p>

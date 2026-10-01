@@ -1,72 +1,97 @@
-import {
-  SiAdobephotoshop,
-  SiBootstrap,
-  SiCodeigniter,
-  SiCss3,
-  SiDatabricks,
-  SiExpo,
-  SiFigma,
-  SiFirebase,
-  SiFramer,
-  SiGit,
-  SiGithub,
-  SiHtml5,
-  SiJavascript,
-  SiMantine,
-  SiPhp,
-  SiPostgresql,
-  SiPython,
-  SiReact,
-  SiTableau,
-  SiTailwindcss,
-} from 'react-icons/si';
-import { LuChartBar, LuClipboardCheck, LuCloud, LuCode, LuNetwork, LuShieldCheck, LuVideo } from 'react-icons/lu';
+import { LuClipboardCheck, LuNetwork, LuShieldCheck } from 'react-icons/lu';
+import html5 from '../assets/brand-logos/html5.svg';
+import css3 from '../assets/brand-logos/css3.svg';
+import javascript from '../assets/brand-logos/javascript.svg';
+import python from '../assets/brand-logos/python.svg';
+import php from '../assets/brand-logos/php.svg';
+import react from '../assets/brand-logos/react.svg';
+import tailwindcss from '../assets/brand-logos/tailwindcss.svg';
+import mantine from '../assets/brand-logos/mantine.svg';
+import bootstrap from '../assets/brand-logos/bootstrap.svg';
+import expo from '../assets/brand-logos/expo.svg';
+import codeigniter from '../assets/brand-logos/codeigniter.svg';
+import postgresql from '../assets/brand-logos/postgresql.svg';
+import firebase from '../assets/brand-logos/firebase.svg';
+import figma from '../assets/brand-logos/figma.svg';
+import framer from '../assets/brand-logos/framer.svg';
+import photoshop from '../assets/brand-logos/photoshop.svg';
+import capcut from '../assets/brand-logos/capcut.png';
+import vscode from '../assets/brand-logos/vscode.svg';
+import git from '../assets/brand-logos/git.svg';
+import github from '../assets/brand-logos/github.svg';
+import powerBi from '../assets/brand-logos/power-bi.svg';
+import tableau from '../assets/brand-logos/tableau.svg';
+import azure from '../assets/brand-logos/azure.svg';
+import databricks from '../assets/brand-logos/databricks.svg';
+import nodejs from '../assets/brand-logos/nodejs.svg';
+import claude from '../assets/brand-logos/claude.svg';
+import cplusplus from '../assets/brand-logos/cplusplus.svg';
+import java from '../assets/brand-logos/java.svg';
 
-// `color` is the official brand color, used for the icon and its hover glow.
+// Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
+// show on the dark theme). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
+// Ordered so the two-column layout pairs related groups; "Other Languages" is basic knowledge only.
 const skillGroups = [
   {
-    title: 'Programming Languages',
+    title: 'Core Languages',
     items: [
-      { name: 'HTML5', description: 'Markup', icon: SiHtml5, color: '#E34F26' },
-      { name: 'CSS3', description: 'Styling', icon: SiCss3, color: '#1572B6' },
-      { name: 'JavaScript', description: 'Language', icon: SiJavascript, color: '#F7DF1E' },
-      { name: 'Python', description: 'General purpose', icon: SiPython, color: '#3776AB' },
-      { name: 'PHP', description: 'Server-side language', icon: SiPhp, color: '#777BB4' },
+      { name: 'HTML5', description: 'Markup', logo: html5, color: '#E34F26' },
+      { name: 'CSS3', description: 'Styling', logo: css3, color: '#1572B6' },
+      { name: 'JavaScript', description: 'Language', logo: javascript, color: '#F7DF1E' },
+      { name: 'PHP', description: 'Server-side language', logo: php, color: '#777BB4' },
+      { name: 'Python', description: 'General purpose', logo: python, color: '#3776AB' },
     ],
   },
   {
-    title: 'Front-End Development',
+    title: 'Front-End & Mobile',
     items: [
-      { name: 'React', description: 'UI library', icon: SiReact, color: '#61DAFB' },
-      { name: 'React Native', description: 'Mobile apps', icon: SiReact, color: '#61DAFB' },
-      { name: 'Tailwind CSS', description: 'Utility-first CSS', icon: SiTailwindcss, color: '#06B6D4' },
-      { name: 'Mantine UI', description: 'Component library', icon: SiMantine, color: '#339AF0' },
-      { name: 'Bootstrap', description: 'CSS framework', icon: SiBootstrap, color: '#7952B3' },
-      { name: 'Expo', description: 'React Native toolchain', icon: SiExpo, color: '#FFFFFF' },
+      { name: 'React', description: 'UI library', logo: react, color: '#61DAFB' },
+      { name: 'React Native', description: 'Mobile apps', logo: react, color: '#61DAFB' },
+      { name: 'Tailwind CSS', description: 'Utility-first CSS', logo: tailwindcss, color: '#06B6D4' },
+      { name: 'Mantine UI', description: 'Component library', logo: mantine, color: '#339AF0' },
+      { name: 'Bootstrap', description: 'CSS framework', logo: bootstrap, color: '#7952B3' },
+      { name: 'Expo', description: 'React Native toolchain', logo: expo, color: '#FFFFFF' },
     ],
   },
   {
     title: 'Back-End & Databases',
     items: [
-      { name: 'CodeIgniter', description: 'PHP framework', icon: SiCodeigniter, color: '#EF4223' },
-      { name: 'PostgreSQL', description: 'Relational database', icon: SiPostgresql, color: '#4169E1' },
-      { name: 'Firebase', description: 'Backend platform', icon: SiFirebase, color: '#FFCA28' },
+      { name: 'Node.js', description: 'JavaScript runtime', logo: nodejs, color: '#5FA04E' },
+      { name: 'CodeIgniter', description: 'PHP framework', logo: codeigniter, color: '#EF4223' },
+      { name: 'PostgreSQL', description: 'Relational database', logo: postgresql, color: '#4169E1' },
+      { name: 'Firebase', description: 'Backend platform', logo: firebase, color: '#FFCA28' },
     ],
   },
   {
-    title: 'Design, Animation & Tools',
+    title: 'Design & Animation',
     items: [
-      { name: 'Figma', description: 'UI/UX design', icon: SiFigma, color: '#F24E1E' },
-      { name: 'Framer Motion', description: 'Animation library', icon: SiFramer, color: '#E93DE0' },
-      { name: 'Photoshop', description: 'Image editing', icon: SiAdobephotoshop, color: '#31A8FF' },
-      { name: 'CapCut', description: 'Video editing', icon: LuVideo, color: '#FFFFFF' },
-      { name: 'VS Code', description: 'Code editor', icon: LuCode, color: '#007ACC' },
-      { name: 'Git', description: 'Version control', icon: SiGit, color: '#F05032' },
-      { name: 'GitHub', description: 'Code hosting', icon: SiGithub, color: '#FFFFFF' },
+      { name: 'Figma', description: 'UI/UX design', logo: figma, color: '#F24E1E' },
+      { name: 'Framer Motion', description: 'Animation library', logo: framer, color: '#E93DE0' },
+      { name: 'Photoshop', description: 'Image editing', logo: photoshop, color: '#31A8FF' },
+      { name: 'CapCut', description: 'Video editing', logo: capcut, color: '#FFFFFF' },
     ],
   },
   {
-    title: 'Other Expertise',
+    title: 'Tools & AI',
+    items: [
+      { name: 'VS Code', description: 'Code editor', logo: vscode, color: '#007ACC' },
+      { name: 'Git', description: 'Version control', logo: git, color: '#F05032' },
+      { name: 'GitHub', description: 'Code hosting', logo: github, color: '#FFFFFF' },
+      { name: 'Claude', description: 'AI-assisted development', logo: claude, color: '#D97757' },
+    ],
+  },
+  {
+    title: 'Data & Analytics (Upskilling)',
+    items: [
+      { name: 'Power BI', description: 'Dashboards', logo: powerBi, color: '#F2C811' },
+      { name: 'Tableau', description: 'Data visualization', logo: tableau, color: '#E97627' },
+      { name: 'Azure Data Factory', description: 'Data pipelines', logo: azure, color: '#0078D4' },
+      { name: 'Databricks', description: 'Data lakes & warehouses', logo: databricks, color: '#FF3621' },
+    ],
+  },
+  {
+    // Areas backed by certifications rather than claimed expertise.
+    title: 'Certified Foundations',
     items: [
       { name: 'Networking', description: 'Cisco CCNA', icon: LuNetwork, color: '#049FD9' },
       { name: 'Cybersecurity', description: 'CCST, CyberOps', icon: LuShieldCheck, color: '#10B981' },
@@ -74,12 +99,10 @@ const skillGroups = [
     ],
   },
   {
-    title: 'Data & Analytics (Upskilling)',
+    title: 'Other Languages (Basic Knowledge)',
     items: [
-      { name: 'Power BI', description: 'Dashboards', icon: LuChartBar, color: '#F2C811' },
-      { name: 'Tableau', description: 'Data visualization', icon: SiTableau, color: '#E97627' },
-      { name: 'Azure Data Factory', description: 'Data pipelines', icon: LuCloud, color: '#0078D4' },
-      { name: 'Databricks', description: 'Data lakes & warehouses', icon: SiDatabricks, color: '#FF3621' },
+      { name: 'C++', description: 'Systems programming', logo: cplusplus, color: '#00599C' },
+      { name: 'Java', description: 'Object-oriented', logo: java, color: '#ED8B00' },
     ],
   },
 ];

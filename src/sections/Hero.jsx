@@ -45,8 +45,6 @@ const HeroBackground = ({ bgY, spotlight }) => (
       />
     ))}
 
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(255_255_255/0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.035)_1px,transparent_1px)] bg-size-[56px_56px] mask-[radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" />
-
     {particles.map(([left, top, delay]) => (
       <motion.span
         key={`${left}-${top}`}

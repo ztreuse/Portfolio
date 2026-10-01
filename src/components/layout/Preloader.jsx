@@ -157,12 +157,8 @@ const Preloader = ({ onDone }) => {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 overflow-hidden bg-ink"
     >
-      {/* Same glow and faded grid as the hero, so the fade-out blends straight into it */}
+      {/* Same warm glow as the hero, so the fade-out blends straight into it */}
       <div aria-hidden className="absolute size-[28rem] rounded-full bg-accent/15 blur-[110px]" />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(to_right,rgb(255_255_255/0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.035)_1px,transparent_1px)] bg-size-[56px_56px] mask-[radial-gradient(ellipse_at_center,black_20%,transparent_70%)]"
-      />
       <div className="relative flex flex-col items-center gap-4">
         <CoffeeCup progress={progress} reduceMotion={reduceMotion} />
         <motion.p className="font-display text-2xl font-bold tracking-wide text-accent-strong tabular-nums">{percent}</motion.p>

@@ -10,7 +10,7 @@ export const profile = {
   roles: ['Web Developer', 'UI/UX Designer', 'Mobile App Developer'],
   about:
     'BSIT-WMA graduate from FEU Tech with hands-on internship experience spanning UI/UX design and front-end engineering. Proven track record of conceptualizing user-centric designs and personally translating them into seamless, responsive web applications. Backed by mobile development experience and a solid full-stack foundation, I am a collaborative, end-to-end builder ready for immediate, full-time deployment.',
-  tagline: "Building digital experiences with precision and passion. Let's create something extraordinary together.",
+  tagline: 'Thanks for scrolling this far — let\'s build something worth scrolling for.',
   email: 'tjansenzb2021@gmail.com',
   phone: '+63 976-056-3152',
   // BASE_URL keeps the link working under the /Portfolio/ GitHub Pages path.

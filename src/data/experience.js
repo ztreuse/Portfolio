@@ -28,7 +28,7 @@ export const education = [
     initials: 'FEU',
     period: '2022 – 2026',
     points: [
-      'Completed all academic and internship requirements; graduating September 2026.',
+      'Graduated September 2026.',
       "CCSMA Dean's Lister (Bronze), August 2024 and April 2025.",
     ],
   },

@@ -3,7 +3,9 @@ import { AnimatePresence, MotionConfig } from 'motion/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
+import Cursor from './components/layout/Cursor';
 import useCleanAnchorLinks from './hooks/useCleanAnchorLinks';
+import useSmoothScroll, { setScrollLocked } from './hooks/useSmoothScroll';
 import Hero from './sections/Hero';
 import About from './sections/About';
 import Experience from './sections/Experience';
@@ -16,27 +18,36 @@ import Contact from './sections/Contact';
 const App = () => {
   const [loading, setLoading] = useState(true);
   const finishLoading = useCallback(() => setLoading(false), []);
+  useSmoothScroll(); // must run before the lock below so the scroller exists
   useCleanAnchorLinks();
 
   // Keep the page from scrolling behind the preloader.
   useEffect(() => {
-    document.body.style.overflow = loading ? 'hidden' : '';
+    setScrollLocked(loading);
   }, [loading]);
 
   return (
     <MotionConfig reducedMotion="user">
       <AnimatePresence>{loading && <Preloader onDone={finishLoading} />}</AnimatePresence>
 
+      <Cursor />
       <Navbar />
       {/* overflow-x-clip stops slide-in reveals from widening the page on phones */}
       <main className="overflow-x-clip">
         <Hero ready={!loading} />
-        <About />
-        <Experience />
-        <Certifications />
-        <Skills />
-        <Projects />
-        <Contact />
+        {/* The rest of the page slides up over the pinned hero. Its top is a fade (part of the panel, so it
+            starts below the first screen and moves with it), which means there's never a hard edge. */}
+        <div className="relative z-10">
+          <div aria-hidden className="pointer-events-none h-[55svh] bg-linear-to-b from-transparent via-ink/60 to-ink" />
+          <div className="bg-ink">
+            <About />
+            <Experience />
+            <Certifications />
+            <Skills />
+            <Projects />
+            <Contact />
+          </div>
+        </div>
       </main>
       <Footer />
     </MotionConfig>

@@ -2,8 +2,9 @@
 
 /* Design tokens — every color and font in the site comes from here. */
 @theme {
-  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Zalando Sans Expanded', 'Poppins', ui-sans-serif, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* One family for everything (Inter, as on dnyaneshgore.com); display = the same face used bold for headings, labels and buttons. */
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
   --color-ink: #161513;
   --color-ink-deep: #0f0e0d;
@@ -11,11 +12,27 @@
   --color-line: #2d2925;
   --color-accent: #9f8f81;
   --color-accent-strong: #c9bcaf;
+  --color-dimension: #403b37; /* Experience's "dimension" circle */
+
+  /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
+     clash with motion's `transform`. Set the height with --float and vary duration/delay per element. */
+  --animate-float: float 6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 var(--float, -8px);
+    }
+  }
 }
+
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    /* No CSS smooth scrolling: Lenis handles easing, and the two fight each other. */
     scroll-padding-top: 4rem; /* clears the fixed navbar on anchor jumps */
   }
 
@@ -25,12 +42,6 @@
 
   ::selection {
     @apply bg-accent text-ink;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
   }
 }
 
@@ -51,6 +62,19 @@
 }
 
 .certs-pagination .swiper-pagination-bullet-active {
+  position: relative;
+  overflow: hidden;
   width: 24px;
   border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+}
+
+/* Autoplay countdown: the active pill fills left to right (driven by --autoplay-progress from the component) */
+.certs-pagination .swiper-pagination-bullet-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent-strong);
+  transform: scaleX(var(--autoplay-progress, 1));
+  transform-origin: left;
 }

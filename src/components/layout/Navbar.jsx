@@ -6,6 +6,7 @@ import useActiveSection from '../../hooks/useActiveSection';
 import { navLinks, socials } from '../../data/site';
 import logo from '../../assets/images/logo.svg';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
+import { setScrollLocked } from '../../hooks/useSmoothScroll';
 
 const sectionIds = navLinks.map((link) => link.id);
 
@@ -148,11 +149,11 @@ const Navbar = () => {
     const onKeyDown = (e) => e.key === 'Escape' && close();
     const onResize = (e) => e.matches && close();
 
-    document.body.style.overflow = 'hidden';
+    setScrollLocked(true);
     window.addEventListener('keydown', onKeyDown);
     desktop.addEventListener('change', onResize);
     return () => {
-      document.body.style.overflow = '';
+      setScrollLocked(false);
       window.removeEventListener('keydown', onKeyDown);
       desktop.removeEventListener('change', onResize);
     };

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="190 140 630 620">
+  <!-- Android Studio (current icon): a blue drafting compass with the green Android head peeking out behind it. -->
+  <g fill="#3DDC84">
+    <circle cx="622" cy="512" r="130" />
+  </g>
+  <g stroke="#3DDC84" stroke-width="9" stroke-linecap="round">
+    <line x1="703" y1="410" x2="728" y2="374" />
+    <line x1="758" y1="522" x2="802" y2="526" />
+  </g>
+  <g fill="#FFFFFF">
+    <circle cx="648" cy="437" r="11" />
+    <circle cx="703" cy="550" r="11" />
+  </g>
+  <g fill="none" stroke="#4285F4" stroke-width="50" stroke-linecap="round">
+    <!-- arc between the legs -->
+    <path d="M 236 445 Q 330 590 572 532" />
+    <!-- legs -->
+    <path d="M 468 330 L 268 722" />
+    <path d="M 492 330 L 690 722" />
+    <!-- handle -->
+    <path d="M 480 178 L 480 250" stroke-width="46" />
+  </g>
+  <!-- hinge -->
+  <circle cx="479" cy="295" r="54" fill="#FFFFFF" stroke="#073042" stroke-width="32" />
+</svg>

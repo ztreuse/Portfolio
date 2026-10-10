@@ -6,11 +6,20 @@ import SectionHeading from './SectionHeading';
  * plus consistent vertical rhythm, container width and heading.
  * `background` renders behind the content (the section is `isolate`, so `-z-10` layers stay inside it).
  */
-const Section = ({ id, eyebrow, title, description, action, background, className = '', children }) => (
+const Section = ({ id, eyebrow, title, description, action, align, zoom, background, className = '', children }) => (
   <section id={id} className={`relative isolate flex min-h-svh flex-col justify-center py-20 sm:py-28 ${className}`}>
     {background}
     <Container>
-      {title && <SectionHeading eyebrow={eyebrow} title={title} description={description} action={action} />}
+      {title && (
+        <SectionHeading
+          eyebrow={eyebrow}
+          title={title}
+          description={description}
+          action={action}
+          align={align}
+          zoom={zoom}
+        />
+      )}
       <div className={title ? 'mt-12 sm:mt-16' : ''}>{children}</div>
     </Container>
   </section>

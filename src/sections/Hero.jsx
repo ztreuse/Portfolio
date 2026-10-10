@@ -138,7 +138,9 @@ const Hero = ({ ready }) => {
   const bgScale = useTransform(journey, [0, 1, 2], reduceMotion ? [1, 1, 1] : [1, 2.4, 2.7]);
   // Zooming toward a low point while the scene drifts up makes the dive head downward (sinking, not just pushing in).
   const bgY = useTransform(journey, [0, 1, 2], reduceMotion ? ['0%', '0%', '0%'] : ['0%', '-12%', '-16%']);
-  const dim = useTransform(journey, [0, 1, 2], [0, 0.35, 0.7]);
+  // The scene fades out into the page colour as it dives, fully by the end of the dive, so About then slides up
+  // over plain ink and needs no fade of its own (a long dark fade showed horizontal strips).
+  const dim = useTransform(journey, [0, 0.3, 1], [0, 0.1, 1]);
   const textScale = useTransform(journey, [0, 0.8], reduceMotion ? [1, 1] : [1, 1.6]);
   const textY = useTransform(journey, [0, 0.8], reduceMotion ? [0, 0] : [0, -220]);
   const textOpacity = useTransform(journey, [0, 0.25, 0.7], reduceMotion ? [1, 1, 1] : [1, 1, 0]);
@@ -156,7 +158,7 @@ const Hero = ({ ready }) => {
         className={`sticky top-0 isolate flex min-h-svh items-center overflow-hidden pt-16 ${covered ? 'invisible' : ''}`}
       >
         <HeroBackground paused={covered} scale={bgScale} y={bgY} />
-        {/* Darkens only the background, behind the text */}
+        {/* Fades the background out during the dive, behind the text */}
         <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 bg-ink" />
 
         <motion.div
@@ -167,16 +169,15 @@ const Hero = ({ ready }) => {
             <RevealGroup play={ready} delay={0.35} stagger={0.12}>
               <RevealItem
                 as="p"
-
-                className={`font-display text-sm font-semibold tracking-[0.14em] text-accent uppercase sm:text-base ${float.label}`}
+                className={`flex items-center gap-4 font-display text-sm font-semibold tracking-[0.14em] text-accent uppercase sm:text-base ${float.label}`}
               >
+                <span aria-hidden className="h-px w-10 bg-linear-to-r from-accent/0 to-accent sm:w-14" />
                 Hello there, I'm
               </RevealItem>
 
               <RevealItem
                 as="h1"
-
-                className={`mt-3 font-display text-6xl leading-[1.05] font-bold tracking-[-0.06em] text-white sm:text-7xl lg:text-8xl ${float.name}`}
+                className={`mt-4 font-display text-6xl leading-[0.95] font-bold tracking-[-0.06em] text-white sm:text-7xl lg:text-[7.5rem] xl:text-[8.5rem] ${float.name}`}
               >
                 {firstName}{' '}
                 {/* Extra right padding (cancelled by the margin) so the tight tracking doesn't clip the last letter out of the gradient */}
@@ -188,8 +189,7 @@ const Hero = ({ ready }) => {
               {/* min-h reserves the line so the layout doesn't jump between roles */}
               <RevealItem
                 as="p"
-
-                className={`mt-5 min-h-[1.4em] font-display text-2xl text-stone-300 sm:text-3xl ${float.role}`}
+                className={`mt-6 flex min-h-[1.4em] items-center font-display text-2xl font-light tracking-[-0.01em] text-stone-200 sm:text-3xl lg:text-4xl ${float.role}`}
               >
                 <span className="sr-only">{profile.role}</span>
                 <TypeAnimation
@@ -199,6 +199,12 @@ const Hero = ({ ready }) => {
                   speed={50}
                   deletionSpeed={70}
                   repeat={Infinity}
+                  cursor={false}
+                />
+                {/* Slim taupe caret instead of the default "|" */}
+                <span
+                  aria-hidden
+                  className="ml-1.5 inline-block h-[0.95em] w-[3px] rounded-full bg-accent animate-caret motion-reduce:animate-none"
                 />
               </RevealItem>
 

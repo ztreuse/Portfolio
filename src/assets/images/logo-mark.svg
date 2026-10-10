@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 8 51 50">
+  <defs>
+    <linearGradient id="face" gradientUnits="userSpaceOnUse" x1="8" y1="8" x2="48" y2="58">
+      <stop offset="0" stop-color="#f1ebe4" />
+      <stop offset="0.5" stop-color="#d4c8bb" />
+      <stop offset="1" stop-color="#a99a8c" />
+    </linearGradient>
+  </defs>
+  <!-- Angular T: slanted crossbar, stem cut to a point at the bottom-left, a window through the stem -->
+  <path fill="url(#face)" fill-rule="evenodd" d="M17 9H56L45 21V45L27 57V22H7Z M33 27H39.5V42L33 46.3Z" />
+  <!-- Recessed facet inside the crossbar (the reference's darker bevel) -->
+  <path d="M19.6 13.4H47.2L44 17.4H16.5Z" fill="#7a6b5f" />
+</svg>

@@ -1,19 +1,6 @@
 import Section from '../components/ui/Section';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import skillGroups from '../data/skills';
-import skillsBg from '../assets/images/skills-bg.webp';
-
-// Fixed background attachment gives a parallax effect without scroll listeners.
-const background = (
-  <>
-    <div
-      aria-hidden
-      className="absolute inset-0 -z-10 bg-cover bg-center opacity-15 md:bg-fixed"
-      style={{ backgroundImage: `url(${skillsBg})` }}
-    />
-    <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-b from-ink via-transparent to-ink" />
-  </>
-);
 
 /** One tool: its brand logo (or generic icon) and name; hovering tints it in the brand colour and shows what it is. */
 const SkillChip = ({ name, description, logo, icon: Icon, color }) => (
@@ -75,9 +62,6 @@ const Skills = () => {
       align="center"
       // The "Skills" label pins huge and shrinks into place as you scroll (reverses when scrolling back up)
       zoom="label"
-      background={background}
-      // clip, not hidden: overflow-hidden would break the pinned (sticky) heading
-      className="overflow-clip"
     >
       {/* Desktop: 3 cards per row on a 6-track grid, so an incomplete last row (one or two cards) sits centred.
         Tablet: 2 per row, and a lone last card spans both. */}

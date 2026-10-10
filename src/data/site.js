@@ -5,11 +5,11 @@ import jobstreetLogo from '../assets/brand-logos/jobstreet.png';
 
 export const profile = {
   name: 'Troy Bay',
-  role: 'Web Developer & UI/UX Designer',
+  role: 'Front-End Developer & UI/UX Designer',
   // Rotated in the hero headline.
-  roles: ['Web Developer', 'UI/UX Designer', 'Mobile App Developer'],
+  roles: ['Front-End Developer', 'UI/UX Designer', 'Mobile App Developer'],
   about:
-    'BSIT-WMA graduate from FEU Tech with hands-on internship experience spanning UI/UX design and front-end engineering. Proven track record of conceptualizing user-centric designs and personally translating them into seamless, responsive web applications. Backed by mobile development experience and a solid full-stack foundation, I am a collaborative, end-to-end builder ready for immediate, full-time deployment.',
+    "Front-end developer and UI/UX designer who bridges design and code. I shape user-centered interfaces in Figma, then build them into responsive web and mobile applications, so the product that ships matches the product that was designed. I work best in collaborative, cross-functional teams, write clean component-based code, and sweat the details that make an interface feel polished. A BSIT graduate from FEU Tech, ready to contribute full-time.",
   // Footer sign-off: the part before " — " is shown muted, the rest bright.
   tagline: 'From the first sketch to the final commit — I care about every step in between.',
   email: 'tjansenzb2021@gmail.com',

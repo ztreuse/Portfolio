@@ -9,7 +9,7 @@ const projects = [
     role: 'Project Manager & Mobile Developer',
     image: tourisla,
     description:
-      'A web and mobile tourism platform for Bantayan, Cebu. It features an interactive map with Google Maps routing, visitor registration with PayMongo payments, QR-code check-ins at tourist spots, an accreditation workflow for tour operators and guides with Google Calendar sync, safety advisories, incident reporting, and a digital archive of local culture.',
+      'A full-stack web and mobile tourism platform for Bantayan, Cebu, serving administrators, local businesses and visitors. It features an interactive map of attractions that hands off to Google Maps for turn-by-turn navigation, a registration portal with PayMongo fee processing, a QR-code scanning module staff use to verify visitors and track demographics, automated guide and operator accreditation with payment verification and Google Calendar sync, safety advisories, emergency incident logs, and a digital archive of local cultural media.',
     tools: ['React.js', 'React Native', 'PostgreSQL', 'Node.js', 'Express.js', 'Tailwind CSS', 'shadcn/ui'],
     link: 'https://tourisla.net/',
   },

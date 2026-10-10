@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   motion,
   useMotionTemplate,
@@ -9,6 +9,7 @@ import {
   useSpring,
   useTransform,
 } from 'motion/react';
+import SmokeCanvas from '../components/ui/SmokeCanvas';
 import { LuBriefcase, LuGraduationCap } from 'react-icons/lu';
 import IconBadge from '../components/ui/IconBadge';
 import Section from '../components/ui/Section';
@@ -122,6 +123,9 @@ const circleFor = (el) => {
  * section leaves. The circle is a fixed full-screen layer drawn above About and Certifications; Experience's
  * content sits above it, masked by the same circle.
  */
+// Inside the lighter circle the smoke is reversed: dark, espresso-toned wisps instead of the page's light ones.
+const DIMENSION_SMOKE = [0.07, 0.055, 0.045];
+
 const Experience = () => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
@@ -158,6 +162,9 @@ const Experience = () => {
     }
   });
   const backdrop = useMotionTemplate`circle(${radius}px at 50% ${cy}px)`;
+  // The circle's smoke only animates while the circle is open.
+  const [circleOpen, setCircleOpen] = useState(false);
+  useMotionValueEvent(radius, 'change', (r) => setCircleOpen(r > 1));
   // Same circle in the content's own coordinates (the content itself scrolls normally, so no spring on its top).
   const maskCy = useTransform(() => cy.get() - contentTop.get());
   const mask = useMotionTemplate`circle(${radius}px at 50% ${maskCy}px)`;
@@ -178,7 +185,14 @@ const Experience = () => {
     </Section>
   );
 
-  if (reduceMotion) return <div className="bg-dimension">{section}</div>;
+  if (reduceMotion) {
+    return (
+      <div className="relative bg-dimension">
+        <SmokeCanvas color={DIMENSION_SMOKE} strength={0.65} seed={37} />
+        {section}
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -187,7 +201,9 @@ const Experience = () => {
         aria-hidden
         style={{ clipPath: backdrop }}
         className="pointer-events-none fixed inset-0 z-20 bg-dimension"
-      />
+      >
+        <SmokeCanvas color={DIMENSION_SMOKE} strength={0.65} seed={37} paused={!circleOpen} />
+      </motion.div>
       <motion.div ref={ref} style={{ clipPath: mask }} className="relative z-30">
         {section}
       </motion.div>

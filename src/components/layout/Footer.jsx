@@ -46,7 +46,7 @@ const Footer = () => {
   const contentOpacity = useTransform(scrollYProgress, (p) => (still ? 1 : 0.2 + 0.8 * Math.min(p / 0.6, 1)));
 
   return (
-    <footer ref={ref} className="relative overflow-hidden bg-ink">
+    <footer ref={ref} className="relative z-10 overflow-hidden">
       {/* Same background as Contact; just this divider (fading out toward both edges) separates them */}
       <div
         aria-hidden

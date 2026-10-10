@@ -5,6 +5,7 @@ import SocialIcon from '../ui/SocialIcon';
 import useActiveSection from '../../hooks/useActiveSection';
 import { navLinks, socials } from '../../data/site';
 import logo from '../../assets/images/logo.svg';
+import logoMark from '../../assets/images/logo-mark.svg';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
 import { setScrollLocked } from '../../hooks/useSmoothScroll';
 
@@ -49,20 +50,23 @@ const logoMask = {
   WebkitMaskSize: '100% 100%',
 };
 
-/** Logo with a light sweep across the letters and a slight lift on hover. */
+/** The T mark (same as the tab icon) beside the wordmark; a light sweeps across the letters and it lifts on hover. */
 const NavLogo = ({ onClick }) => (
   <a
     {...sectionLink('hero')}
     onClick={onClick}
     aria-label="Back to top"
-    className="group/logo relative block shrink-0 transition-transform duration-300 ease-out hover:scale-105"
+    className="group/logo flex shrink-0 items-center gap-2.5 transition-transform duration-300 ease-out hover:scale-105"
   >
-    <img src={logo} alt="Troy Bay" className="block h-8 w-auto" />
-    <span
-      aria-hidden
-      style={logoMask}
-      className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,var(--color-accent)_50%,transparent_70%)] bg-size-[250%_100%] bg-position-[100%_0] transition-none group-hover/logo:bg-position-[-50%_0] group-hover/logo:transition-[background-position] group-hover/logo:duration-1000 group-hover/logo:ease-in-out"
-    />
+    <img src={logoMark} alt="" className="block h-8 w-auto" />
+    <span className="relative block">
+      <img src={logo} alt="Troy Bay" className="block h-8 w-auto" />
+      <span
+        aria-hidden
+        style={logoMask}
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,var(--color-accent)_50%,transparent_70%)] bg-size-[250%_100%] bg-position-[100%_0] transition-none group-hover/logo:bg-position-[-50%_0] group-hover/logo:transition-[background-position] group-hover/logo:duration-1000 group-hover/logo:ease-in-out"
+      />
+    </span>
   </a>
 );
 

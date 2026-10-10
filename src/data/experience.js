@@ -11,11 +11,11 @@ export const experience = [
     initials: 'SV',
     period: 'Jan 2026 – Jul 2026',
     points: [
-      'Collaborated with a cross-functional team to build and optimize user interfaces for internal software systems.',
-      'Translated Figma mockups into production-ready front-end code using Tailwind CSS and Mantine.',
-      'Followed component-based architecture and organized file structures to keep modules consistent.',
-      'Used Git and GitHub for version control and team workflows.',
-      'Tested and optimized applications for cross-browser compatibility.',
+      'Built and optimized user interfaces for internal software systems within a cross-functional development team.',
+      'Converted Figma mockups into responsive, production-ready front-end code using Tailwind CSS and Mantine UI.',
+      'Developed reusable components in a component-based architecture for consistency across modules.',
+      'Delivered features through Git and GitHub team workflows for version control and code management.',
+      'Tested and optimized applications for cross-browser compatibility before release.',
     ],
   },
 ];

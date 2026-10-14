@@ -32,7 +32,7 @@ const App = () => {
       <AnimatePresence>{loading && <Preloader onDone={finishLoading} />}</AnimatePresence>
 
       <Cursor />
-      <Navbar />
+      <Navbar ready={!loading} />
       {/* overflow-x-clip stops slide-in reveals from widening the page on phones */}
       <main className="overflow-x-clip">
         <Hero ready={!loading} />

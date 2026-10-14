@@ -136,7 +136,8 @@ const MobileMenu = ({ activeId, onNavigate }) => (
   </motion.div>
 );
 
-const Navbar = () => {
+// `ready` holds the entrance until the preloader lifts (otherwise it plays unseen behind it).
+const Navbar = ({ ready = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 24);
   const activeId = useActiveSection(sectionIds);
@@ -170,8 +171,8 @@ const Navbar = () => {
     <>
       <motion.header
         initial={{ y: -64, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: easeOut }}
+        animate={ready ? { y: 0, opacity: 1 } : { y: -64, opacity: 0 }}
+        transition={{ duration: 0.7, ease: easeOut, delay: ready ? 0.15 : 0 }}
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,box-shadow] duration-300 ${
           solid ? 'bg-ink/90 shadow-[0_10px_30px_-15px_rgb(0_0_0/0.8)] backdrop-blur-lg' : 'bg-transparent'
         }`}
@@ -183,7 +184,7 @@ const Navbar = () => {
             <motion.ul
               variants={linkListVariants}
               initial="hidden"
-              animate="visible"
+              animate={ready ? 'visible' : 'hidden'}
               className="flex items-center gap-1"
             >
               {navLinks.map(({ id, label }) => {

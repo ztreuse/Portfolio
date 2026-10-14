@@ -250,6 +250,17 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
     const leave = () => {
       last = null;
     };
+    // The preloader's coffee flood lands here: a burst of ripples from the centre as the hero is revealed.
+    const splash = () => {
+      const rect = canvas.getBoundingClientRect();
+      const ring = 70; // px
+      disturb(0.5, 0.5, 0.4);
+      for (let i = 0; i < 18; i += 1) {
+        const a = (i / 18) * Math.PI * 2;
+        disturb(0.5 + (Math.cos(a) * ring) / rect.width, 0.5 + (Math.sin(a) * ring) / rect.height, 0.35);
+      }
+      wakeRef.current?.();
+    };
 
     const img = new Image();
     img.onload = () => {
@@ -281,6 +292,7 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
     const host = canvas.closest('section') ?? canvas.parentElement;
     host.addEventListener('pointermove', move);
     host.addEventListener('pointerleave', leave);
+    window.addEventListener('coffee-splash', splash);
     frame = requestAnimationFrame(render);
 
     return () => {
@@ -291,6 +303,7 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
       visibility.disconnect();
       host.removeEventListener('pointermove', move);
       host.removeEventListener('pointerleave', leave);
+      window.removeEventListener('coffee-splash', splash);
       gl.deleteTexture(imageTexture);
       gl.deleteTexture(waterTexture);
       gl.deleteBuffer(buffer);

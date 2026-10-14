@@ -111,14 +111,14 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
         <motion.h2
           aria-label={title}
           style={zoom === 'title' ? { scale } : zoom === 'label' ? { opacity: fadeIn } : undefined}
-          className={`mt-3 font-display text-3xl font-bold tracking-[-0.05em] text-white sm:text-4xl lg:text-5xl ${origin}`}
+          className={`mt-3 font-display text-3xl font-bold tracking-[-0.05em] text-balance text-white sm:text-4xl lg:text-5xl ${origin}`}
         >
           <span ref={titleText} aria-hidden className="inline-block">
             <MaskedTitle text={title} />
           </span>
         </motion.h2>
         {description && (
-          <RevealItem as="p" className="mt-4 text-base leading-relaxed text-stone-400 sm:text-lg">
+          <RevealItem as="p" className="mt-4 text-base leading-relaxed text-pretty text-stone-400 sm:text-lg">
             <motion.span style={{ opacity: fadeIn }} className="block">
               {description}
             </motion.span>

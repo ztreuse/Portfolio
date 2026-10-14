@@ -1,7 +1,7 @@
-import tipsyTavern from '../assets/projects/tipsy-tavern.png';
-import ticap from '../assets/projects/ticap.png';
-import tourisla from '../assets/projects/tourisla.png';
-import ecocool from '../assets/projects/ecocool.png';
+import tipsyTavern from '../assets/projects/tipsy-tavern.webp';
+import ticap from '../assets/projects/ticap.webp';
+import tourisla from '../assets/projects/tourisla.webp';
+import ecocool from '../assets/projects/ecocool.webp';
 
 const projects = [
   {

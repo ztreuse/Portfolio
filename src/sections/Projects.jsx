@@ -54,6 +54,8 @@ const ProjectImage = ({ project, className = '' }) => (
         src={project.image}
         alt=""
         loading="lazy"
+        width={1600}
+        height={900}
         className="aspect-video size-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
     </motion.div>

@@ -57,6 +57,12 @@
   ::selection {
     @apply bg-accent text-ink;
   }
+
+  /* One keyboard-focus outline for every link, button and field (mouse clicks don't show it) */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
 }
 
 /*

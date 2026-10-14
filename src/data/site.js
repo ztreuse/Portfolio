@@ -10,8 +10,8 @@ export const profile = {
   roles: ['Front-End Developer', 'UI/UX Designer', 'Mobile App Developer'],
   about:
     "Front-end developer and UI/UX designer who bridges design and code. I shape user-centered interfaces in Figma, then build them into responsive web and mobile applications, so the product that ships matches the product that was designed. I work best in collaborative, cross-functional teams, write clean component-based code, and sweat the details that make an interface feel polished. A BSIT graduate from FEU Tech, ready to contribute full-time.",
-  // Footer sign-off: the part before " — " is shown muted, the rest bright.
-  tagline: 'From the first sketch to the final commit — I care about every step in between.',
+  // Footer sign-off: the first sentence is shown muted, the rest bright.
+  tagline: 'From the first sketch to the final commit. I care about every step in between.',
   email: 'tjansenzb2021@gmail.com',
   phone: '+63 976-056-3152',
   // BASE_URL keeps the link working under the /Portfolio/ GitHub Pages path.

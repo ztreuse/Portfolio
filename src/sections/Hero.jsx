@@ -37,7 +37,17 @@ const particles = [
   [14, 15, 6.8],
 ];
 
-const HeroBackground = ({ paused, scale, y }) => (
+// Entrance: the photo comes into focus as the preloader lifts (blurred and slightly zoomed, then sharp), like a
+// camera pulling focus. It waits for `ready`, so it isn't spent unseen behind the preloader.
+const focusPull = (ready, reduceMotion) => ({
+  initial: { scale: 1.12, opacity: 0, filter: reduceMotion ? 'blur(0px)' : 'blur(5px)' },
+  animate: ready
+    ? { scale: 1, opacity: 1, filter: 'blur(0px)' }
+    : { scale: 1.12, opacity: 0, filter: reduceMotion ? 'blur(0px)' : 'blur(5px)' },
+  transition: { duration: 1.8, ease: [0.22, 1, 0.36, 1] },
+});
+
+const HeroBackground = ({ paused, scale, y, ready, reduceMotion }) => (
   <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
     {/* Everything behind the text zooms in and rises as you scroll: sinking down into the picture, like going underwater */}
     <motion.div style={{ scale, y }} className="absolute inset-0 origin-[50%_70%]">
@@ -46,9 +56,7 @@ const HeroBackground = ({ paused, scale, y }) => (
         paused={paused}
         // Darkened inside the shader (not by an overlay) so the coffee ripples and crema show at full strength
         dim={0.85}
-        initial={{ scale: 1.1 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 1.8, ease: 'easeOut' }}
+        {...focusPull(ready, reduceMotion)}
         className="absolute inset-0 size-full object-cover"
       />
 
@@ -82,7 +90,7 @@ const ScrollCue = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     transition={{ delay: 1.6, duration: 0.6 }}
-    className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 text-[11px] font-semibold tracking-[0.25em] text-stone-500 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:700px)]:hidden"
+    className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 text-[11px] font-semibold tracking-[0.25em] text-stone-400 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:700px)]:hidden"
   >
     Scroll
     <span className="relative h-10 w-px overflow-hidden bg-line">
@@ -93,6 +101,31 @@ const ScrollCue = () => (
       />
     </span>
   </motion.a>
+);
+
+// Hero entrance pieces (children of the hero's RevealGroup, so they follow its timing).
+const enterEase = [0.22, 1, 0.36, 1];
+const ruleDraw = {
+  hidden: { scaleX: 0 },
+  visible: { scaleX: 1, transition: { duration: 0.9, ease: enterEase } },
+};
+// The name's words rise one after the other from behind a mask, like the section titles.
+const nameRise = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
+const wordRise = {
+  hidden: { y: '115%' },
+  visible: { y: 0, transition: { duration: 1.1, ease: enterEase } },
+};
+
+/**
+ * One word of the name inside a mask. The padding (cancelled by negative margins, so spacing doesn't change) leaves
+ * room for the "y": its tail below, and its top-right arm, which the tight tracking pushes past the letter's box.
+ */
+const MaskedWord = ({ className = '', children }) => (
+  <span className="-my-[0.2em] -mr-[0.3em] inline-block overflow-hidden py-[0.2em] pr-[0.3em] align-bottom">
+    <motion.span variants={wordRise} className={`inline-block ${className}`}>
+      {children}
+    </motion.span>
+  </span>
 );
 
 const [firstName, ...otherNames] = profile.name.split(' ');
@@ -157,7 +190,7 @@ const Hero = ({ ready }) => {
         id="hero"
         className={`sticky top-0 isolate flex min-h-svh items-center overflow-hidden pt-16 ${covered ? 'invisible' : ''}`}
       >
-        <HeroBackground paused={covered} scale={bgScale} y={bgY} />
+        <HeroBackground paused={covered} scale={bgScale} y={bgY} ready={ready} reduceMotion={reduceMotion} />
         {/* Fades the background out during the dive, behind the text */}
         <motion.div aria-hidden style={{ opacity: dim }} className="pointer-events-none absolute inset-0 bg-ink" />
 
@@ -171,19 +204,26 @@ const Hero = ({ ready }) => {
                 as="p"
                 className={`flex items-center gap-4 font-display text-sm font-semibold tracking-[0.14em] text-accent uppercase sm:text-base ${float.label}`}
               >
-                <span aria-hidden className="h-px w-10 bg-linear-to-r from-accent/0 to-accent sm:w-14" />
+                {/* The rule draws itself in from the left as the label appears */}
+                <motion.span
+                  aria-hidden
+                  variants={ruleDraw}
+                  className="h-px w-10 origin-left bg-linear-to-r from-accent/0 to-accent sm:w-14"
+                />
                 Hello there, I'm
               </RevealItem>
 
               <RevealItem
                 as="h1"
+                variants={nameRise}
                 className={`mt-4 font-display text-6xl leading-[0.95] font-bold tracking-[-0.06em] text-white sm:text-7xl lg:text-[7.5rem] xl:text-[8.5rem] ${float.name}`}
               >
-                {firstName}{' '}
-                {/* Extra right padding (cancelled by the margin) so the tight tracking doesn't clip the last letter out of the gradient */}
-                <span className="-mr-[0.1em] bg-linear-to-r from-accent-strong to-accent bg-clip-text pr-[0.1em] text-transparent">
+                <MaskedWord>{firstName}</MaskedWord>{' '}
+                {/* Solid taupe, not a bg-clip-text gradient: some browsers clip that gradient to the letter's box and
+                    cut off the "y" arm that the tight tracking pushes past it */}
+                <MaskedWord className="text-accent-strong">
                   {otherNames.join(' ')}
-                </span>
+                </MaskedWord>
               </RevealItem>
 
               {/* min-h reserves the line so the layout doesn't jump between roles */}
@@ -192,15 +232,18 @@ const Hero = ({ ready }) => {
                 className={`mt-6 flex min-h-[1.4em] items-center font-display text-2xl font-light tracking-[-0.01em] text-stone-200 sm:text-3xl lg:text-4xl ${float.role}`}
               >
                 <span className="sr-only">{profile.role}</span>
-                <TypeAnimation
-                  aria-hidden
-                  sequence={profile.roles.flatMap((role) => [role, 2200])}
-                  wrapper="span"
-                  speed={50}
-                  deletionSpeed={70}
-                  repeat={Infinity}
-                  cursor={false}
-                />
+                {/* Starts typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts */}
+                {ready && (
+                  <TypeAnimation
+                    aria-hidden
+                    sequence={profile.roles.flatMap((role) => [role, 2200])}
+                    wrapper="span"
+                    speed={50}
+                    deletionSpeed={70}
+                    repeat={Infinity}
+                    cursor={false}
+                  />
+                )}
                 {/* Slim taupe caret instead of the default "|" */}
                 <span
                   aria-hidden

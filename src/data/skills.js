@@ -31,6 +31,7 @@ import nodejs from '../assets/brand-logos/nodejs.svg';
 import claude from '../assets/brand-logos/claude.svg';
 import cplusplus from '../assets/brand-logos/cplusplus.svg';
 import java from '../assets/brand-logos/java.svg';
+import threejs from '../assets/brand-logos/threejs.svg';
 
 // Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
 // show on the dark theme). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
@@ -112,6 +113,10 @@ const skillGroups = [
       { name: 'Azure Data Factory', description: 'Data pipelines', logo: azure, color: '#0078D4' },
       { name: 'Databricks', description: 'Data lakes & warehouses', logo: databricks, color: '#FF3621' },
     ],
+  },
+  {
+    title: '3D & WebGL (Upskilling)',
+    items: [{ name: 'Three.js', description: '3D on the web', logo: threejs, color: '#FFFFFF' }],
   },
 ];
 

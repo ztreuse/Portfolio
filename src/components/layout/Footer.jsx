@@ -6,16 +6,17 @@ import IconButton from '../ui/IconButton';
 import { profile, socials } from '../../data/site';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
 
-// The tagline's part before " — " reads quiet, the rest bright.
-const [taglineLead, taglineRest] = profile.tagline.includes(' — ')
-  ? profile.tagline.split(' — ')
-  : ['', profile.tagline];
+// The tagline's first sentence reads quiet, the rest bright.
+const leadEnd = profile.tagline.indexOf('. ');
+const [taglineLead, taglineRest] =
+  leadEnd === -1 ? ['', profile.tagline] : [profile.tagline.slice(0, leadEnd + 1), profile.tagline.slice(leadEnd + 2)];
 const letters = [...profile.name];
 
-/** One wordmark letter, rising out of the bottom edge on its own slice of the scroll (staggered left to right). */
-const WordmarkLetter = ({ char, index, progress, still }) => {
-  const start = 0.3 + index * 0.05;
-  const y = useTransform(progress, [start, Math.min(start + 0.4, 1)], still ? ['0%', '0%'] : ['105%', '0%']);
+/** One wordmark letter, rising out of the bottom edge with the rest of the name. */
+const WordmarkLetter = ({ char, progress, still }) => {
+  // All letters rise together and land at 80% of the footer's scroll, so the whole name is up even when a phone's
+  // address bar stops the page just short of the very bottom (a per-letter stagger left "Bay" half-risen there).
+  const y = useTransform(progress, [0.35, 0.8], still ? ['0%', '0%'] : ['105%', '0%']);
 
   return (
     // Clipped vertically only (tight tracking pushes glyphs past their box sideways); padding keeps the "y" tail
@@ -58,7 +59,7 @@ const Footer = () => {
           <div className="grid gap-12 md:grid-cols-12 md:items-end">
             {/* Sign-off line */}
             <p className="font-display text-3xl leading-tight font-bold tracking-[-0.04em] text-balance sm:text-4xl md:col-span-7 lg:text-5xl">
-              {taglineLead && <span className="text-stone-500">{taglineLead} — </span>}
+              {taglineLead && <span className="text-stone-500">{taglineLead} </span>}
               <span className="text-white">{taglineRest}</span>
             </p>
 
@@ -90,7 +91,7 @@ const Footer = () => {
             </nav>
           </div>
 
-          <div className="mt-16 flex items-center justify-between gap-4 text-sm text-stone-500 sm:mt-20">
+          <div className="mt-16 flex items-center justify-between gap-4 text-sm text-stone-400 sm:mt-20">
             <p>
               &copy; {new Date().getFullYear()} {profile.name}. All rights reserved.
             </p>
@@ -105,7 +106,7 @@ const Footer = () => {
         className="pointer-events-none mt-8 -mb-[0.22em] text-center font-display text-[18vw] leading-none font-bold tracking-[-0.06em] whitespace-nowrap select-none lg:text-[13rem]"
       >
         {letters.map((char, i) => (
-          <WordmarkLetter key={i} char={char} index={i} progress={scrollYProgress} still={still} />
+          <WordmarkLetter key={i} char={char} progress={scrollYProgress} still={still} />
         ))}
       </p>
     </footer>

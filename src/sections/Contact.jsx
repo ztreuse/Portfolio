@@ -23,7 +23,7 @@ const statusMessages = {
 
 // Underline-only inputs: no boxes, just a line that warms to taupe on focus.
 const inputClass =
-  'w-full border-0 border-b border-line bg-transparent px-0 pt-2 pb-3 text-base text-white placeholder:text-stone-600 transition-colors outline-none focus:border-accent sm:text-lg';
+  'w-full border-0 border-b border-line bg-transparent px-0 pt-2 pb-3 text-base text-white placeholder:text-stone-500 transition-colors outline-none focus:border-accent sm:text-lg';
 
 /**
  * One conversational form field ("What's your name?").
@@ -148,9 +148,9 @@ const Contact = () => {
           </div>
           <a
             href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}
-            className="mt-5 inline-flex items-center gap-3 text-stone-400 transition-colors hover:text-white"
+            className="mt-5 inline-flex items-center gap-3 text-stone-300 transition-colors hover:text-white"
           >
-            <span className="font-display text-xs font-semibold tracking-[0.14em] text-stone-500 uppercase">Phone</span>
+            <span className="font-display text-xs font-semibold tracking-[0.14em] text-stone-400 uppercase">Phone</span>
             {profile.phone}
           </a>
         </Reveal>

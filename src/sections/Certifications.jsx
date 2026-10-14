@@ -140,7 +140,7 @@ const Certifications = () => {
 
         {/* z-10: the track's extra glow room overlaps this row, so keep the controls on top and clickable */}
         <div className="relative z-10 mt-6 flex items-center justify-between gap-6">
-          <p className="font-display text-sm font-semibold whitespace-nowrap text-stone-500 tabular-nums">
+          <p className="font-display text-sm font-semibold whitespace-nowrap text-stone-400 tabular-nums">
             <span className="text-white">{pad(index + 1)}</span> / {pad(certifications.length)}
           </p>
           {/* The active dot fills up as autoplay counts down to the next card */}

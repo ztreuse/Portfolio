@@ -25,7 +25,7 @@ const nudges = {
  */
 const Button = ({ href, variant = 'primary', icon: Icon, nudge = 'x', className = '', children, ...props }) => {
   const style = variants[variant];
-  const classes = `group inline-flex items-center justify-center gap-3 rounded-full py-2 font-display text-sm font-semibold transition-[translate,box-shadow,border-color] duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-70 motion-reduce:hover:translate-y-0 ${
+  const classes = `group inline-flex items-center justify-center gap-3 rounded-full py-2 font-display text-sm font-semibold transition-[translate,scale,box-shadow,border-color] duration-300 hover:-translate-y-0.5 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-70 motion-reduce:hover:translate-y-0 ${
     Icon ? 'pr-2 pl-6' : 'px-6'
   } ${style.base} ${className}`;
 

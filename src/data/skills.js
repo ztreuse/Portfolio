@@ -5,6 +5,7 @@ import javascript from '../assets/brand-logos/javascript.svg';
 import python from '../assets/brand-logos/python.svg';
 import php from '../assets/brand-logos/php.svg';
 import react from '../assets/brand-logos/react.svg';
+import nextjs from '../assets/brand-logos/nextjs.svg';
 import tailwindcss from '../assets/brand-logos/tailwindcss.svg';
 import mantine from '../assets/brand-logos/mantine.svg';
 import bootstrap from '../assets/brand-logos/bootstrap.svg';
@@ -44,6 +45,7 @@ const skillGroups = [
       { name: 'CSS3', description: 'Styling', logo: css3, color: '#1572B6' },
       { name: 'JavaScript', description: 'Language', logo: javascript, color: '#F7DF1E' },
       { name: 'React', description: 'UI library', logo: react, color: '#61DAFB' },
+      { name: 'Next.js', description: 'React framework', logo: nextjs, color: '#FFFFFF' },
       { name: 'Vue.js', description: 'UI framework', logo: vue, color: '#41B883' },
       { name: 'Tailwind CSS', description: 'Utility-first CSS', logo: tailwindcss, color: '#06B6D4' },
       { name: 'Mantine UI', description: 'Component library', logo: mantine, color: '#339AF0' },

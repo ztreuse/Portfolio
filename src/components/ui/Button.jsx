@@ -13,10 +13,11 @@ const variants = {
   },
 };
 
-// Which way the icon nudges on hover: arrows slide right, a download icon dips down.
+// Which way the icon nudges on hover: arrows slide right; a download icon stays centred in its circle and rises
+// with the button (a downward dip cancelled the button's lift and left the icon looking stuck).
 const nudges = {
   x: 'group-hover:translate-x-0.5',
-  y: 'group-hover:translate-y-0.5',
+  y: '',
 };
 
 /**

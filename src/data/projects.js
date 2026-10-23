@@ -2,8 +2,18 @@ import tipsyTavern from '../assets/projects/tipsy-tavern.webp';
 import ticap from '../assets/projects/ticap.webp';
 import tourisla from '../assets/projects/tourisla.webp';
 import ecocool from '../assets/projects/ecocool.webp';
+import grooveGrounds from '../assets/projects/groove-grounds.webp';
 
 const projects = [
+  {
+    name: 'Groove Grounds',
+    role: 'UI/UX Designer & Full-Stack Developer',
+    image: grooveGrounds,
+    description:
+      "A dance-themed coffee ordering web app where every drink is a dance style: the menu is The Lineup, the cart is your Playlist, and checkout is Showtime, with a Plain words switch for anyone who doesn't dance. Customers customize drinks or build their own, order for pickup now or book a time slot, and follow a live order tracker that updates in real time as staff move the order along in a Backstage dashboard. It includes group orders with quotes, loyalty points and levels, drink ratings, Google sign-in, and an owner dashboard with sales reports, a menu manager and schedule settings. Built from my own product spec and design system in Next.js, TypeScript, Supabase and Tailwind, and deployed on Vercel.",
+    tools: ['Next.js', 'TypeScript', 'Supabase', 'PostgreSQL', 'Drizzle', 'Tailwind CSS', 'Motion', 'Vercel'],
+    link: 'https://groove-grounds.vercel.app',
+  },
   {
     name: 'Tourisla',
     role: 'Project Manager & Mobile Developer',

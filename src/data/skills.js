@@ -1,7 +1,8 @@
-import { LuClipboardCheck, LuNetwork, LuShieldCheck } from 'react-icons/lu';
+import { LuClipboardCheck, LuNetwork, LuShieldCheck, LuSwatchBook } from 'react-icons/lu';
 import html5 from '../assets/brand-logos/html5.svg';
 import css3 from '../assets/brand-logos/css3.svg';
 import javascript from '../assets/brand-logos/javascript.svg';
+import typescript from '../assets/brand-logos/typescript.svg';
 import python from '../assets/brand-logos/python.svg';
 import php from '../assets/brand-logos/php.svg';
 import react from '../assets/brand-logos/react.svg';
@@ -13,6 +14,7 @@ import expo from '../assets/brand-logos/expo.svg';
 import codeigniter from '../assets/brand-logos/codeigniter.svg';
 import postgresql from '../assets/brand-logos/postgresql.svg';
 import firebase from '../assets/brand-logos/firebase.svg';
+import supabase from '../assets/brand-logos/supabase.svg';
 import figma from '../assets/brand-logos/figma.svg';
 import framer from '../assets/brand-logos/framer.svg';
 import photoshop from '../assets/brand-logos/photoshop.svg';
@@ -24,6 +26,7 @@ import swagger from '../assets/brand-logos/swagger.svg';
 import vscode from '../assets/brand-logos/vscode.svg';
 import git from '../assets/brand-logos/git.svg';
 import github from '../assets/brand-logos/github.svg';
+import vercel from '../assets/brand-logos/vercel.svg';
 import powerBi from '../assets/brand-logos/power-bi.svg';
 import tableau from '../assets/brand-logos/tableau.svg';
 import azure from '../assets/brand-logos/azure.svg';
@@ -44,6 +47,7 @@ const skillGroups = [
       { name: 'HTML5', description: 'Markup', logo: html5, color: '#E34F26' },
       { name: 'CSS3', description: 'Styling', logo: css3, color: '#1572B6' },
       { name: 'JavaScript', description: 'Language', logo: javascript, color: '#F7DF1E' },
+      { name: 'TypeScript', description: 'Typed JavaScript', logo: typescript, color: '#3178C6' },
       { name: 'React', description: 'UI library', logo: react, color: '#61DAFB' },
       { name: 'Next.js', description: 'React framework', logo: nextjs, color: '#FFFFFF' },
       { name: 'Vue.js', description: 'UI framework', logo: vue, color: '#41B883' },
@@ -56,10 +60,11 @@ const skillGroups = [
     title: 'Design & Animation',
     items: [
       { name: 'Figma', description: 'UI/UX design', logo: figma, color: '#F24E1E' },
-      { name: 'Framer Motion', description: 'Animation library', logo: framer, color: '#E93DE0' },
+      { name: 'Motion (Framer Motion)', description: 'Animation library', logo: framer, color: '#E93DE0' },
       { name: 'Photoshop', description: 'Image editing', logo: photoshop, color: '#31A8FF' },
       { name: 'CapCut', description: 'Video editing', logo: capcut, color: '#FFFFFF' },
       { name: 'Canva', description: 'Graphic design', logo: canva, color: '#7D2AE7' },
+      { name: 'Design Systems', description: 'Tokens & components', icon: LuSwatchBook, color: '#C9BCAF' },
     ],
   },
   {
@@ -70,6 +75,7 @@ const skillGroups = [
       { name: 'CodeIgniter', description: 'PHP framework', logo: codeigniter, color: '#EF4223' },
       { name: 'PostgreSQL', description: 'Relational database', logo: postgresql, color: '#4169E1' },
       { name: 'Firebase', description: 'Backend platform', logo: firebase, color: '#FFCA28' },
+      { name: 'Supabase', description: 'Postgres backend', logo: supabase, color: '#3ECF8E' },
       { name: 'Swagger UI', description: 'API documentation', logo: swagger, color: '#85EA2D' },
     ],
   },
@@ -79,6 +85,7 @@ const skillGroups = [
       { name: 'VS Code', description: 'Code editor', logo: vscode, color: '#007ACC' },
       { name: 'Git', description: 'Version control', logo: git, color: '#F05032' },
       { name: 'GitHub', description: 'Code hosting', logo: github, color: '#FFFFFF' },
+      { name: 'Vercel', description: 'Deployment & hosting', logo: vercel, color: '#FFFFFF' },
       { name: 'Claude', description: 'AI-assisted development', logo: claude, color: '#D97757' },
     ],
   },

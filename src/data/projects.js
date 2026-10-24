@@ -39,7 +39,7 @@ const projects = [
     description:
       'A responsive liquor retail website built for our Advanced Web Design course, showcasing whiskey, wine, beer, and other spirits, with a working add-to-cart system and a custom dark mode toggle.',
     tools: ['HTML', 'CSS', 'JavaScript'],
-    link: 'https://seeejaay.github.io/TroyKingdom-FEUTECH-AWD-TW24/index.html',
+    link: 'https://seeejaay.github.io/Tipsy-Tavern/',
   },
   {
     name: 'TICAP 20 Awards Night Certificate',

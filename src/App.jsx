@@ -5,6 +5,7 @@ import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
 import Cursor from './components/layout/Cursor';
 import Smoke from './components/layout/Smoke';
+import CremaBand from './components/layout/CremaBand';
 import useCleanAnchorLinks from './hooks/useCleanAnchorLinks';
 import useSmoothScroll, { setScrollLocked } from './hooks/useSmoothScroll';
 import Hero from './sections/Hero';
@@ -41,15 +42,26 @@ const App = () => {
         <div className="relative z-10">
           {/* No fade at the panel's top: the hero has already faded to ink by the time About slides up, so the edge
               is invisible. Only for reduced motion (no dive, so the hero is still visible) is there a short soft edge. */}
-          <div aria-hidden className="pointer-events-none hidden h-36 bg-linear-to-b from-transparent to-ink motion-reduce:block" />
+          <div
+            aria-hidden
+            className="pointer-events-none hidden h-36 bg-linear-to-b from-transparent to-ink motion-reduce:block"
+          />
           {/* Transparent so the smoke (behind) shows through; the hero has faded to ink before this covers it. With
               reduced motion there's no dive, so the panel keeps its solid ink to cover the still-visible hero. */}
           <div className="motion-reduce:bg-ink">
             <About />
+            {/* Dark and light alternate: the work and the credentials sit on crema between the dark sections. You fly
+                through the "O" of WORK into the first; the Experience circle opens over it and closes over the second;
+                each band's content recedes as it leaves. Projects comes first after About because it's what
+                recruiters look for first. */}
+            <CremaBand zoom={{ word: 'Work', letter: 1, section: 'projects' }} hold="end" landingFor="projects">
+              <Projects />
+            </CremaBand>
             <Experience />
-            <Certifications />
+            <CremaBand hold="start" landingFor="certifications" lightsDown={{ flyTo: [0.72, 0.3] }}>
+              <Certifications />
+            </CremaBand>
             <Skills />
-            <Projects />
             <Contact />
           </div>
         </div>

@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 import emailjs from '@emailjs/browser';
 import { LuArrowRight, LuCheck, LuCircleAlert, LuCircleCheck, LuCopy, LuLoaderCircle } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Section from '../components/ui/Section';
 import Reveal from '../components/ui/Reveal';
+import ContactFilm from './ContactFilm';
 import { emailjsConfig, profile } from '../data/site';
 
 const [emailUser, emailDomain] = profile.email.split('@');
@@ -31,7 +33,7 @@ const inputClass =
  */
 const Field = ({ label, name, as: Control = 'input', className = '', ...props }) => (
   <label className={`group block ${className}`}>
-    <span className="font-display text-xs font-semibold tracking-[0.14em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
+    <span className="font-heading text-base font-bold tracking-[0.16em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
       {label}
     </span>
     <Control name={name} className={inputClass} required {...props} />
@@ -119,93 +121,100 @@ const Contact = () => {
 
   const message = statusMessages[status];
   const sending = status === 'sending';
+  const reduceMotion = useReducedMotion();
 
   return (
-    <Section
-      id="contact"
-      eyebrow="06 — Contact"
-      title="Let's work together"
-      description="Have a project in mind or just want to say hi? I'm always open to discussing new opportunities and creative ideas."
-    >
-      <div className="grid gap-14 lg:grid-cols-12 lg:items-center lg:gap-16">
-        {/* Direct line */}
-        <Reveal x={-32} y={0} className="lg:col-span-5">
-          <p className="font-display text-xs font-semibold tracking-[0.14em] text-accent uppercase">
-            Reach me directly
-          </p>
-          <div className="mt-4 flex items-center gap-3">
-            <a
-              href={`mailto:${profile.email}`}
-              className="group min-w-0 font-display text-lg font-semibold text-white sm:text-xl"
-            >
-              <span className="bg-linear-to-r from-accent-strong to-accent-strong bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-1 transition-[background-size] duration-500 group-hover:bg-size-[100%_2px]">
-                {/* If it must wrap (narrow phones), it breaks right after the @ */}
-                {emailUser}@<wbr />
-                {emailDomain}
-              </span>
-            </a>
-            <CopyEmail />
-          </div>
-          <a
-            href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}
-            className="mt-5 inline-flex items-center gap-3 text-stone-300 transition-colors hover:text-white"
-          >
-            <span className="font-display text-xs font-semibold tracking-[0.14em] text-stone-400 uppercase">Phone</span>
-            {profile.phone}
-          </a>
-        </Reveal>
-
-        {/* Form */}
-        <Reveal
-          as="form"
-          x={32}
-          y={0}
-          delay={0.1}
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:col-span-7"
-        >
-          <Field label="What's your name?" name="user_name" placeholder="Your full name" autoComplete="name" />
-          <Field
-            label="Your email"
-            name="user_email"
-            type="email"
-            placeholder="Where can I reply?"
-            autoComplete="email"
-          />
-          <Field
-            label="What's it about?"
-            name="subject"
-            placeholder="A front-end role, a project, a quick hello…"
-            className="sm:col-span-2"
-          />
-          <Field
-            label="Your message"
-            name="message"
-            as="textarea"
-            rows={4}
-            placeholder="Tell me a little about it…"
-            className="sm:col-span-2 [&_textarea]:resize-none"
-          />
-
-          <div className="flex flex-col-reverse gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-            <p role="status" className={`flex min-h-5 items-center gap-2 text-sm ${message?.className ?? ''}`}>
-              {message && <message.icon aria-hidden className="size-4 shrink-0" />}
-              {message?.text}
+    <>
+      {/* The Skills → Contact film: a pre-rendered 3D shot scrubbed by the scroll */}
+      {!reduceMotion && <ContactFilm />}
+      <Section
+        id="contact"
+        eyebrow="06 — Contact"
+        // On the colour of the desk film's glowing screen, which the film ends on
+        className="tone-light tone-screen bg-ink"
+        title="Let's work together"
+        description="Have a project in mind or just want to say hi? I'm always open to discussing new opportunities and creative ideas."
+      >
+        <div className="grid gap-14 lg:grid-cols-12 lg:items-center lg:gap-16">
+          {/* Direct line */}
+          <Reveal x={-32} y={0} className="lg:col-span-5">
+            <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
+              Reach me directly
             </p>
-            <Button
-              type="submit"
-              disabled={sending}
-              // Compact pill on every screen; on phones it sits at the left under the fields
-              className="shrink-0 max-sm:self-start"
-              icon={sending ? <LuLoaderCircle aria-hidden className="size-4 animate-spin" /> : LuArrowRight}
+            <div className="mt-4 flex items-center gap-3">
+              <a
+                href={`mailto:${profile.email}`}
+                className="group min-w-0 font-display text-lg font-semibold text-white sm:text-xl"
+              >
+                <span className="bg-linear-to-r from-accent-strong to-accent-strong bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-1 transition-[background-size] duration-500 group-hover:bg-size-[100%_2px]">
+                  {/* If it must wrap (narrow phones), it breaks right after the @ */}
+                  {emailUser}@<wbr />
+                  {emailDomain}
+                </span>
+              </a>
+              <CopyEmail />
+            </div>
+            <a
+              href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}
+              className="mt-5 inline-flex items-center gap-3 text-stone-300 transition-colors hover:text-white"
             >
-              {sending ? 'Sending…' : 'Send message'}
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </Section>
+              <span className="font-heading text-base font-bold tracking-[0.16em] text-stone-400 uppercase">Phone</span>
+              {profile.phone}
+            </a>
+          </Reveal>
+
+          {/* Form */}
+          <Reveal
+            as="form"
+            x={32}
+            y={0}
+            delay={0.1}
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:col-span-7"
+          >
+            <Field label="What's your name?" name="user_name" placeholder="Your full name" autoComplete="name" />
+            <Field
+              label="Your email"
+              name="user_email"
+              type="email"
+              placeholder="Where can I reply?"
+              autoComplete="email"
+            />
+            <Field
+              label="What's it about?"
+              name="subject"
+              placeholder="A front-end role, a project, a quick hello…"
+              className="sm:col-span-2"
+            />
+            <Field
+              label="Your message"
+              name="message"
+              as="textarea"
+              rows={4}
+              placeholder="Tell me a little about it…"
+              className="sm:col-span-2 [&_textarea]:resize-none"
+            />
+
+            <div className="flex flex-col-reverse gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
+              <p role="status" className={`flex min-h-5 items-center gap-2 text-sm ${message?.className ?? ''}`}>
+                {message && <message.icon aria-hidden className="size-4 shrink-0" />}
+                {message?.text}
+              </p>
+              <Button
+                type="submit"
+                disabled={sending}
+                // Compact pill on every screen; on phones it sits at the left under the fields
+                className="shrink-0 max-sm:self-start"
+                icon={sending ? <LuLoaderCircle aria-hidden className="size-4 animate-spin" /> : LuArrowRight}
+              >
+                {sending ? 'Sending…' : 'Send message'}
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+      </Section>
+    </>
   );
 };
 

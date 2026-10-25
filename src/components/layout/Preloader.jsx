@@ -467,7 +467,7 @@ const Preloader = ({ onDone }) => {
       >
         <motion.p
           style={{ opacity: counterOpacity }}
-          className="flex items-start justify-center font-display leading-none font-bold tracking-[-0.06em] text-accent-strong/[0.14] tabular-nums select-none"
+          className="flex items-start justify-center font-heading leading-none font-black text-accent-strong/[0.14] tabular-nums select-none"
         >
           <motion.span className="text-[clamp(9rem,34vw,26rem)]">{number}</motion.span>
           <span className="mt-[0.6em] ml-1 text-[clamp(2rem,6vw,4.5rem)]">%</span>
@@ -498,7 +498,7 @@ const Preloader = ({ onDone }) => {
             has3D ? 'opacity-100 delay-500' : 'opacity-0'
           }`}
         >
-          <p className="flex items-start font-display leading-none font-bold tracking-[-0.06em] text-white tabular-nums select-none">
+          <p className="flex items-start font-heading leading-none font-black text-white tabular-nums select-none">
             <motion.span className="text-[clamp(3.5rem,9vw,6.5rem)]">{number}</motion.span>
             <span className="mt-[0.35em] ml-1 text-[clamp(1.1rem,2.4vw,1.6rem)] tracking-normal text-accent">%</span>
           </p>

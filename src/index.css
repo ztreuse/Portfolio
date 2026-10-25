@@ -3,8 +3,11 @@
 /* Design tokens — every color and font in the site comes from here. */
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  /* One family for everything (Inter, as on dnyaneshgore.com); display = the same face used bold for headings, labels and buttons. */
+  /* UI type: Inter for body text, buttons and nav links (small uppercase labels use the heading font). */
   --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Display headings: a tall condensed poster face, always uppercase and heavy (hero name, section titles,
+     card and job titles, the footer sign-off and wordmark, chapter numbers, the loader percentage). */
+  --font-heading: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
 
   --color-ink: #161513;
   --color-ink-deep: #0f0e0d;
@@ -13,6 +16,9 @@
   --color-accent: #9f8f81;
   --color-accent-strong: #c9bcaf;
   --color-dimension: #403b37; /* Experience's "dimension" circle */
+  --color-crema: #e6ddd2; /* the light "crema" sections (see .tone-light) */
+  --color-screen: #c2b19a; /* Contact: the glow of the desk film's monitor screen (graded), see .tone-screen */
+  --color-espresso: #161513; /* same as ink, but never re-pointed by .tone-light: dark on purpose inside a crema band */
 
   /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
      clash with motion's `transform`. Set the height with --float and vary duration/delay per element. */
@@ -32,6 +38,45 @@
     }
   }
 
+  /* Skill chips flicking on in their brand colour as their card lands (--brand set on the chip), then settling
+     back to the plain outline. Delay each chip with animation-delay for the sequence. */
+  --animate-chip-flash: chip-flash 1.1s ease-out both;
+
+  @keyframes chip-flash {
+    0% {
+      opacity: 0.35;
+    }
+    10%,
+    24% {
+      opacity: 1;
+      border-color: color-mix(in srgb, var(--brand) 75%, transparent);
+      background-color: color-mix(in srgb, var(--brand) 20%, transparent);
+      box-shadow: 0 0 22px -4px var(--brand);
+    }
+    16% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Slow drift (Skills' strata): sideways by --sway-x with a gentle rise and fall by --sway-y, then back (run it
+     `alternate`). Animates `translate`, so it stacks with motion's scroll transforms. Vary duration/delay per layer. */
+  --animate-sway: sway 14s ease-in-out infinite alternate;
+
+  @keyframes sway {
+    0% {
+      translate: calc(var(--sway-x, 60px) * -1) 0;
+    }
+    50% {
+      translate: 0 var(--sway-y, 10px);
+    }
+    100% {
+      translate: var(--sway-x, 60px) 0;
+    }
+  }
+
   @keyframes float {
     0%,
     100% {
@@ -43,6 +88,41 @@
   }
 }
 
+
+/*
+ * Light "crema" sections: Certifications and Projects sit on crema between dark sections. Instead of restyling every
+ * component, this class re-points the palette inside it (Tailwind v4 utilities read these variables): white text
+ * becomes ink, ink backgrounds become crema, cards, lines and muted text step to light-theme values, and the accents
+ * darken to keep their contrast. `bg-ink` on the section itself therefore paints crema.
+ */
+.tone-light {
+  --color-white: #1a1714;
+  --color-stone-200: #2b2622;
+  --color-stone-300: #3b3530;
+  --color-stone-400: #5a5048;
+  --color-stone-500: #6e645b;
+  --color-ink: var(--color-crema);
+  --color-surface: #efe8df;
+  --color-line: #cfc3b5;
+  --color-accent: #7a6a5c;
+  --color-accent-strong: #54473d;
+  color: var(--color-stone-300);
+}
+
+/*
+ * Contact and the footer sit on the colour of the desk film's glowing monitor screen (`screen`), as if you've flown
+ * into it. On top of .tone-light: `bg-ink` paints the screen colour, and the muted text, accents and lines step darker
+ * so small labels keep AA contrast on this mid-toned background.
+ */
+.tone-screen {
+  --color-ink: var(--color-screen);
+  --color-surface: #cbbba5;
+  --color-line: #a8967f;
+  --color-stone-400: #4a4038;
+  --color-stone-500: #574c43;
+  --color-accent: #5f5146;
+  --color-accent-strong: #3f352d;
+}
 
 @layer base {
   html {
@@ -65,36 +145,4 @@
   }
 }
 
-/*
- * Swiper pagination overrides. Kept unlayered on purpose: Swiper's own CSS is
- * unlayered, so layered rules would always lose to it.
- */
-.certs-pagination {
-  --swiper-pagination-color: var(--color-accent);
-  --swiper-pagination-bullet-inactive-color: #fff;
-  --swiper-pagination-bullet-inactive-opacity: 0.25;
-  --swiper-pagination-bullet-size: 8px;
-  --swiper-pagination-bullet-horizontal-gap: 4px;
-}
 
-.certs-pagination .swiper-pagination-bullet {
-  transition: width 0.3s ease;
-}
-
-.certs-pagination .swiper-pagination-bullet-active {
-  position: relative;
-  overflow: hidden;
-  width: 24px;
-  border-radius: 9999px;
-  background: color-mix(in oklab, var(--color-accent) 35%, transparent);
-}
-
-/* Autoplay countdown: the active pill fills left to right (driven by --autoplay-progress from the component) */
-.certs-pagination .swiper-pagination-bullet-active::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-accent-strong);
-  transform: scaleX(var(--autoplay-progress, 1));
-  transform-origin: left;
-}

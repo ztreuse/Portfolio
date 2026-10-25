@@ -102,7 +102,7 @@ const Cursor = () => {
                 initial={{ opacity: 0, scale: 0.6 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.6 }}
-                className="font-display text-[11px] font-semibold tracking-[0.14em] text-ink uppercase"
+                className="font-heading text-sm font-bold tracking-[0.16em] text-ink uppercase"
               >
                 {label}
               </motion.span>

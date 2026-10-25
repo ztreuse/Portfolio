@@ -1,39 +1,69 @@
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { RevealGroup, RevealItem } from './Reveal';
+import ScrollBand from './ScrollBand';
 
-// Each title word rises from behind its own mask; the group's stagger plays them in sequence.
+// Each title word fades up whole and sharpens into place; the group's stagger plays them in sequence. No mask: a
+// word caught mid-rise behind one showed only the tops of its letters, like cut-off stumps.
 const wordRise = {
-  hidden: { y: '110%' },
-  visible: { y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: '0.3em', filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
 };
 
 const MaskedTitle = ({ text }) =>
   text.split(' ').map((word, i) => (
-    <span key={`${word}-${i}`} className="-mb-[0.12em] inline-block overflow-hidden pb-[0.12em] align-top">
+    // The space sits outside the word's inline-block, which would otherwise swallow it
+    <Fragment key={`${word}-${i}`}>
       <motion.span variants={wordRise} className="inline-block">
         {word}
-        {' '}
-      </motion.span>
-    </span>
+      </motion.span>{' '}
+    </Fragment>
   ));
 
-/** Oversized faint section number ("01") behind the title, drifting slower than the page. */
-const GhostNumber = ({ value, target, centered }) => {
+/**
+ * The chapter numeral ("01"): a huge outlined number behind the heading. As the section arrives it sweeps in
+ * from the side and firms up, then drifts slower than the page, so moving down the page feels like turning
+ * chapters. Off for reduced motion (it just sits there).
+ */
+const ChapterNumber = ({ value, target, centered }) => {
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], [70, -70]);
+  // Arrival: 0 as the heading enters at the bottom of the screen, 1 once it's two-fifths of the way up.
+  const arrive = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : Math.min(1, p / 0.4)));
+  const x = useTransform(arrive, (a) => `${(1 - a) * (centered ? 0 : 40)}%`);
+  const y = useTransform(scrollYProgress, (p) => (reduceMotion ? 0 : 70 - p * 140));
+  const scale = useTransform(arrive, (a) => (centered ? 0.85 + 0.15 * a : 1));
+  // A function transform, so motion keeps it on the JS side (a plain opacity map can stick, see the footer).
+  const opacity = useTransform(arrive, (a) => 0.15 + 0.85 * a);
 
   return (
     <motion.span
       aria-hidden
-      style={{ y }}
-      className={`pointer-events-none absolute -top-16 -z-10 font-display text-[8rem] leading-none font-bold text-white/[0.04] select-none sm:-top-20 sm:text-[11rem] lg:-top-24 lg:text-[13rem] ${
-        centered ? 'left-1/2 -translate-x-1/2' : '-left-3'
+      // useCleanAnchorLinks keeps it clear of the navbar when a link lands on the section
+      data-chapter
+      style={{ x, y, scale, opacity }}
+      className={`pointer-events-none absolute -top-20 -z-10 font-heading text-[9rem] leading-none font-black text-transparent [-webkit-text-stroke:1.5px_color-mix(in_oklab,var(--color-accent)_40%,transparent)] select-none sm:-top-28 sm:text-[13rem] lg:-top-36 lg:text-[17rem] ${
+        centered ? 'left-1/2 -translate-x-1/2' : 'right-0'
       }`}
     >
       {value}
     </motion.span>
   );
+};
+
+/**
+ * "Focus reveal": the title starts blurred and spread out, then sharpens and tightens into place as it scrolls up
+ * to reading height; it reverses going back up. Off for reduced motion.
+ */
+const useFocusReveal = (enabled, target) => {
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target, offset: ['start end', 'start 0.35'] });
+  const on = enabled && !reduceMotion;
+  const ease = (p) => 1 - (1 - p) ** 2;
+  const filter = useTransform(scrollYProgress, (p) => (on ? `blur(${(1 - ease(p)) * 14}px)` : 'none'));
+  const letterSpacing = useTransform(scrollYProgress, (p) => (on ? `${(1 - ease(p)) * 0.22}em` : '0em'));
+  const opacity = useTransform(scrollYProgress, (p) => (on ? 0.25 + 0.75 * ease(p) : 1));
+  return on ? { filter, letterSpacing, opacity } : undefined;
 };
 
 // How large each zoom target may start (it's also capped to what fits the heading's width).
@@ -73,7 +103,8 @@ const useHeadingZoom = (mode, runwayRef, pinRef, groupRef, textRef) => {
 };
 
 // `play` (optional) reveals on cue instead of on scroll; see RevealGroup. `align="center"` centres the heading.
-const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom }) => {
+// `focus` sharpens the title in with the scroll; `bleed` turns it into a full-width band that slides sideways.
+const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom, focus, bleed }) => {
   const centered = align === 'center';
   const origin = centered ? 'origin-top' : 'origin-top-left';
   const ref = useRef(null);
@@ -82,6 +113,7 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
   const runway = useRef(null);
   const pin = useRef(null);
   const { active, scale, fadeIn } = useHeadingZoom(zoom, runway, pin, ref, zoom === 'label' ? labelText : titleText);
+  const focusStyle = useFocusReveal(focus, ref);
   // "01 — About": the number only drives the faint ghost number behind the title; the label shows just "About".
   const [number, label] = eyebrow?.includes(' — ') ? eyebrow.split(' — ') : [null, eyebrow];
 
@@ -92,12 +124,13 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
       play={play}
       className={`relative flex flex-wrap gap-6 ${centered ? 'flex-col items-center text-center' : 'items-end justify-between'}`}
     >
-      {number && <GhostNumber value={number} target={ref} centered={centered} />}
-      <div className={`max-w-2xl ${centered ? 'mx-auto' : ''}`}>
+      {/* Always at the right, even on a centred heading, so every section's number lines up down the page */}
+      {number && !bleed && <ChapterNumber value={number} target={ref} />}
+      <div className={`min-w-0 ${bleed ? 'w-full' : 'max-w-5xl'} ${centered ? 'mx-auto' : ''}`}>
         {eyebrow && (
           <RevealItem
             as="p"
-            className="font-display text-xs font-semibold tracking-[0.14em] text-accent uppercase sm:text-sm"
+            className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase sm:text-lg"
           >
             <motion.span
               ref={labelText}
@@ -108,17 +141,27 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
             </motion.span>
           </RevealItem>
         )}
-        <motion.h2
-          aria-label={title}
-          style={zoom === 'title' ? { scale } : zoom === 'label' ? { opacity: fadeIn } : undefined}
-          className={`mt-3 font-display text-3xl font-bold tracking-[-0.05em] text-balance text-white sm:text-4xl lg:text-5xl ${origin}`}
-        >
-          <span ref={titleText} aria-hidden className="inline-block">
-            <MaskedTitle text={title} />
-          </span>
-        </motion.h2>
+        {bleed ? (
+          // Wordmark bleed: the title as a full-width band of huge type sliding sideways with the scroll
+          <h2 aria-label={title} className="mt-4 text-white">
+            <ScrollBand items={[title]} className="text-[clamp(4.5rem,15vw,14rem)]" />
+          </h2>
+        ) : (
+          <motion.h2
+            aria-label={title}
+            style={zoom === 'title' ? { scale } : zoom === 'label' ? { opacity: fadeIn } : focusStyle}
+            className={`mt-3 font-heading text-[clamp(3.25rem,10vw,8.5rem)] leading-[0.88] font-black tracking-[0.005em] text-balance text-white uppercase ${origin}`}
+          >
+            <span ref={titleText} aria-hidden className="inline-block">
+              <MaskedTitle text={title} />
+            </span>
+          </motion.h2>
+        )}
         {description && (
-          <RevealItem as="p" className="mt-4 text-base leading-relaxed text-pretty text-stone-400 sm:text-lg">
+          <RevealItem
+            as="p"
+            className={`mt-5 max-w-2xl text-base leading-relaxed text-pretty text-stone-400 sm:text-lg ${centered ? 'mx-auto' : ''}`}
+          >
             <motion.span style={{ opacity: fadeIn }} className="block">
               {description}
             </motion.span>
@@ -134,18 +177,24 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
   );
 
   if (!active) return heading;
-  // Zooming: the heading pins where a navbar link lands it (64px navbar + the section's top padding) while the
-  // spacer below it scrolls past; the zoom is scrubbed over that stretch. The section must not be overflow-hidden
+  // Zooming: the heading pins where a navbar link lands it (3rem lower than the section's top padding would put it,
+  // so the big outlined number above it clears the navbar) while the spacer below it scrolls past; the zoom is
+  // scrubbed over that stretch. The section must not be overflow-hidden
   // (use overflow-clip), or sticky stops working.
   return (
     <div ref={runway} className="relative">
-      <div ref={pin} className="sticky top-36 z-10 sm:top-44">
+      <div ref={pin} className="sticky top-48 z-10 sm:top-56">
         {heading}
       </div>
       <div aria-hidden className="h-[70svh]" />
-      {/* Where a navbar link lands: the end of the pinned stretch (70svh minus the section's top padding), so a
+      {/* Where a navbar link lands: the end of the pinned stretch (70svh minus the pin's distance below the navbar), so a
         click arrives with the zoom already settled. useCleanAnchorLinks glides to [data-landing] when present. */}
-      <span data-landing aria-hidden className="absolute top-[calc(70svh-5rem)] sm:top-[calc(70svh-7rem)]" />
+      <span
+        data-landing
+        data-landing-exact
+        aria-hidden
+        className="absolute top-[calc(70svh-8rem)] sm:top-[calc(70svh-10rem)]"
+      />
     </div>
   );
 };

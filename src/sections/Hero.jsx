@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { TypeAnimation } from 'react-type-animation';
 import { LuArrowRight, LuDownload } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Container from '../components/ui/Container';
 import FluidImage from '../components/ui/FluidImage';
+import MorphText from '../components/ui/MorphText';
 import SocialIcon from '../components/ui/SocialIcon';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { profile, socials } from '../data/site';
@@ -83,24 +84,22 @@ const HeroBackground = ({ paused, scale, y, ready, reduceMotion }) => (
   </div>
 );
 
+// Sits in the middle of the bottom strip; hidden on phones and on short screens.
 const ScrollCue = () => (
-  <motion.a
+  <a
     {...sectionLink('about')}
     aria-label="Scroll to About"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ delay: 1.6, duration: 0.6 }}
-    className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 text-[11px] font-semibold tracking-[0.25em] text-stone-400 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:700px)]:hidden"
+    className="hidden items-center gap-3 font-heading text-sm font-bold tracking-[0.25em] text-stone-400 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:620px)]:hidden"
   >
     Scroll
-    <span className="relative h-10 w-px overflow-hidden bg-line">
+    <span className="relative h-8 w-px overflow-hidden bg-line">
       <motion.span
         className="absolute inset-x-0 top-0 h-1/2 bg-accent"
         animate={{ y: ['-100%', '200%'] }}
         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
       />
     </span>
-  </motion.a>
+  </a>
 );
 
 // Hero entrance pieces (children of the hero's RevealGroup, so they follow its timing).
@@ -109,23 +108,18 @@ const ruleDraw = {
   hidden: { scaleX: 0 },
   visible: { scaleX: 1, transition: { duration: 0.9, ease: enterEase } },
 };
-// The name's words rise one after the other from behind a mask, like the section titles.
+// The name's words fade up whole one after the other and sharpen into place, like the section titles. No mask: a
+// word caught mid-rise behind one showed only the tops of its letters.
 const nameRise = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 const wordRise = {
-  hidden: { y: '115%' },
-  visible: { y: 0, transition: { duration: 1.1, ease: enterEase } },
+  hidden: { opacity: 0, y: '0.25em', filter: 'blur(10px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: enterEase } },
 };
 
-/**
- * One word of the name inside a mask. The padding (cancelled by negative margins, so spacing doesn't change) leaves
- * room for the "y": its tail below, and its top-right arm, which the tight tracking pushes past the letter's box.
- */
 const MaskedWord = ({ className = '', children }) => (
-  <span className="-my-[0.2em] -mr-[0.3em] inline-block overflow-hidden py-[0.2em] pr-[0.3em] align-bottom">
-    <motion.span variants={wordRise} className={`inline-block ${className}`}>
-      {children}
-    </motion.span>
-  </span>
+  <motion.span data-morph-word variants={wordRise} className={`inline-block ${className}`}>
+    {children}
+  </motion.span>
 );
 
 const [firstName, ...otherNames] = profile.name.split(' ');
@@ -137,9 +131,40 @@ const floatBase = 'animate-float will-change-[translate] motion-reduce:animate-n
 const float = {
   label: `${floatBase} [--float:-5px] [animation-duration:6s] [animation-delay:-0.5s]`,
   name: `${floatBase} [--float:-9px] [animation-duration:7s] [animation-delay:-2s]`,
-  role: `${floatBase} [--float:-7px] [animation-duration:6.5s] [animation-delay:-3.5s]`,
   actions: `${floatBase} [--float:-6px] [animation-duration:5.5s] [animation-delay:-1.2s]`,
-  socials: `${floatBase} [--float:-5px] [animation-duration:7.5s] [animation-delay:-4.6s]`,
+};
+
+/**
+ * Sizes the name so it spans the full content width: one line from sm up, "TROY" over "BAY" on phones (the wider
+ * word fills the width). It measures the name at a known size and scales, and re-fits only when the width changes
+ * (a phone's address bar changing the height must not resize it). Capped by the screen height so the name leaves
+ * room for the rest of the hero on short, wide screens.
+ */
+const useFitName = (boxRef, nameRef) => {
+  const [size, setSize] = useState(null);
+  useLayoutEffect(() => {
+    // Text width scales linearly with font size, so one measurement at the current size gives the fitted size
+    const fit = () => {
+      const box = boxRef.current;
+      const name = nameRef.current;
+      if (!box || !name || !name.offsetWidth) return;
+      const current = parseFloat(getComputedStyle(box).fontSize);
+      const lines = window.matchMedia('(max-width: 639px)').matches ? 2 : 1;
+      const maxByHeight = (window.innerHeight * 0.4) / (lines * 0.85);
+      setSize(Math.min(((current * box.clientWidth) / name.offsetWidth) * 0.995, maxByHeight));
+    };
+    fit();
+    document.fonts?.ready.then(fit);
+    let width = boxRef.current?.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (boxRef.current?.clientWidth === width) return;
+      width = boxRef.current?.clientWidth;
+      fit();
+    });
+    if (boxRef.current) observer.observe(boxRef.current);
+    return () => observer.disconnect();
+  }, [boxRef, nameRef]);
+  return size;
 };
 
 // How many screens of scrolling the dive takes; must match the spacer's h-[140svh] below.
@@ -149,6 +174,9 @@ const Hero = ({ ready }) => {
   const ref = useRef(null);
   const [covered, setCovered] = useState(false);
   const reduceMotion = useReducedMotion();
+  const nameBox = useRef(null);
+  const nameText = useRef(null);
+  const nameSize = useFitName(nameBox, nameText);
 
   // The hero is pinned (sticky) and followed by a spacer, so scrolling plays a "dive" first and only then
   // lets About slide up. journey: 0 -> 1 dives into the picture (over DIVE_SCREENS screens, so each scroll
@@ -198,11 +226,11 @@ const Hero = ({ ready }) => {
           style={{ y: textY, scale: textScale, opacity: textOpacity, filter: textBlur }}
           className="relative w-full"
         >
-          <Container className="py-20">
+          <Container className="pt-10 pb-32 sm:pb-36">
             <RevealGroup play={ready} delay={0.35} stagger={0.12}>
               <RevealItem
                 as="p"
-                className={`flex items-center gap-4 font-display text-sm font-semibold tracking-[0.14em] text-accent uppercase sm:text-base ${float.label}`}
+                className={`flex items-center gap-4 font-heading text-lg font-bold tracking-[0.18em] text-accent uppercase sm:text-xl ${float.label}`}
               >
                 {/* The rule draws itself in from the left as the label appears */}
                 <motion.span
@@ -213,23 +241,65 @@ const Hero = ({ ready }) => {
                 Hello there, I'm
               </RevealItem>
 
+              {/* Fitted to the full content width by useFitName (the clamp is only the size before it measures) */}
               <RevealItem
                 as="h1"
+                ref={nameBox}
+                style={nameSize ? { fontSize: nameSize } : undefined}
                 variants={nameRise}
-                className={`mt-4 font-display text-6xl leading-[0.95] font-bold tracking-[-0.06em] text-white sm:text-7xl lg:text-[7.5rem] xl:text-[8.5rem] ${float.name}`}
+                className={`relative mt-3 font-heading text-[clamp(5rem,22vw,13rem)] leading-[0.85] font-black tracking-[0.005em] text-white uppercase ${float.name}`}
               >
-                <MaskedWord>{firstName}</MaskedWord>{' '}
-                {/* Solid taupe, not a bg-clip-text gradient: some browsers clip that gradient to the letter's box and
-                    cut off the "y" arm that the tight tracking pushes past it */}
-                <MaskedWord className="text-accent-strong">
-                  {otherNames.join(' ')}
-                </MaskedWord>
+                <span ref={nameText} className="inline-block whitespace-nowrap max-sm:whitespace-normal">
+                  <MaskedWord className="max-sm:block">{firstName}</MaskedWord>{' '}
+                  {/* Solid taupe, not a bg-clip-text gradient: some browsers clip that gradient to the letter's box and
+                      cut off the "y" arm that the tight tracking pushes past it */}
+                  <MaskedWord className="text-accent-strong max-sm:block">{otherNames.join(' ')}</MaskedWord>
+                </span>
+                {/* The letters bend like liquid where the cursor touches them */}
+                <MorphText fit={nameSize} />
               </RevealItem>
 
+              {/* Equal halves with short labels on phones, natural widths from sm up */}
+              <RevealItem className={`mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:flex sm:gap-4 ${float.actions}`}>
+                <Button
+                  href={profile.resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  icon={LuDownload}
+                  nudge="y"
+                  className="max-sm:justify-between max-sm:pl-5"
+                >
+                  <span className="sm:hidden">Resume</span>
+                  <span className="max-sm:hidden">Download Resume</span>
+                </Button>
+                <Button
+                  {...sectionLink('contact')}
+                  variant="outline"
+                  icon={LuArrowRight}
+                  className="max-sm:justify-between max-sm:pl-5"
+                >
+                  <span className="sm:hidden">Contact</span>
+                  <span className="max-sm:hidden">Get in Touch</span>
+                </Button>
+              </RevealItem>
+            </RevealGroup>
+          </Container>
+        </motion.div>
+
+        {/* Bottom strip on the screen's bottom edge: the cycling role, the scroll cue and the socials above a
+            hairline. It leaves the middle to the name and fills the bottom of the first screen. */}
+        <motion.div style={{ opacity: textOpacity }} className="absolute inset-x-0 bottom-0">
+          <Container>
+            <RevealGroup
+              play={ready}
+              delay={0.9}
+              stagger={0.12}
+              className="grid grid-cols-[1fr_auto] items-center gap-4 border-t border-white/10 py-5 sm:grid-cols-[1fr_auto_1fr] sm:py-6"
+            >
               {/* min-h reserves the line so the layout doesn't jump between roles */}
               <RevealItem
                 as="p"
-                className={`mt-6 flex min-h-[1.4em] items-center font-display text-2xl font-light tracking-[-0.01em] text-stone-200 sm:text-3xl lg:text-4xl ${float.role}`}
+                className="flex min-h-[1.2em] items-center font-heading text-2xl font-semibold tracking-[0.04em] text-stone-200 uppercase sm:text-3xl"
               >
                 <span className="sr-only">{profile.role}</span>
                 {/* Starts typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts */}
@@ -251,16 +321,11 @@ const Hero = ({ ready }) => {
                 />
               </RevealItem>
 
-              <RevealItem className={`mt-10 flex flex-wrap gap-4 ${float.actions}`}>
-                <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuDownload} nudge="y">
-                  Download Resume
-                </Button>
-                <Button {...sectionLink('contact')} variant="outline" icon={LuArrowRight}>
-                  Get in Touch
-                </Button>
+              <RevealItem className="max-sm:hidden">
+                <ScrollCue />
               </RevealItem>
 
-              <RevealItem as="ul" className={`mt-12 flex gap-3 ${float.socials}`}>
+              <RevealItem as="ul" className="flex justify-end gap-2 sm:gap-3">
                 {socials.map((social) => (
                   <li key={social.label}>
                     <SocialIcon {...social} />
@@ -269,10 +334,6 @@ const Hero = ({ ready }) => {
               </RevealItem>
             </RevealGroup>
           </Container>
-        </motion.div>
-
-        <motion.div style={{ opacity: textOpacity }}>
-          <ScrollCue />
         </motion.div>
       </section>
       {/* Scroll room for the dive; skipped for reduced motion so About follows straight away */}

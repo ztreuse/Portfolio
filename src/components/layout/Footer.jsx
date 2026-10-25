@@ -47,8 +47,8 @@ const Footer = () => {
   const contentOpacity = useTransform(scrollYProgress, (p) => (still ? 1 : 0.2 + 0.8 * Math.min(p / 0.6, 1)));
 
   return (
-    <footer ref={ref} className="relative z-10 overflow-hidden">
-      {/* Same background as Contact; just this divider (fading out toward both edges) separates them */}
+    <footer ref={ref} className="tone-light tone-screen relative z-10 overflow-hidden bg-ink">
+      {/* Same screen colour as Contact; just this divider (fading out toward both edges) separates them */}
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/40 to-transparent"
@@ -58,14 +58,14 @@ const Footer = () => {
         <Container className="pt-20 sm:pt-28">
           <div className="grid gap-12 md:grid-cols-12 md:items-end">
             {/* Sign-off line */}
-            <p className="font-display text-3xl leading-tight font-bold tracking-[-0.04em] text-balance sm:text-4xl md:col-span-7 lg:text-5xl">
+            <p className="font-heading text-4xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance uppercase sm:text-5xl md:col-span-7 lg:text-6xl">
               {taglineLead && <span className="text-stone-500">{taglineLead} </span>}
               <span className="text-white">{taglineRest}</span>
             </p>
 
             {/* Profiles as a labelled list; each row's line fills taupe on hover */}
             <nav aria-label="Profiles" className="md:col-span-4 md:col-start-9">
-              <p className="font-display text-xs font-semibold tracking-[0.14em] text-accent uppercase">Find me on</p>
+              <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">Find me on</p>
               <ul className="mt-3">
                 {socials.map(({ label, href }) => (
                   <li key={label}>
@@ -103,7 +103,7 @@ const Footer = () => {
       {/* Oversized signature wordmark, cropped by the bottom edge; its letters rise in with the scroll */}
       <p
         aria-hidden
-        className="pointer-events-none mt-8 -mb-[0.22em] text-center font-display text-[18vw] leading-none font-bold tracking-[-0.06em] whitespace-nowrap select-none lg:text-[13rem]"
+        className="pointer-events-none mt-8 -mb-[0.2em] text-center font-heading text-[min(24vw,21rem)] leading-none font-black tracking-[0.01em] whitespace-nowrap uppercase select-none"
       >
         {letters.map((char, i) => (
           <WordmarkLetter key={i} char={char} progress={scrollYProgress} still={still} />

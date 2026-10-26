@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 /**
  * Returns the id of the section currently crossing the middle of the viewport. When several do
  * (the pinned hero stays under About while it slides over), the one furthest down the page wins.
- * An element with `data-section-of="<id>"` counts as part of that section (e.g. the zoom stretch before Projects).
+ * An element with `data-section-of="<id>"` counts as part of that section (e.g. the flood stretch before Projects).
+ * An element with `data-section-claim="<id>"` wins outright while it crosses the middle: Certifications' band is
+ * tucked up behind the end of Experience, which should still read as Experience.
  */
 const useActiveSection = (ids) => {
   const [activeId, setActiveId] = useState(ids[0]);
@@ -17,8 +19,9 @@ const useActiveSection = (ids) => {
           if (entry.isIntersecting) crossing.add(entry.target);
           else crossing.delete(entry.target);
         });
+        const claim = [...crossing].find((el) => el.dataset.sectionClaim)?.dataset.sectionClaim;
         const crossingIds = new Set([...crossing].map((el) => el.dataset.sectionOf || el.id));
-        const current = ids.findLast((id) => crossingIds.has(id));
+        const current = claim || ids.findLast((id) => crossingIds.has(id));
         if (current) setActiveId(current);
       },
       { rootMargin: '-45% 0px -50% 0px' },
@@ -27,7 +30,9 @@ const useActiveSection = (ids) => {
     ids.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
-      document.querySelectorAll(`[data-section-of="${id}"]`).forEach((part) => observer.observe(part));
+      document
+        .querySelectorAll(`[data-section-of="${id}"], [data-section-claim="${id}"]`)
+        .forEach((part) => observer.observe(part));
     });
 
     return () => observer.disconnect();

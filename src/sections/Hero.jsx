@@ -87,8 +87,8 @@ const HeroBackground = ({ paused, scale, y, ready, reduceMotion }) => (
 // Sits in the middle of the bottom strip; hidden on phones and on short screens.
 const ScrollCue = () => (
   <a
-    {...sectionLink('about')}
-    aria-label="Scroll to About"
+    {...sectionLink('projects')}
+    aria-label="Scroll to Projects"
     className="hidden items-center gap-3 font-heading text-sm font-bold tracking-[0.25em] text-stone-400 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:620px)]:hidden"
   >
     Scroll
@@ -188,10 +188,10 @@ const Hero = ({ ready }) => {
     const value = y <= dive ? y / dive : 1 + (y - dive) / screen;
     return Math.min(Math.max(value, 0), 2);
   });
-  // Hidden (and its animation paused) only once About's solid part has fully passed over it.
+  // Hidden (and its animation paused) only once the panel after it has fully passed over it.
   useMotionValueEvent(scrollY, 'change', () => {
-    const about = document.getElementById('about');
-    setCovered(!!about && about.getBoundingClientRect().top <= 0);
+    const panel = document.querySelector('[data-panel]');
+    setCovered(!!panel && panel.getBoundingClientRect().top <= 0);
   });
 
   // Dive: the background zooms deep into the photo while the text rushes past (grows, blurs, clears).

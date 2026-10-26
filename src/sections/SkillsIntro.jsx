@@ -87,7 +87,7 @@ const SkillsIntro = () => {
     // A navbar glide spends 2 s on the flight, so it plays out (it flashed past in about 0.6 s)
     <div
       ref={runway}
-      data-slow-glide="2"
+      data-slow-glide="1"
       data-slow-between="certifications skills"
       aria-hidden
       className="pointer-events-none relative -mt-[165svh] h-[230svh]"

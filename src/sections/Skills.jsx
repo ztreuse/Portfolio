@@ -96,29 +96,38 @@ const CategoryCard = ({ group, index }) => {
  * CategoryCard). A taupe spotlight follows the pointer over a card. Adding skills or
  * categories in data/skills.js just adds chips or cards.
  */
+// As Skills ends, the cards fade out while their bottom rises from 75% to 30% of the screen, leaving the backdrop
+const SkillsFade = ({ children }) => {
+  const ref = useRef(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['end 0.75', 'end 0.3'] });
+  const opacity = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : 1 - smooth(clamp01(p))));
+  return (
+    <motion.div ref={ref} style={{ opacity }}>
+      {children}
+    </motion.div>
+  );
+};
+
 const Skills = () => {
   const reduceMotion = useReducedMotion();
   return (
     <>
       {/* Skills' intro: the flight from Certifications toward a far-off SKILLS, which you pass through */}
       {!reduceMotion && <SkillsIntro />}
-      <Section
-        id="skills"
-        eyebrow="05 — Skills"
-        title="Tools I build with"
-        description="Bringing ideas to life with modern web technologies."
-        background={<SkillsBackdrop />}
-      >
+      <Section id="skills" eyebrow="05 — Skills" title="Tools I build with" background={<SkillsBackdrop />}>
         {/* Desktop: 3 cards per row on a 6-track grid, so an incomplete last row (one or two cards) sits centred.
           Tablet: 2 per row, and a lone last card spans both. */}
-        <ul
-          className="grid gap-4 sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2 lg:grid-cols-6 lg:gap-5 lg:[&>li]:[grid-column:span_2] lg:[&>li:nth-last-child(2):nth-child(3n+1)]:[grid-column:2/span_2] lg:[&>li:last-child:nth-child(3n+1):not(:first-child)]:[grid-column:3/span_2]"
-        >
-          {skillGroups.map((group, i) => (
-            <CategoryCard key={group.title} group={group} index={i} />
-          ))}
-        </ul>
+        <SkillsFade>
+          <ul className="grid gap-4 sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2 lg:grid-cols-6 lg:gap-5 lg:[&>li]:[grid-column:span_2] lg:[&>li:nth-last-child(2):nth-child(3n+1)]:[grid-column:2/span_2] lg:[&>li:last-child:nth-child(3n+1):not(:first-child)]:[grid-column:3/span_2]">
+            {skillGroups.map((group, i) => (
+              <CategoryCard key={group.title} group={group} index={i} />
+            ))}
+          </ul>
+        </SkillsFade>
       </Section>
+      {/* A stretch after the cards where the backdrop comes into focus before the Contact film rises over it */}
+      {!reduceMotion && <div aria-hidden data-section-of="skills" className="h-[80svh]" />}
     </>
   );
 };

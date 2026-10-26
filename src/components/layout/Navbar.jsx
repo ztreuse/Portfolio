@@ -11,9 +11,8 @@ import {
 import Container from '../ui/Container';
 import SocialIcon from '../ui/SocialIcon';
 import useActiveSection from '../../hooks/useActiveSection';
-import { navLinks, socials } from '../../data/site';
-import logo from '../../assets/images/logo.svg';
-import logoMark from '../../assets/images/logo-mark.svg';
+import { navLinks, profile, socials } from '../../data/site';
+import logoHelmet from '../../assets/images/logo-helmet.svg';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
 import { setScrollLocked } from '../../hooks/useSmoothScroll';
 
@@ -50,17 +49,9 @@ const menuItemVariants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.3, ease: easeOut } },
 };
 
-// The logo file doubles as a mask, so the shine only paints inside the letterforms.
-const logoMask = {
-  maskImage: `url(${logo})`,
-  WebkitMaskImage: `url(${logo})`,
-  maskSize: '100% 100%',
-  WebkitMaskSize: '100% 100%',
-};
-
 /**
  * Whether the page right under the navbar is light: a visible light surface there (the crema bands' background and
- * the WORK zoom's crema fill, marked `data-nav-light`; Contact and the footer, `.tone-screen`) that the Experience
+ * the WORK flood's crema layer, marked `data-nav-light`; Contact and the footer, `.tone-screen`) that the Experience
  * drop isn't covering (it marks itself `data-covers-nav`). Hit-testing couldn't tell: most background layers here are
  * click-through, so it saw through them.
  */
@@ -74,7 +65,11 @@ const lightUnderBar = (header) => {
   });
 };
 
-/** The T mark (same as the tab icon) beside the wordmark; a light sweeps across the letters and it lifts on hover. */
+/**
+ * The helmeted horse head (a redraw of the owner's reference: a solid taupe silhouette with its engraved lines cut out
+ * as transparent gaps) beside the name. Over light sections the mark is darkened and the name turns dark with the
+ * header's `tone-light`. The tab icon is the same mark.
+ */
 const NavLogo = ({ onClick, light }) => (
   <a
     {...sectionLink('hero')}
@@ -82,23 +77,15 @@ const NavLogo = ({ onClick, light }) => (
     aria-label="Back to top"
     className="group/logo flex shrink-0 items-center gap-2.5 transition-transform duration-300 ease-out hover:scale-105"
   >
-    {/* Darkened over light sections */}
     <img
-      src={logoMark}
+      src={logoHelmet}
       alt=""
-      className={`block h-8 w-auto transition-[filter] duration-500 ${light ? 'brightness-[0.35]' : ''}`}
+      width="28"
+      height="36"
+      className={`block h-9 w-auto transition-[filter,rotate] duration-500 group-hover/logo:-rotate-3 ${light ? 'brightness-[0.35]' : ''}`}
     />
-    <span className="relative block">
-      <img
-        src={logo}
-        alt="Troy Bay"
-        className={`block h-8 w-auto transition-[filter] duration-500 ${light ? 'brightness-[0.12]' : ''}`}
-      />
-      <span
-        aria-hidden
-        style={logoMask}
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,var(--color-accent)_50%,transparent_70%)] bg-size-[250%_100%] bg-position-[100%_0] transition-none group-hover/logo:bg-position-[-50%_0] group-hover/logo:transition-[background-position] group-hover/logo:duration-1000 group-hover/logo:ease-in-out"
-      />
+    <span className="font-heading text-xl leading-none font-black tracking-[0.08em] text-white uppercase transition-colors duration-500">
+      {profile.name}
     </span>
   </a>
 );

@@ -89,8 +89,9 @@ const slowGlide = (distance, targetId) => {
     const fromOk = holdsMiddle(region) || between.some((id) => holdsMiddle(document.getElementById(id)));
     if (!fromOk || !between.includes(targetId)) return null;
   } else if (enter + (total - leave) > 2 * window.innerHeight) return null;
-  // The stretches before and after it at the usual pace, but never dragging (a tall section made them long)
-  const pace = (px) => (px > 0 ? Math.min(1.2, Math.max(0.5, px / 1100)) : 0);
+  // The stretches before and after it at the usual pace, but brief (a tall section made them long, and the owner
+  // wanted these trips about as long as the others: about 2 s in all)
+  const pace = (px) => (px > 0 ? Math.min(0.6, Math.max(0.3, px / 1100)) : 0);
   const times = [pace(enter), parseFloat(region.dataset.slowGlide) || 2, pace(total - leave)];
   const duration = times[0] + times[1] + times[2];
   const points = [[0, 0]];

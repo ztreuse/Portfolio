@@ -384,9 +384,8 @@ const Projects = () => {
   return (
     <Section
       id="projects"
-      eyebrow="02 — Projects"
+      eyebrow="01 — Projects"
       title="Selected work"
-      description="A selection of web, mobile, and design work."
       action={viewToggle}
       focus
     >

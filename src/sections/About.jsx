@@ -14,9 +14,10 @@ const aboutRest = restOfAbout.join('. ');
 const About = () => {
   // About rises over the pinned hero, so its content waits until the section has reached the top of the
   // screen (fills the page) instead of revealing while it's still sliding up. The marker covers the whole
-  // section and the watch zone is the top 12% of the viewport.
+  // section and the watch zone is the top 20% of the viewport (at 12%, a navbar link to About, which lands with
+  // About's top about 13% down so the big "01" clears the bar, left the content waiting for more scrolling).
   const marker = useRef(null);
-  const arrived = useInView(marker, { once: true, margin: '0px 0px -88% 0px' });
+  const arrived = useInView(marker, { once: true, margin: '0px 0px -80% 0px' });
 
   // The photo sits slightly enlarged in its card and drifts as the section scrolls past (a window effect).
   const photo = useRef(null);
@@ -50,7 +51,7 @@ const About = () => {
         </div>
 
         <div className="md:col-span-7">
-          <SectionHeading eyebrow="01 — About" title="Get to know me" play={arrived} />
+          <SectionHeading eyebrow="02 — About" title="Get to know me" play={arrived} />
           {/* Magazine-style: the opening line as a pull statement, the rest as body text */}
           <Reveal
             as="p"

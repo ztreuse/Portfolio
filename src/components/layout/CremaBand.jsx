@@ -1,80 +1,110 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import Hold from './Hold';
+import stratum from '../ui/stratum';
+
+const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
+const smooth = (x) => x * x * (3 - 2 * x);
 
 /**
- * Zoom-through entrance: a pinned stretch before the band where one giant word in crema floats on the page's own
- * smoky background (no box of its own, so the smoke runs straight on from the section before, with no edge). The
- * word fades up and sharpens as it arrives; scrolling then zooms into one letter's thick left stroke (to about
- * 14x, where it fills most of the screen) while the crema fades in over the whole screen, and you land in the band.
- * The word is scaled around a point in that stroke. Reverses going back up. Much past 14x the browser stops
- * drawing the text (it vanished at 90x), which is why the crema fades in instead of zooming all the way.
+ * Flood entrance, part one: one giant word in crema floats on the page's own smoky background (no box of its own,
+ * so the smoke runs straight on from the hero). It fades up and sharpens as it arrives, then stays pinned for a
+ * screen while the band (pulled up over that screen) rises over it with its wavy crema edge (`WaveEdge`), so the
+ * projects come up together with the crema instead of after it. The word drifts up a little slower than the band,
+ * so it climbs over it. Reverses going back up. It replaced a zoom into the "O" (up to 14x over two screens), which a
+ * classmate found dizzying, and then two flooding layers that filled the whole screen before the content came.
  * `section` is the id of the section it leads into, so the navbar highlights that one during the stretch.
  */
-const ZoomThrough = ({ word, letter, section }) => {
+const Flood = ({ word, section }) => {
   const runway = useRef(null);
-  const text = useRef(null);
-  const group = useRef(null);
-  const [origin, setOrigin] = useState({ x: 500, y: 300 });
   const { scrollYProgress } = useScroll({ target: runway, offset: ['start start', 'end end'] });
-  // The word's arrival, over the screen of scrolling before the stretch pins
+  // The word's arrival, over the screen of scrolling before it pins
   const { scrollYProgress: arrival } = useScroll({ target: runway, offset: ['start end', 'start start'] });
 
-  // Find the letter to fly through, once the font has loaded and laid the word out
-  useLayoutEffect(() => {
-    const measure = () => {
-      const el = text.current;
-      if (!el) return;
-      const box = el.getExtentOfChar(letter);
-      // Aim at the middle of the letter's left stroke, not its counter (the hole, which shows the smoke).
-      // Measured for Big Shoulders' "O": the stroke spans about 7% to 38% of the character box.
-      setOrigin({ x: box.x + box.width * 0.23, y: box.y + box.height * 0.5 });
-    };
-    measure();
-    document.fonts?.ready.then(measure);
-  }, [letter]);
-
-  const enter = (p) => Math.min(1, Math.max(0, (p - 0.35) / 0.5));
+  const enter = (p) => clamp01((p - 0.35) / 0.5);
   const wordOpacity = useTransform(arrival, (p) => enter(p));
   const wordBlur = useTransform(arrival, (p) => `blur(${(1 - enter(p)) * 12}px)`);
-  const wordY = useTransform(arrival, (p) => (1 - enter(p)) * 40);
-
-  // Slow at first (you read the word), then rushing in: 14x by 85% of the stretch, while the crema fades in over
-  // the last third so it takes the whole screen
-  const scale = useTransform(scrollYProgress, (p) => {
-    const t = Math.min(1, Math.max(0, (p - 0.1) / 0.75));
-    return 1 + 13 * t ** 2.2;
-  });
-  const fill = useTransform(scrollYProgress, (p) => Math.min(1, Math.max(0, (p - 0.62) / 0.3)));
-  const apply = (s) =>
-    group.current?.setAttribute(
-      'transform',
-      `translate(${origin.x} ${origin.y}) scale(${s}) translate(${-origin.x} ${-origin.y})`,
-    );
-  useMotionValueEvent(scale, 'change', apply);
-  useLayoutEffect(() => apply(scale.get()));
+  const wordY = useTransform([arrival, scrollYProgress], ([a, p]) => `${(1 - enter(a)) * 6 - 16 * p}svh`);
 
   return (
     <div ref={runway} aria-hidden data-section-of={section} className="relative h-[200svh]">
       <div className="sticky top-0 h-svh overflow-hidden">
-        <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" className="size-full overflow-visible">
-          <motion.g style={{ opacity: wordOpacity, filter: wordBlur, y: wordY }}>
-            <g ref={group}>
-              <text
-                ref={text}
-                x="500"
-                y="300"
-                textAnchor="middle"
-                dominantBaseline="central"
-                className="fill-crema font-heading text-[330px] font-black uppercase"
-              >
-                {word}
-              </text>
-            </g>
-          </motion.g>
-        </svg>
-        {/* data-nav-light: the navbar turns to light glass over it (see Navbar) */}
-        <motion.div data-nav-light style={{ opacity: fill }} className="absolute inset-0 bg-crema" />
+        <motion.div style={{ opacity: wordOpacity, filter: wordBlur, y: wordY }} className="absolute inset-0">
+          <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" className="size-full overflow-visible">
+            <text
+              x="500"
+              y="300"
+              textAnchor="middle"
+              dominantBaseline="central"
+              className="fill-crema font-heading text-[330px] font-black uppercase"
+            >
+              {word}
+            </text>
+          </svg>
+        </motion.div>
       </div>
+    </div>
+  );
+};
+
+/**
+ * The band's wavy edge: a rolling crema wave like the Skills strata (the same edge from `stratum`, redrawn at 30fps
+ * while on screen, plus its own `animate-sway`), with a soft shadow on its dark side. Its box reaches 16svh past the
+ * band and overlaps the band's own crema, so the edge is all you see of it.
+ * `bottom` hangs it upside down off the band's bottom edge instead, so the band ends in a wave into the next section.
+ */
+const WaveEdge = ({ bottom = false }) => {
+  const box = useRef(null);
+  const path = useRef(null);
+  const shadowPath = useRef(null);
+  useEffect(() => {
+    let frame = 0;
+    let visible = false;
+    let last = 0;
+    const start = performance.now();
+    const tick = (now) => {
+      frame = visible && !document.hidden ? requestAnimationFrame(tick) : 0;
+      if (now - last < 1000 / 30) return;
+      last = now;
+      const d = stratum(5.1, (now - start) / 1000, -0.9);
+      path.current?.setAttribute('d', d);
+      shadowPath.current?.setAttribute('d', d);
+    };
+    const wake = () => {
+      if (visible && !document.hidden && !frame) frame = requestAnimationFrame(tick);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      wake();
+    });
+    if (box.current) observer.observe(box.current);
+    document.addEventListener('visibilitychange', wake);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', wake);
+    };
+  }, []);
+
+  const sway = { '--sway-x': '120px', '--sway-y': '12px', animationDuration: '11s', animationDelay: '-8s' };
+  return (
+    <div
+      ref={box}
+      aria-hidden
+      className={`pointer-events-none absolute -inset-x-[30%] h-[60svh] ${bottom ? '-bottom-[16svh] -scale-y-100' : '-top-[16svh]'}`}
+    >
+      {/* The shadow: a blurred dark copy of the wave just past its edge */}
+      <svg
+        viewBox="0 0 2000 1000"
+        preserveAspectRatio="none"
+        style={sway}
+        className="absolute inset-x-0 -top-2.5 h-full w-full animate-sway blur-[9px]"
+      >
+        <path ref={shadowPath} d={stratum(5.1, 0, -0.9)} className="fill-espresso/35" />
+      </svg>
+      <svg viewBox="0 0 2000 1000" preserveAspectRatio="none" style={sway} className="absolute inset-0 size-full animate-sway">
+        <path ref={path} d={stratum(5.1, 0, -0.9)} className="fill-crema" />
+      </svg>
     </div>
   );
 };
@@ -100,57 +130,6 @@ const Recede = ({ children }) => {
     </motion.div>
   );
 };
-
-/**
- * Holds the band's content still for a stretch of scrolling while the Experience circle plays over it, instead of
- * adding empty space. `edge="end"`: the content's last screen stays put (its bottom on the screen's bottom) for 120%
- * of a screen while the Experience drop spreads over it. `edge="start"`: its first screen stays put (its top just under the
- * navbar, `top-29`, so its big outlined number clears it and lines up with the other sections') for 110% of a screen while the drop draws back. It's a sticky element followed by a spacer it slides over,
- * so nothing blank ever shows. `landingFor` (a section id) adds the spot a navbar link to that section glides to,
- * fixed in the page while the content itself moves: past the hold for "start" (so it lands with the drop gone), the
- * content's real top for "end" (after the hold the sticky content sits lower, and a link measuring it landed
- * mid-drop).
- */
-const Hold = ({ edge, landingFor, children }) => {
-  const ref = useRef(null);
-  const [top, setTop] = useState(0);
-
-  // Pinning the bottom edge needs the content's height: top = screen height - content height
-  useLayoutEffect(() => {
-    if (edge !== 'end') return undefined;
-    const measure = () => ref.current && setTop(window.innerHeight - ref.current.offsetHeight);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(ref.current);
-    window.addEventListener('resize', measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, [edge]);
-
-  return (
-    <div className="relative">
-      {landingFor && (
-        <span
-          aria-hidden
-          data-landing-for={landingFor}
-          // Where the start hold lets go: land exactly here (the pinned heading never moves during the hold, so
-          // chasing its chapter number landed at the start of the hold, inside the coffee drop)
-          data-landing-exact={edge === 'start' ? '' : undefined}
-          className={`pointer-events-none absolute h-px w-px ${edge === 'start' ? 'top-[calc(110svh-3.25rem)]' : 'top-0'}`}
-        />
-      )}
-      <div ref={ref} style={edge === 'end' ? { top } : undefined} className={`sticky ${edge === 'start' ? 'top-29' : ''}`}>
-        {children}
-      </div>
-      <div aria-hidden className={edge === 'end' ? 'h-[120svh]' : 'h-[110svh]'} />
-    </div>
-  );
-};
-
-const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
-const smooth = (x) => x * x * (3 - 2 * x);
 
 /**
  * "Lights down" exit: when the band's content ends, it holds still for 65% of a screen of scrolling while the crema
@@ -227,17 +206,22 @@ const LightsDown = ({ bg, section, flyTo, children }) => {
 /**
  * A light "crema" stretch of the page between dark sections. `tone-light` re-points the palette for everything
  * inside (see index.css), so the sections in it render light without their own styling; `bg-ink` here therefore
- * paints crema (behind the content only, so the zoom stretch shows the page's smoke). `zoom` adds the
- * zoom-through entrance (fly through the given word, skipped for reduced motion); its content recedes as the band
- * leaves the screen. `hold` ("end" or "start") pauses the content while the Experience drop plays over it, and
+ * paints crema (behind the content only, so the flood stretch shows the page's smoke). `flood` adds the flood
+ * entrance (wavy layers rising over the given word, skipped for reduced motion); by default its content recedes as
+ * the band leaves the screen; `waveOut` instead ends the band in the same wave, hanging into the next section,
+ * with the content simply scrolling on, and 30svh of the page after it so the wave is off screen where a navbar link
+ * lands on the next section. `tuck` pulls the band up a screen behind the section before it (the Experience drop),
+ * so the drop can close while that section's last content is still scrolling, with crema already behind it. `hold` ("end" or "start") pauses the content while the Experience drop plays over it, and
  * `landingFor` sets where a navbar link lands (see Hold). `lightsDown` (true, or { flyTo }) replaces the recede with the
  * "lights down" exit into a dark section (see LightsDown). Holds and lights down are skipped for reduced motion.
  */
-const CremaBand = ({ zoom, hold, landingFor, lightsDown, children }) => {
+const CremaBand = ({ flood, hold, landingFor, lightsDown, waveOut, tuck, children }) => {
+  // `tuck` is the id of the section it tucks behind
   const reduceMotion = useReducedMotion();
   const bg = useMotionValue(1);
   const fades = lightsDown && !reduceMotion;
-  const content = fades ? children : <Recede>{children}</Recede>;
+  const flooding = flood && !reduceMotion;
+  const content = fades || waveOut ? children : <Recede>{children}</Recede>;
   const held =
     hold && !reduceMotion ? (
       // With lights down the landing marker lives outside the part that slides during the fade (measured there, a
@@ -249,21 +233,31 @@ const CremaBand = ({ zoom, hold, landingFor, lightsDown, children }) => {
       content
     );
   return (
-    <div className="tone-light relative">
-      {zoom && !reduceMotion && <ZoomThrough {...zoom} />}
-      {/* The crema sits behind the content only (the zoom stretch above it stays see-through to the smoke), as
-          its own layer so lights down can fade it */}
-      <div className="relative">
+    <div className={`tone-light relative ${tuck && !reduceMotion ? '-mt-[100svh]' : ''}`}>
+      {flooding && <Flood {...flood} />}
+      {/* The tucked screen still belongs to the section in front for the navbar */}
+      {tuck && !reduceMotion && (
+        <span aria-hidden data-section-claim={tuck} className="pointer-events-none absolute inset-x-0 top-0 h-svh" />
+      )}
+      {/* The crema sits behind the content only (the flood stretch above it stays see-through to the smoke), as
+          its own layer so lights down can fade it. With the flood it's pulled up a screen, so it rises over the
+          pinned word, led by its wavy edge. */}
+      <div className={`relative ${flooding ? '-mt-[100svh]' : ''}`}>
+        {flooding && <WaveEdge />}
+        {waveOut && <WaveEdge bottom />}
         <motion.div aria-hidden data-nav-light style={{ opacity: bg }} className="absolute inset-0 bg-ink" />
         {fades && hold === 'start' && landingFor && (
           <span
             aria-hidden
             data-landing-for={landingFor}
             data-landing-exact
-            className="pointer-events-none absolute top-[calc(110svh-3.25rem)] h-px w-px"
+            className="pointer-events-none absolute top-[calc(110svh-3.75rem)] h-px w-px"
           />
         )}
         <div className="relative">
+          {/* The rising crema itself fills the screen: a stretch of solid band between its wave and the content,
+              so by the time a navbar link lands on the section the wave has already risen past the top */}
+          {flooding && <div aria-hidden className="h-[30svh]" />}
           {fades ? (
             <LightsDown bg={bg} section={landingFor} flyTo={lightsDown.flyTo}>
               {held}
@@ -273,6 +267,8 @@ const CremaBand = ({ zoom, hold, landingFor, lightsDown, children }) => {
           )}
         </div>
       </div>
+      {/* Room for the wave hanging off the bottom, so a link landing on the next section never shows its edge */}
+      {waveOut && !reduceMotion && <div aria-hidden className="h-[30svh]" />}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useMotionValueEvent, useScroll } from 'motion/react';
+import { FILM_END_RGB, FILM_GRADE } from './filmGrade';
 
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
 const smooth = (x) => x * x * (3 - 2 * x);
@@ -19,9 +20,10 @@ const SCREEN = { wide: [0.516, 0.46], tall: [0.5, 0.45] };
  * as if you've flown into the screen. The frames are colour-graded toward the site's taupes (baked in: saturate 0.45,
  * sepia 0.12, brightness 0.92; the raw clip read yellow).
  *
- * Into it, a soft edge: the runway starts right after Skills (no overlap, so there's breathing room between the last
- * cards and the monitors), and the film rises up the screen with a feathered top edge (a mask that fades its top 40% of a screen into Skills), which tightens to a
- * crisp edge as the film reaches the top and pins, then the dolly plays. At the end the stage simply scrolls away into
+ * Into it, a seamless hand-off: Skills' backdrop is this film's first frame, fixed to the screen, and it comes into
+ * focus as Skills ends. The runway is pulled up a screen, so the stage pins just as that happens; it stays invisible
+ * until it has pinned and drawn a frame, then simply appears over the identical picture and the dolly plays. (While
+ * still rising it would draw a second, offset copy of the desk.) At the end the stage simply scrolls away into
  * Contact's matching background. Frames load only when it's near. Render it only when motion is allowed.
  */
 const ContactFilm = () => {
@@ -38,24 +40,23 @@ const ContactFilm = () => {
     const el = canvas.current;
     if (!el || !stage.current) return;
     const p = scrollYProgress.get();
-    // The feathered top edge while the film rises over the end of Skills, crisp once it reaches the top
-    const vh = window.innerHeight;
-    const top = stage.current.getBoundingClientRect().top;
-    const feather = 0.4 * vh * smooth(clamp01(top / (0.4 * vh)));
-    const mask = feather > 1 ? `linear-gradient(to bottom, transparent, black ${feather.toFixed(0)}px)` : 'none';
-    stage.current.style.maskImage = mask;
-    stage.current.style.webkitMaskImage = mask;
+    // Hidden until it has pinned (Skills' backdrop shows the same first frame until then)
+    const pinned = stage.current.getBoundingClientRect().top <= 0.5;
+    if (!pinned) stage.current.style.opacity = '0';
     const play = clamp01(p / 0.6);
     // Then the push into the left monitor's screen, settling onto its flat colour (Contact's background)
     const push = smooth(clamp01((p - 0.6) / 0.22));
     const dim = smooth(clamp01((p - 0.68) / 0.18));
     // Once it has settled on Contact's light colour, the navbar turns to light glass over it too
     stage.current.toggleAttribute('data-nav-light', dim > 0.5);
-    let i = Math.round(play * (FRAMES - 1));
+    // The clip itself slows down as the camera nears the monitor, so the scroll moves through the later frames
+    // faster (three times the pace of the start by the end)
+    let i = Math.round((0.5 * play + 0.5 * play * play) * (FRAMES - 1));
     // Draw the nearest frame that has loaded
     while (i > 0 && !images.current[i]?.complete) i -= 1;
     const img = images.current[i];
     if (!img?.complete || !img.naturalWidth) return;
+    if (pinned) stage.current.style.opacity = '1';
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = el.clientWidth;
     const h = el.clientHeight;
@@ -74,17 +75,17 @@ const ContactFilm = () => {
     const x = el.width / 2 - sx * dw + ((sx - 0.5) * dw * (1 - push)) / zoom;
     const y = el.height / 2 - sy * dh + ((sy - 0.5) * dh * (1 - push)) / zoom;
     // A soft focus pull as it pushes in, which also hides the compression blocks of a frame enlarged nearly 3×
-    const filters = [];
+    const filters = [FILM_GRADE];
     if (push > 0.01) filters.push(`blur(${(push * 10 * dpr).toFixed(1)}px)`);
-    ctx.filter = filters.length ? filters.join(' ') : 'none';
+    ctx.filter = filters.join(' ');
     ctx.drawImage(img, x, y, dw, dh);
     ctx.filter = 'none';
     if (dim > 0) {
-      ctx.fillStyle = `rgba(194, 177, 154, ${dim.toFixed(3)})`; // the screen colour, Contact's background
+      ctx.fillStyle = `rgba(${FILM_END_RGB}, ${dim.toFixed(3)})`; // Contact's background
       ctx.fillRect(0, 0, el.width, el.height);
     }
   };
-  // On every scroll (the progress stays at 0 while the film is still rising, but its edge has to follow)
+  // On every scroll (the progress stays at 0 while the film is still rising, but it has to know when it pins)
   useMotionValueEvent(scrollY, 'change', draw);
 
   // Load the frames for this screen's shape once the film is within a couple of screens
@@ -116,18 +117,18 @@ const ContactFilm = () => {
   return (
     <div
       ref={runway}
-      // A navbar glide between Skills and Contact spends 2.5 s on the film, so it plays out
-      data-slow-glide="2.5"
+      // A navbar glide between Skills and Contact spends 1 s on the film, so it still plays out
+      data-slow-glide="1"
       data-slow-between="skills contact"
       aria-hidden
-      className="pointer-events-none relative h-[260svh]"
+      className="pointer-events-none relative -mt-[100svh] h-[220svh]"
     >
       {/* Counts as Contact for the navbar once Skills has gone */}
-      <span data-section-of="contact" className="absolute inset-x-0 bottom-0 h-[220svh]" />
+      <span data-section-of="contact" className="absolute inset-x-0 bottom-0 h-[180svh]" />
       {/* Its start, while the film is still rising after Skills, still counts as Skills (unmarked, the pinned hero made
           the navbar show Home) */}
       <span data-section-of="skills" className="absolute inset-x-0 top-0 h-[40svh]" />
-      <div ref={stage} className="sticky top-0 h-svh overflow-hidden bg-ink">
+      <div ref={stage} className="sticky top-0 h-svh overflow-hidden bg-ink opacity-0">
         <canvas ref={canvas} className="absolute inset-0 size-full" />
       </div>
     </div>

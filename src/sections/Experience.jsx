@@ -10,10 +10,10 @@ import {
   useTransform,
   animate,
 } from 'motion/react';
-import SmokeCanvas from '../components/ui/SmokeCanvas';
 import Section from '../components/ui/Section';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { experience } from '../data/experience';
+import desk from '../assets/images/desk.webp';
 
 const enterEase = [0.22, 1, 0.36, 1];
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -206,6 +206,25 @@ const Roles = () => {
   );
 };
 
+/**
+ * Inside the dimension: the owner's desk at night (their own setup, the same scene as the Contact film, graded to the
+ * site's taupes), softly blurred under a veil of the dimension colour so the text stays readable. It replaced the
+ * smoke here, so the page isn't smoke all the way through. In the drop it's fixed to the screen, so it stays put while
+ * the roles scroll over it.
+ */
+const DeskBackdrop = () => (
+  <>
+    <img
+      src={desk}
+      alt=""
+      width="1024"
+      height="576"
+      className="absolute inset-0 size-full scale-110 object-cover blur-[6px]"
+    />
+    <div className="absolute inset-0 bg-dimension/70" />
+  </>
+);
+
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
 const smooth = (x) => x * x * (3 - 2 * x);
 
@@ -235,7 +254,7 @@ const NONE = 'inset(50%)';
 const dropFor = (el, gliding = false) => {
   const r = el.getBoundingClientRect();
   const vh = window.innerHeight;
-  const out = clamp01((-r.bottom - 0.2 * vh) / (0.7 * vh));
+  const out = clamp01((0.8 * vh - r.bottom) / (0.6 * vh));
   const lead = gliding ? GLIDE_LEAD : 0;
   return out > 0 ? 1 + out : clamp01(((2.2 + lead) * vh - r.top) / (0.85 * vh));
 };
@@ -268,7 +287,6 @@ const dropOutline = (cx, cy, radius, spread) => {
  * outline in its own coordinates.
  */
 // Inside the lighter dimension the smoke is reversed: dark, espresso-toned wisps instead of the page's light ones.
-const DIMENSION_SMOKE = [0.07, 0.055, 0.045];
 
 const Experience = () => {
   const ref = useRef(null);
@@ -281,7 +299,6 @@ const Experience = () => {
   const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
   const [size, setSize] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }));
-  const [open, setOpen] = useState(false);
 
   // Where the drop should be for this scroll position, and where it is (trailing on a spring)
   const target = useMotionValue(0);
@@ -296,9 +313,18 @@ const Experience = () => {
   // In-page links glide to their section; during that glide the drop tracks the scroll exactly (no lag), so it's
   // already full when you land on Experience and already gone when you land on the next section.
   const linkGlideUntil = useRef(0);
+  // Whether the glide ends at Experience or past it: only then may the drop open early (GLIDE_LEAD). A glide that
+  // stops at About, just before it, would otherwise land with the drop already spreading over About.
+  const glidePast = useRef(false);
   useEffect(() => {
     const onClick = (e) => {
-      if (e.target.closest?.('a[href^="#"], a[data-section]')) linkGlideUntil.current = performance.now() + 3500;
+      const link = e.target.closest?.('a[href^="#"], a[data-section]');
+      if (!link) return;
+      linkGlideUntil.current = performance.now() + 3500;
+      const id = link.getAttribute('href')?.startsWith('#') ? link.getAttribute('href').slice(1) : link.dataset.section;
+      const target = id && document.getElementById(id);
+      glidePast.current =
+        !!target && !!ref.current && target.getBoundingClientRect().top >= ref.current.getBoundingClientRect().top - 1;
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
@@ -351,8 +377,7 @@ const Experience = () => {
     return radius > 1;
   };
   const drawAndTrack = () => {
-    const isOpen = draw();
-    setOpen((was) => (was === isOpen ? was : isOpen));
+    draw();
   };
 
   useMotionValueEvent(scrollY, 'change', () => {
@@ -360,7 +385,7 @@ const Experience = () => {
     // The early start only helps going down into Experience; going back up it would keep the drop full for longer
     const down = scrollY.getVelocity() >= 0;
     const gliding = performance.now() < linkGlideUntil.current;
-    const next = dropFor(ref.current, gliding && down);
+    const next = dropFor(ref.current, gliding && down && glidePast.current);
     if (next !== target.get()) {
       target.set(next);
       animate(dropValue, next, gliding ? GLIDE_SPRING : DROP_SPRING);
@@ -368,7 +393,8 @@ const Experience = () => {
     // Last resort: if a very fast scroll has the drop well behind while an edge of Experience is on screen, catch it
     // up at once so the straight edge never shows (normally the buffer in dropFor gives the spring time)
     const r = ref.current.getBoundingClientRect();
-    const edgeShowing = r.top < window.innerHeight && r.bottom > 0 && Math.abs(dropValue.get() - 1) > 0.12;
+    // Only the top edge matters now: Certifications' crema sits behind the bottom one
+    const edgeShowing = r.top < window.innerHeight && r.top > 0 && Math.abs(dropValue.get() - 1) > 0.12;
     if (edgeShowing) dropValue.jump(target.get());
     drawAndTrack();
   });
@@ -387,7 +413,6 @@ const Experience = () => {
       id="experience"
       eyebrow="03 — Experience"
       title="Where I've worked"
-      description="Front-end engineering with real teams, from Figma handoff to production-ready code."
       // The dimension's gray-taupe is lighter than the page, so muted text steps up one shade inside it.
       className={DIMENSION_TEXT}
     >
@@ -398,7 +423,7 @@ const Experience = () => {
   if (reduceMotion) {
     return (
       <div className="relative bg-dimension">
-        <SmokeCanvas color={DIMENSION_SMOKE} strength={0.65} seed={37} />
+        <DeskBackdrop />
         {section}
       </div>
     );
@@ -413,7 +438,7 @@ const Experience = () => {
       {/* The drop: the dimension colour, its smoke and the word, clipped to the drop's outline. z-20 puts it over
           the neighbouring sections but under the navbar */}
       <div ref={backdrop} aria-hidden className="pointer-events-none fixed inset-0 z-20 bg-dimension [clip-path:inset(50%)]">
-        <SmokeCanvas color={DIMENSION_SMOKE} strength={0.65} seed={37} paused={!open} />
+        <DeskBackdrop />
         <svg viewBox={`0 0 ${w} ${h}`} className="absolute inset-0 size-full">
           <defs>
             {/* Seen through liquid: the letters waver and blur, settling as the word surfaces */}

@@ -17,7 +17,7 @@
   --color-accent-strong: #c9bcaf;
   --color-dimension: #403b37; /* Experience's "dimension" circle */
   --color-crema: #e6ddd2; /* the light "crema" sections (see .tone-light) */
-  --color-screen: #c2b19a; /* Contact: the glow of the desk film's monitor screen (graded), see .tone-screen */
+  --color-screen: #e6ddd2; /* Contact and the footer: the crema of the Projects band, which the desk film settles onto */
   --color-espresso: #161513; /* same as ink, but never re-pointed by .tone-light: dark on purpose inside a crema band */
 
   /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
@@ -110,14 +110,14 @@
 }
 
 /*
- * Contact and the footer sit on the colour of the desk film's glowing monitor screen (`screen`), as if you've flown
- * into it. On top of .tone-light: `bg-ink` paints the screen colour, and the muted text, accents and lines step darker
- * so small labels keep AA contrast on this mid-toned background.
+ * Contact and the footer sit on `screen` (the crema of the Projects band; the desk film settles onto it, as if
+ * you've flown into the monitor). On top of .tone-light: `bg-ink` paints the screen colour, and the muted text and
+ * accents stay a step darker than in the crema bands, which only adds contrast.
  */
 .tone-screen {
   --color-ink: var(--color-screen);
-  --color-surface: #cbbba5;
-  --color-line: #a8967f;
+  --color-surface: #efe8df;
+  --color-line: #cfc3b5;
   --color-stone-400: #4a4038;
   --color-stone-500: #574c43;
   --color-accent: #5f5146;

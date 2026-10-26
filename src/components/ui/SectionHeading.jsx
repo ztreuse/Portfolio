@@ -109,13 +109,13 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
   const origin = centered ? 'origin-top' : 'origin-top-left';
   const ref = useRef(null);
   const titleText = useRef(null);
-  const labelText = useRef(null);
   const runway = useRef(null);
   const pin = useRef(null);
-  const { active, scale, fadeIn } = useHeadingZoom(zoom, runway, pin, ref, zoom === 'label' ? labelText : titleText);
+  const { active, scale, fadeIn } = useHeadingZoom(zoom, runway, pin, ref, titleText);
   const focusStyle = useFocusReveal(focus, ref);
-  // "01 — About": the number only drives the faint ghost number behind the title; the label shows just "About".
-  const [number, label] = eyebrow?.includes(' — ') ? eyebrow.split(' — ') : [null, eyebrow];
+  // "01 — About": only the number is used, for the outlined chapter number behind the title. The small spaced label
+  // ("ABOUT") was removed at the owner's request (it read as an AI-template formula repeated on every section).
+  const number = eyebrow?.includes(' — ') ? eyebrow.split(' — ')[0] : null;
 
   const heading = (
     <RevealGroup
@@ -127,30 +127,16 @@ const SectionHeading = ({ eyebrow, title, description, action, play, align, zoom
       {/* Always at the right, even on a centred heading, so every section's number lines up down the page */}
       {number && !bleed && <ChapterNumber value={number} target={ref} />}
       <div className={`min-w-0 ${bleed ? 'w-full' : 'max-w-5xl'} ${centered ? 'mx-auto' : ''}`}>
-        {eyebrow && (
-          <RevealItem
-            as="p"
-            className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase sm:text-lg"
-          >
-            <motion.span
-              ref={labelText}
-              style={zoom === 'label' ? { scale } : undefined}
-              className={`inline-block ${origin}`}
-            >
-              {label}
-            </motion.span>
-          </RevealItem>
-        )}
         {bleed ? (
           // Wordmark bleed: the title as a full-width band of huge type sliding sideways with the scroll
-          <h2 aria-label={title} className="mt-4 text-white">
+          <h2 aria-label={title} className="text-white">
             <ScrollBand items={[title]} className="text-[clamp(4.5rem,15vw,14rem)]" />
           </h2>
         ) : (
           <motion.h2
             aria-label={title}
             style={zoom === 'title' ? { scale } : zoom === 'label' ? { opacity: fadeIn } : focusStyle}
-            className={`mt-3 font-heading text-[clamp(3.25rem,10vw,8.5rem)] leading-[0.88] font-black tracking-[0.005em] text-balance text-white uppercase ${origin}`}
+            className={`font-heading text-[clamp(3.25rem,10vw,8.5rem)] leading-[0.88] font-black tracking-[0.005em] text-balance text-white uppercase ${origin}`}
           >
             <span ref={titleText} aria-hidden className="inline-block">
               <MaskedTitle text={title} />

@@ -317,7 +317,6 @@ const Certifications = () => {
       id="certifications"
       eyebrow="04 — Certifications"
       title="Credentials I've earned"
-      description="Industry-recognized credentials from Certiport, Cisco, and the Project Management Institute."
     >
       <Reveal>
         {/* Full-bleed stage; the mask fades the cards turning away at both edges into the page. A mask also clips

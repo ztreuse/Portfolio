@@ -133,7 +133,6 @@ const Contact = () => {
         // On the colour of the desk film's glowing screen, which the film ends on
         className="tone-light tone-screen bg-ink"
         title="Let's work together"
-        description="Have a project in mind or just want to say hi? I'm always open to discussing new opportunities and creative ideas."
       >
         <div className="grid gap-14 lg:grid-cols-12 lg:items-center lg:gap-16">
           {/* Direct line */}

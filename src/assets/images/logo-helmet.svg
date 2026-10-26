@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="90 40 545 705">
+  <defs>
+    <!-- The engraved lines are cut out of the silhouette, so they show whatever is behind the logo -->
+    <mask id="cuts" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="800">
+      <rect width="800" height="800" fill="#fff" />
+      <g fill="none" stroke="#000" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Notches in the crest -->
+        <path d="M333 46L336 108M176 118L210 160M524 54L504 104M96 314L146 318" />
+        <!-- The gap between the crest and the helmet, down to the crest's tail -->
+        <path d="M124 486C150 340 210 214 330 180C420 160 498 178 540 200" />
+        <!-- The helmet's two rims -->
+        <path d="M200 456C205 334 250 244 340 218C410 202 470 216 502 238" />
+        <path d="M236 436C240 346 280 276 352 256C402 246 440 250 472 262" />
+        <!-- Brow line from the helmet to the ear -->
+        <path d="M334 338L548 252" />
+        <!-- Cheek guard and neck -->
+        <path d="M348 382L294 528M348 386C384 434 422 472 470 508" />
+        <!-- Collar -->
+        <path d="M168 548L472 722" />
+        <!-- Mouth and nostril -->
+        <path d="M540 528L580 548M592 492L610 506" />
+      </g>
+      <!-- Eye -->
+      <path d="M462 344L566 360L474 374Z" fill="#000" />
+    </mask>
+  </defs>
+  <path
+    mask="url(#cuts)"
+    fill="#c9bcaf"
+    d="M100 496C94 330 140 170 250 94C360 30 520 44 612 110L540 196L552 246C578 302 606 392 622 472C632 516 612 548 586 558L540 562C514 546 490 522 470 506L502 736L300 690L104 578L168 534L190 468L124 484Z"
+  />
+</svg>

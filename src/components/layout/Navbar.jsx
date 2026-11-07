@@ -133,7 +133,7 @@ const MobileMenu = ({ activeId, onNavigate }) => (
                 {...sectionLink(id)}
                 onClick={onNavigate}
                 aria-current={active ? 'true' : undefined}
-                className={`flex items-center rounded-xl px-3.5 py-3 font-display text-[0.9375rem] font-semibold transition-colors duration-200 ${
+                className={`flex items-center rounded-xl px-3.5 py-3 font-display text-[0.8125rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200 ${
                   active
                     ? 'bg-accent/15 text-accent-strong'
                     : 'text-stone-300 hover:bg-white/5 hover:text-white active:bg-white/8'

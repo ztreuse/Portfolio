@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { LuArrowUp, LuArrowUpRight } from 'react-icons/lu';
+import { LuArrowUp } from 'react-icons/lu';
 import Container from '../ui/Container';
-import IconButton from '../ui/IconButton';
-import { profile, socials } from '../../data/site';
+import Button from '../ui/Button';
+import { profile } from '../../data/site';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
 
 // The tagline's first sentence reads quiet, the rest bright.
@@ -48,54 +48,28 @@ const Footer = () => {
 
   return (
     <footer ref={ref} className="tone-light tone-screen relative z-10 overflow-hidden bg-ink">
-      {/* Same screen colour as Contact; just this divider (fading out toward both edges) separates them */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-accent/40 to-transparent"
-      />
+      {/* Same screen colour as Contact; just this divider, edge to edge, separates them */}
+      <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-accent/40" />
 
       <motion.div style={{ y: contentY, opacity: contentOpacity }}>
         <Container className="pt-20 sm:pt-28">
-          <div className="grid gap-12 md:grid-cols-12 md:items-end">
+          <div className="grid md:grid-cols-12">
             {/* Sign-off line */}
-            <p className="font-heading text-4xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance uppercase sm:text-5xl md:col-span-7 lg:text-6xl">
-              {taglineLead && <span className="text-stone-500">{taglineLead} </span>}
-              <span className="text-white">{taglineRest}</span>
+            <p className="font-heading text-4xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance uppercase sm:text-5xl md:col-span-9 lg:text-6xl">
+              {/* Each sentence starts its own line */}
+              {taglineLead && <span className="block text-stone-500">{taglineLead}</span>}
+              <span className="block text-white">{taglineRest}</span>
             </p>
 
-            {/* Profiles as a labelled list; each row's line fills taupe on hover */}
-            <nav aria-label="Profiles" className="md:col-span-4 md:col-start-9">
-              <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">Find me on</p>
-              <ul className="mt-3">
-                {socials.map(({ label, href }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative flex items-center justify-between border-b border-line py-4 font-display text-lg font-semibold text-stone-300 transition-colors duration-300 hover:text-white"
-                    >
-                      {label}
-                      <LuArrowUpRight
-                        aria-hidden
-                        className="size-5 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
-                      />
-                      <span
-                        aria-hidden
-                        className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
-                      />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
           </div>
 
           <div className="mt-16 flex items-center justify-between gap-4 text-sm text-stone-400 sm:mt-20">
             <p>
               &copy; {new Date().getFullYear()} {profile.name}. All rights reserved.
             </p>
-            <IconButton label="Back to top" icon={LuArrowUp} {...sectionLink('hero')} className="shrink-0" />
+            <Button variant="outline" icon={LuArrowUp} nudge="y" {...sectionLink('hero')} className="shrink-0">
+              Back to top
+            </Button>
           </div>
         </Container>
       </motion.div>

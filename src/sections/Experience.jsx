@@ -1,13 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
-  AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
+  useInView,
   useScroll,
-  useSpring,
-  useTransform,
   animate,
 } from 'motion/react';
 import Section from '../components/ui/Section';
@@ -26,11 +24,11 @@ const badgeIn = {
   visible: { opacity: 1, scale: 1, rotate: 0, transition: { duration: 0.8, ease: enterEase } },
 };
 
-/** Circular badge on the timeline: the organization's logo, or its initials as a fallback. */
+/** The organization's logo in a round badge, or its initials as a fallback. */
 const OrgBadge = ({ logo, initials, organization }) => (
   <motion.span
     variants={badgeIn}
-    className="absolute top-0 -left-6 flex size-12 items-center justify-center overflow-hidden rounded-full border border-line bg-surface ring-4 ring-surface shadow-[0_0_18px_-4px_rgb(159_143_129/0.5)]"
+    className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface shadow-[0_0_18px_-4px_rgb(159_143_129/0.5)]"
   >
     {logo ? (
       <img src={logo} alt={`${organization} logo`} className="size-full bg-white object-contain p-1" />
@@ -42,169 +40,87 @@ const OrgBadge = ({ logo, initials, organization }) => (
   </motion.span>
 );
 
-/** Track plus a taupe line that draws down it as the timeline scrolls past, led by a glowing tip. */
-const DrawnLine = ({ target }) => {
-  const { scrollYProgress } = useScroll({ target, offset: ['start 0.75', 'end 0.5'] });
-  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
-  const tipTop = useTransform(progress, (v) => `${v * 100}%`);
-
-  return (
-    <>
-      <span aria-hidden className="absolute inset-y-0 left-0 w-px bg-line" />
-      <motion.span
-        aria-hidden
-        style={{ scaleY: progress }}
-        className="absolute inset-y-0 left-0 w-px origin-top bg-linear-to-b from-accent/40 to-accent-strong"
-      />
-      <motion.span
-        aria-hidden
-        style={{ top: tipTop }}
-        className="absolute left-0 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-strong shadow-[0_0_14px_4px_rgb(201_188_175/0.55)]"
-      />
-    </>
-  );
-};
-
 /**
- * The pinned index beside the roles (lg and up): a big outlined year that changes as you move between roles, the
- * "01 / 03" count, and every role as a row (company, role, dates) with the one you're reading highlighted.
- * Clicking a row jumps to that role.
+ * One role as an editorial row, each detail shown once: on the left the big outlined start year; on the right the
+ * company (with its logo) and the dates on one line, the title large and the description as plain paragraphs. A hairline
+ * divides it from the row above. It plays in as it arrives: the year sharpens, the logo spins in and the rest rises
+ * one by one. Stacked on smaller screens.
  */
-const RoleIndex = ({ active }) => {
-  const current = experience[active];
-  return (
-    <div className="sticky top-32">
-      <div className="relative h-[clamp(6rem,10vw,9rem)]">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span
-            key={startYear(current.period)}
-            aria-hidden
-            initial={{ opacity: 0, y: '0.25em', filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: '-0.25em', filter: 'blur(8px)' }}
-            transition={{ duration: 0.6, ease: enterEase }}
-            className="absolute inset-x-0 top-0 font-heading text-[clamp(6rem,10vw,9rem)] leading-none font-black text-transparent [-webkit-text-stroke:1.5px_color-mix(in_oklab,var(--color-accent)_70%,transparent)]"
-          >
-            {startYear(current.period)}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-      <p className="mt-4 font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
-        <span className="text-white">{pad2(active + 1)}</span> / {pad2(experience.length)}
-      </p>
-      <ol className="mt-5 border-t border-white/10">
-        {experience.map(({ role, organization, period }, i) => (
-          <li key={role}>
-            <a
-              href={`#role-${i + 1}`}
-              className={`group relative block border-b border-white/10 py-4 pl-5 transition-colors duration-300 ${
-                i === active ? 'text-white' : 'text-stone-400 hover:text-stone-200'
-              }`}
-            >
-              {/* The active row's marker grows in */}
-              <span
-                aria-hidden
-                className={`absolute top-4 bottom-4 left-0 w-0.5 origin-top rounded-full bg-accent-strong transition-transform duration-500 ${
-                  i === active ? 'scale-y-100' : 'scale-y-0'
-                }`}
-              />
-              <span className="block font-heading text-xl leading-none font-extrabold tracking-[0.01em] uppercase">
-                {organization}
-              </span>
-              <span className="mt-1.5 block text-sm">{role}</span>
-              <span className="mt-1 block font-heading text-sm font-bold tracking-[0.16em] text-accent uppercase">
-                {period}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
-};
-
-/**
- * One role on the timeline. As it arrives, its logo spins in, its title and details rise in and its points follow
- * one by one. While another role is the one being read, it dims back so the eye follows the active one.
- */
-const RoleEntry = ({ entry, index, active, onActive }) => {
-  const ref = useRef(null);
+const RoleEntry = ({ entry, index }) => {
   const { role, organization, logo, initials, period, points } = entry;
-
-  // Active while it crosses the middle of the screen
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const observer = new IntersectionObserver(([e]) => e.isIntersecting && onActive(index), {
-      rootMargin: '-45% 0px -45% 0px',
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [index, onActive]);
+  const ref = useRef(null);
+  // The role being read: the one crossing the middle of the screen
+  const active = useInView(ref, { margin: '-50% 0px -50% 0px' });
 
   return (
     <RevealGroup
-      as="li"
       ref={ref}
+      as="li"
       id={`role-${index + 1}`}
       stagger={0.08}
-      className={`relative min-h-12 scroll-mt-32 pl-12 transition-opacity duration-500 ${
-        active ? 'opacity-100' : 'opacity-45'
-      }`}
+      className="grid scroll-mt-32 gap-6 border-t border-white/15 pt-10 lg:grid-cols-12 lg:gap-16"
     >
-      <OrgBadge logo={logo} initials={initials} organization={organization} />
-      <RevealItem as="p" className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
-        {/* The count lives in the pinned index on large screens */}
-        <span className="lg:hidden">
-          {pad2(index + 1)} / {pad2(experience.length)} ·{' '}
-        </span>
-        {period}
-      </RevealItem>
-      <RevealItem
-        as="h3"
-        className="mt-2 font-heading text-3xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance text-white uppercase sm:text-4xl lg:text-5xl"
-      >
-        {role}
-      </RevealItem>
-      <RevealItem as="p" className="mt-2 text-lg text-stone-300">
-        {organization}
-      </RevealItem>
-      {points.length > 0 && (
-        <ul className="mt-6 space-y-3 text-base leading-relaxed text-stone-400">
-          {points.map((point) => (
-            <RevealItem as="li" key={point} className="flex gap-3">
-              <span aria-hidden className="mt-2.5 size-1 shrink-0 rounded-full bg-accent" />
-              {point}
+      {/* The year rides along beside its role on wide screens, and fills in solid while that role is being read */}
+      <div className="lg:sticky lg:top-32 lg:col-span-4 lg:self-start">
+        <RevealItem
+          as="p"
+          aria-hidden
+          className={`font-heading text-[clamp(5rem,9vw,8rem)] leading-[0.85] font-black transition-[color,-webkit-text-stroke-color] duration-700 motion-reduce:transition-none [-webkit-text-stroke-width:1.5px] ${
+            active
+              ? 'text-accent-strong [-webkit-text-stroke-color:var(--color-accent-strong)]'
+              : 'text-transparent [-webkit-text-stroke-color:color-mix(in_oklab,var(--color-accent)_70%,transparent)]'
+          }`}
+        >
+          {startYear(period)}
+        </RevealItem>
+      </div>
+
+      <div className="lg:col-span-8">
+        {/* The role's own header: who and when on one line, so the dates clearly belong to this job */}
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <div className="flex items-center gap-4">
+            <OrgBadge logo={logo} initials={initials} organization={organization} />
+            <RevealItem as="p" className="text-lg font-medium text-stone-200">
+              {organization}
             </RevealItem>
-          ))}
-        </ul>
-      )}
+          </div>
+          <RevealItem
+            as="p"
+            className="rounded-full border border-accent/35 px-4 py-1.5 font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent-strong uppercase"
+          >
+            {period}
+            {experience.length > 1 && (
+              <span className="text-stone-400">
+                {' '}
+                · {pad2(index + 1)} / {pad2(experience.length)}
+              </span>
+            )}
+          </RevealItem>
+        </div>
+        <RevealItem
+          as="h3"
+          className="mt-5 font-heading text-3xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance text-white uppercase sm:text-4xl lg:text-5xl"
+        >
+          {role}
+        </RevealItem>
+        {points.map((point) => (
+          <RevealItem as="p" key={point} className="mt-5 max-w-2xl text-base leading-relaxed text-pretty text-stone-300">
+            {point}
+          </RevealItem>
+        ))}
+      </div>
     </RevealGroup>
   );
 };
 
-/**
- * Work experience, built to grow: on large screens a pinned index on the left (rolling year, count, every role)
- * beside the roles on a drawn line; on smaller screens just the line. New roles go in data/experience.js.
- */
-const Roles = () => {
-  const listRef = useRef(null);
-  const [active, setActive] = useState(0);
-
-  return (
-    <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-      <div className="hidden lg:col-span-4 lg:block">
-        <RoleIndex active={active} />
-      </div>
-      <ol ref={listRef} className="relative ml-6 space-y-24 lg:col-span-8 lg:ml-0">
-        <DrawnLine target={listRef} />
-        {experience.map((entry, i) => (
-          <RoleEntry key={entry.role} entry={entry} index={i} active={i === active} onActive={setActive} />
-        ))}
-      </ol>
-    </div>
-  );
-};
+/** Work experience, built to grow: one row per role, newest first. New roles go in data/experience.js. */
+const Roles = () => (
+  <ol className="space-y-16">
+    {experience.map((entry, i) => (
+      <RoleEntry key={entry.role} entry={entry} index={i} />
+    ))}
+  </ol>
+);
 
 /**
  * Inside the dimension: the owner's desk at night (their own setup, the same scene as the Contact film, graded to the

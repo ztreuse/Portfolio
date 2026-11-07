@@ -7,10 +7,6 @@ import { profile } from '../data/site';
 import { education } from '../data/experience';
 import profileImg from '../assets/images/profile.jpg';
 
-// The first sentence becomes the pull statement; the rest is the paragraph under it.
-const [statement, ...restOfAbout] = profile.about.split('. ');
-const aboutRest = restOfAbout.join('. ');
-
 const About = () => {
   // About rises over the pinned hero, so its content waits until the section has reached the top of the
   // screen (fills the page) instead of revealing while it's still sliding up. The marker covers the whole
@@ -27,9 +23,15 @@ const About = () => {
 
   return (
     <Section id="about" background={<span ref={marker} aria-hidden className="pointer-events-none absolute inset-0" />}>
-      <div className="grid items-center gap-12 md:grid-cols-12 lg:gap-16">
+      {/* Laid out like the other sections: the heading across the top, then the content on the grid under it */}
+      <SectionHeading eyebrow="02 — About" title="Get to know me" play={arrived} />
+
+      <div className="mt-12 grid gap-12 sm:mt-16 md:grid-cols-12 lg:gap-16">
         {/* Hovering twists the photo one way and swings the offset frame behind it the other way */}
-        <div ref={photo} className="group relative mx-auto w-full max-w-sm md:col-span-5 md:max-w-none">
+        <div
+          ref={photo}
+          className="group relative mx-auto w-full max-w-sm self-start md:col-span-5 md:max-w-none lg:col-span-4"
+        >
           <Reveal play={arrived} delay={0.45} y={0} className="absolute inset-0">
             <span
               aria-hidden
@@ -50,50 +52,46 @@ const About = () => {
           </RevealImage>
         </div>
 
-        <div className="md:col-span-7">
-          <SectionHeading eyebrow="02 — About" title="Get to know me" play={arrived} />
-          {/* Magazine-style: the opening line as a pull statement, the rest as body text */}
-          <Reveal
-            as="p"
-            play={arrived}
-            delay={0.3}
-            className="mt-8 border-l-2 border-accent pl-5 font-heading text-3xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance text-accent-strong uppercase sm:text-4xl lg:text-[2.75rem]"
-          >
-            {statement}.
-          </Reveal>
+        {/* As tall as the photo: the paragraph at its top, Education lined up with its bottom edge */}
+        <div className="flex flex-col justify-between gap-12 md:col-span-7 lg:col-span-8">
           <Reveal
             as="p"
             play={arrived}
             delay={0.45}
-            className="mt-6 text-base leading-relaxed text-stone-300 sm:text-lg"
+            className="max-w-2xl text-base leading-relaxed text-pretty text-stone-300"
           >
-            {aboutRest}
+            {profile.about}
           </Reveal>
 
-          {/* Education, compact: one entry doesn't need a timeline of its own */}
+          {/* Education, built like an Experience row: school and dates on one line, the degree, then the honours */}
           {education.map(({ role, organization, logo, initials, period, points }) => (
-            <Reveal key={role} play={arrived} delay={0.6} className="mt-10 flex gap-5 border-t border-white/10 pt-6">
-              <span className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface">
-                {logo ? (
-                  <img src={logo} alt={`${organization} logo`} className="size-full bg-white object-contain p-1" />
-                ) : (
-                  <span aria-hidden className="font-display text-xs font-bold text-accent-strong">
-                    {initials}
+            <Reveal key={role} play={arrived} delay={0.6} className="border-t border-white/15 pt-8">
+              <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">Education</p>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+                <div className="flex items-center gap-4">
+                  <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface shadow-[0_0_18px_-4px_rgb(159_143_129/0.5)]">
+                    {logo ? (
+                      <img src={logo} alt={`${organization} logo`} className="size-full bg-white object-contain p-1" />
+                    ) : (
+                      <span aria-hidden className="font-display text-xs font-bold text-accent-strong">
+                        {initials}
+                      </span>
+                    )}
                   </span>
-                )}
-              </span>
-              <div>
-                <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
-                  Education · {period}
+                  <p className="text-lg font-medium text-stone-200">{organization}</p>
+                </div>
+                <p className="rounded-full border border-accent/35 px-4 py-1.5 font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent-strong uppercase">
+                  {period}
                 </p>
-                <h3 className="mt-1.5 font-heading text-xl leading-[0.95] font-extrabold tracking-[0.01em] text-white uppercase sm:text-2xl">
-                  {role}
-                </h3>
-                <p className="mt-1 text-stone-300">{organization}</p>
-                {points.length > 0 && (
-                  <p className="mt-2 text-sm leading-relaxed text-stone-400">{points.join(' ')}</p>
-                )}
               </div>
+              <h3 className="mt-5 font-heading text-2xl leading-[0.95] font-extrabold tracking-[0.01em] text-balance text-white uppercase sm:text-3xl">
+                {role}
+              </h3>
+              {points.length > 0 && (
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-pretty text-stone-300">
+                  {points.join(' ')}
+                </p>
+              )}
             </Reveal>
           ))}
         </div>

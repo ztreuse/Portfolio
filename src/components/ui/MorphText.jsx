@@ -6,6 +6,8 @@ const PAD = 0.25;
 // How many recent cursor points bend the letters (a short trail), and how fast each one's pull fades.
 const POINTS = 24;
 const FADE = 0.94;
+// How long the cursor must be still on the name before the distortion freezes in place (ms)
+const IDLE = 120;
 
 const VERTEX = `
 attribute vec2 aPos;
@@ -43,8 +45,8 @@ void main() {
     if (pt.z <= 0.0) continue;
     vec2 d = q - pt.xy;
     float f = exp(-dot(d, d) / (uRadius * uRadius)) * pt.z;
-    // Twist around the point
-    float a = f * 1.8;
+    // Twist around the point (strong, so the strokes swirl; it was 1.8)
+    float a = f * 3.0;
     d = mat2(cos(a), -sin(a), sin(a), cos(a)) * d;
     q = pt.xy + d;
     // Smear along the stroke
@@ -58,7 +60,9 @@ void main() {
 
 /**
  * Liquid letters: when the mouse touches the hero name, the strokes near it bend, smear along the movement, twist
- * and wobble into abstract shapes, then flow back into crisp letters about a second after it stops.
+ * and wobble into abstract shapes. When the cursor stops on the name, the distortion freezes exactly as it is (no
+ * fading, no wobble); the letters flow back into crisp shape about a second after the cursor leaves the name (or
+ * the page scrolls).
  *
  * A WebGL canvas over the name draws the words itself (same font, colours, letter spacing and laid-out positions)
  * and warps them. It's only shown while the letters are bent: then the real words are made transparent (they stay
@@ -129,6 +133,14 @@ const MorphText = ({ fit }) => {
     let frame = 0;
     let last = null;
     let hidden = false;
+    // True while the cursor is over the name. Once it has also been still for a moment (IDLE ms), the whole
+    // distortion freezes exactly as it is: nothing fades and the wobble stops, until the cursor moves again, leaves
+    // the name or the page scrolls
+    let holding = false;
+    let lastMove = 0;
+    // The wobble's own clock, which stands still while frozen (so the shape doesn't move on its own)
+    let clock = 0;
+    let prevTime = null;
 
     const words = () => [...box.querySelectorAll('[data-morph-word]')];
 
@@ -193,6 +205,14 @@ const MorphText = ({ fit }) => {
     };
 
     const render = (time) => {
+      const dt = prevTime === null ? 0 : time - prevTime;
+      prevTime = time;
+      // Resting on the name: keep the last drawing as it is and just wait
+      if (holding && time - lastMove > IDLE) {
+        frame = requestAnimationFrame(render);
+        return;
+      }
+      clock += dt;
       for (const p of points) p.s *= FADE;
       while (points.length && points[0].s < 0.01) points.shift();
       pointData.fill(0);
@@ -202,7 +222,7 @@ const MorphText = ({ fit }) => {
         velData.set([p.vx, p.vy], i * 2);
       });
       gl.uniform2f(uSize, width, height);
-      gl.uniform1f(uTime, time / 1000);
+      gl.uniform1f(uTime, clock / 1000);
       gl.uniform1f(uRadius, radius);
       gl.uniform4fv(uPoint, pointData);
       gl.uniform2fv(uVel, velData);
@@ -214,6 +234,7 @@ const MorphText = ({ fit }) => {
         frame = requestAnimationFrame(render);
       } else {
         frame = 0;
+        prevTime = null;
         setHidden(false);
       }
     };
@@ -228,6 +249,9 @@ const MorphText = ({ fit }) => {
       const y = (event.clientY - rect.top) / scale;
       const prev = last;
       last = { x, y };
+      // Over the name itself (not the padding around it)
+      holding = x > pad && y > pad && x < width - pad && y < height - pad;
+      lastMove = performance.now();
       if (!prev || x < 0 || y < 0 || x > width || y > height) return;
       const vx = x - prev.x;
       const vy = y - prev.y;
@@ -244,6 +268,11 @@ const MorphText = ({ fit }) => {
     };
     const leave = () => {
       last = null;
+      holding = false;
+    };
+    // Scrolling moves the name away from a resting cursor, so let the bend flow back
+    const release = () => {
+      holding = false;
     };
 
     build();
@@ -253,8 +282,10 @@ const MorphText = ({ fit }) => {
     observer.observe(box);
     window.addEventListener('pointermove', move, { passive: true });
     document.addEventListener('pointerleave', leave);
+    window.addEventListener('scroll', release, { passive: true });
 
     return () => {
+      window.removeEventListener('scroll', release);
       cancelAnimationFrame(frame);
       setHidden(false);
       observer.disconnect();

@@ -8,6 +8,7 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
+import { LuDownload } from 'react-icons/lu';
 import Container from '../ui/Container';
 import SocialIcon from '../ui/SocialIcon';
 import useActiveSection from '../../hooks/useActiveSection';
@@ -116,10 +117,14 @@ const MobileMenu = ({ activeId, onNavigate }) => (
     initial="hidden"
     animate="visible"
     exit="exit"
-    className="absolute top-full right-3 mt-2 w-64 origin-top-right rounded-2xl border border-line bg-ink/95 p-2 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06),0_24px_60px_-20px_rgb(0_0_0/0.9),0_0_40px_-14px_rgb(159_143_129/0.4)] backdrop-blur-xl sm:right-6 lg:hidden"
+    className="absolute top-full right-3 mt-2 w-80 origin-top-right rounded-2xl border border-line bg-ink/95 p-2.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06),0_24px_60px_-20px_rgb(0_0_0/0.9),0_0_40px_-14px_rgb(159_143_129/0.4)] backdrop-blur-xl sm:right-6 lg:hidden"
   >
     <nav aria-label="Mobile">
-      <ul>
+      {/* Clean rows, normal case and no dividers, in the navbar's Manrope; the current section is a soft taupe-tinted
+          box with taupe text, hover a faint tint (after a reference the owner found cleaner). Rejected: hairlines on
+          every row ("like a notepad"), a filled taupe pill, a dash, a grey box with a glowing bar on its edge, and
+          26px Big Shoulders links (too big and off-font) */}
+      <ul className="space-y-0.5">
         {navLinks.map(({ id, label }) => {
           const active = activeId === id;
           return (
@@ -128,16 +133,12 @@ const MobileMenu = ({ activeId, onNavigate }) => (
                 {...sectionLink(id)}
                 onClick={onNavigate}
                 aria-current={active ? 'true' : undefined}
-                className={`relative flex items-center rounded-xl px-4 py-2.5 font-heading text-lg font-bold tracking-[0.12em] uppercase transition-colors duration-200 ${
-                  active ? 'bg-white/[0.06] text-white' : 'text-stone-400 hover:bg-white/[0.04] hover:text-white'
+                className={`flex items-center rounded-xl px-3.5 py-3 font-display text-[0.9375rem] font-semibold transition-colors duration-200 ${
+                  active
+                    ? 'bg-accent/15 text-accent-strong'
+                    : 'text-stone-300 hover:bg-white/5 hover:text-white active:bg-white/8'
                 }`}
               >
-                {active && (
-                  <span
-                    aria-hidden
-                    className="absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_10px_2px_rgb(159_143_129/0.6)]"
-                  />
-                )}
                 {label}
               </a>
             </motion.li>
@@ -146,16 +147,28 @@ const MobileMenu = ({ activeId, onNavigate }) => (
       </ul>
     </nav>
 
-    <motion.ul
-      variants={menuItemVariants}
-      className="mt-2 flex justify-center gap-2 border-t border-line px-2 pt-3 pb-1"
-    >
-      {socials.map((social) => (
-        <li key={social.label}>
-          <SocialIcon {...social} />
-        </li>
-      ))}
-    </motion.ul>
+    {/* One divider, then the profiles and a résumé shortcut under a small label */}
+    <motion.div variants={menuItemVariants} className="mx-1 mt-2 border-t border-line px-2.5 pt-3 pb-1">
+      <p className="font-display text-[0.6875rem] font-bold tracking-[0.14em] text-stone-400 uppercase">Connect</p>
+      <div className="mt-2.5 flex items-center justify-between gap-2">
+        <ul className="flex gap-2">
+          {socials.map((social) => (
+            <li key={social.label}>
+              <SocialIcon {...social} />
+            </li>
+          ))}
+        </ul>
+        <a
+          href={profile.resume}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/20 py-2 pr-3 pl-3.5 font-display text-sm font-semibold text-stone-200 transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink"
+        >
+          Résumé
+          <LuDownload aria-hidden className="size-4" />
+        </a>
+      </div>
+    </motion.div>
   </motion.div>
 );
 
@@ -304,14 +317,14 @@ const Navbar = ({ ready = true }) => {
                     <a
                       {...sectionLink(id)}
                       aria-current={active ? 'true' : undefined}
-                      className={`group/link grid justify-items-center px-3 py-2 font-heading text-[15px] font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
+                      className={`group/link grid justify-items-center px-3 py-2 font-display text-[0.8125rem] font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
                         active ? 'text-white' : 'text-stone-400'
                       }`}
                     >
-                      <span aria-hidden className="invisible tracking-[0.2em] [grid-area:1/1]">
+                      <span aria-hidden className="invisible tracking-[0.17em] [grid-area:1/1]">
                         {label}
                       </span>
-                      <span className="tracking-[0.14em] transition-[letter-spacing] duration-300 ease-out [grid-area:1/1] group-hover/link:tracking-[0.2em] group-focus-visible/link:tracking-[0.2em] motion-reduce:transition-none">
+                      <span className="tracking-[0.12em] transition-[letter-spacing] duration-300 ease-out [grid-area:1/1] group-hover/link:tracking-[0.17em] group-focus-visible/link:tracking-[0.17em] motion-reduce:transition-none">
                         {label}
                       </span>
                     </a>

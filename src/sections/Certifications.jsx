@@ -159,7 +159,7 @@ const CertificationCard = ({ cert, number, isActive }) => (
         {number}
       </span>
       <div className="relative">
-        <motion.p variants={playIn} className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
+        <motion.p variants={playIn} className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">
           Issued by {cert.issuer}
         </motion.p>
         <motion.h3

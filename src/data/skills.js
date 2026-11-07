@@ -1,4 +1,4 @@
-import { LuClipboardCheck, LuNetwork, LuShieldCheck, LuSwatchBook } from 'react-icons/lu';
+import { LuSwatchBook } from 'react-icons/lu';
 import html5 from '../assets/brand-logos/html5.svg';
 import css3 from '../assets/brand-logos/css3.svg';
 import javascript from '../assets/brand-logos/javascript.svg';
@@ -36,6 +36,12 @@ import claude from '../assets/brand-logos/claude.svg';
 import cplusplus from '../assets/brand-logos/cplusplus.svg';
 import java from '../assets/brand-logos/java.svg';
 import threejs from '../assets/brand-logos/threejs.svg';
+import laravel from '../assets/brand-logos/laravel.svg';
+import sqlite from '../assets/brand-logos/sqlite.svg';
+import vite from '../assets/brand-logos/vitejs.svg';
+import cisco from '../assets/brand-logos/cisco.svg';
+import ccst from '../assets/brand-logos/ccst.svg';
+import pmi from '../assets/brand-logos/pmi.svg';
 
 // Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
 // show on the dark theme). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
@@ -73,7 +79,9 @@ const skillGroups = [
       { name: 'PHP', description: 'Server-side language', logo: php, color: '#777BB4' },
       { name: 'Node.js', description: 'JavaScript runtime', logo: nodejs, color: '#5FA04E' },
       { name: 'CodeIgniter', description: 'PHP framework', logo: codeigniter, color: '#EF4223' },
+      { name: 'Laravel', description: 'PHP framework', logo: laravel, color: '#FF2D20' },
       { name: 'PostgreSQL', description: 'Relational database', logo: postgresql, color: '#4169E1' },
+      { name: 'SQLite', description: 'Embedded database', logo: sqlite, color: '#0F80CC' },
       { name: 'Firebase', description: 'Backend platform', logo: firebase, color: '#FFCA28' },
       { name: 'Supabase', description: 'Postgres backend', logo: supabase, color: '#3ECF8E' },
       { name: 'Swagger UI', description: 'API documentation', logo: swagger, color: '#85EA2D' },
@@ -85,6 +93,7 @@ const skillGroups = [
       { name: 'VS Code', description: 'Code editor', logo: vscode, color: '#007ACC' },
       { name: 'Git', description: 'Version control', logo: git, color: '#F05032' },
       { name: 'GitHub', description: 'Code hosting', logo: github, color: '#FFFFFF' },
+      { name: 'Vite', description: 'Build tool', logo: vite, color: '#646CFF' },
       { name: 'Vercel', description: 'Deployment & hosting', logo: vercel, color: '#FFFFFF' },
       { name: 'Claude', description: 'AI-assisted development', logo: claude, color: '#D97757' },
     ],
@@ -101,9 +110,9 @@ const skillGroups = [
     // Areas backed by certifications rather than claimed expertise.
     title: 'Certified Foundations',
     items: [
-      { name: 'Networking', description: 'Cisco CCNA', icon: LuNetwork, color: '#049FD9' },
-      { name: 'Cybersecurity', description: 'CCST, CyberOps', icon: LuShieldCheck, color: '#10B981' },
-      { name: 'Project Management', description: 'PMI certified', icon: LuClipboardCheck, color: '#F97316' },
+      { name: 'Networking', description: 'Cisco CCNA', logo: cisco, wide: true, color: '#00BCEB' },
+      { name: 'Cybersecurity', description: 'CCST, CyberOps', logo: ccst, wide: true, color: '#1B8AA0' },
+      { name: 'Project Management', description: 'PMI certified', logo: pmi, color: '#FF610F' },
     ],
   },
   {

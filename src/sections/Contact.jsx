@@ -1,12 +1,22 @@
 import { useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import emailjs from '@emailjs/browser';
-import { LuArrowRight, LuCheck, LuCircleAlert, LuCircleCheck, LuCopy, LuLoaderCircle } from 'react-icons/lu';
+import {
+  LuArrowRight,
+  LuArrowUpRight,
+  LuCheck,
+  LuCircleAlert,
+  LuCircleCheck,
+  LuCopy,
+  LuLoaderCircle,
+  LuMail,
+  LuPhone,
+} from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Section from '../components/ui/Section';
 import Reveal from '../components/ui/Reveal';
 import ContactFilm from './ContactFilm';
-import { emailjsConfig, profile } from '../data/site';
+import { emailjsConfig, profile, socials } from '../data/site';
 
 const [emailUser, emailDomain] = profile.email.split('@');
 
@@ -23,9 +33,13 @@ const statusMessages = {
   },
 };
 
-// Underline-only inputs: no boxes, just a line that warms to taupe on focus.
+// Outlined inputs (16px text like the Experience bullets; 14px like the Skills chips looked too small to the owner,
+// rounded-lg like the chips): a transparent box with a thin taupe
+// border that strengthens on hover and focus (the owner asked for boxes instead of underlines, then for no fill, which
+// looked like a generic form). Autofill: browsers paint their own white or blue fill on autofilled fields, so an inset
+// shadow in the page colour covers it and the text keeps its colour.
 const inputClass =
-  'w-full border-0 border-b border-line bg-transparent px-0 pt-2 pb-3 text-base text-white placeholder:text-stone-500 transition-colors outline-none focus:border-accent sm:text-lg';
+  'mt-2.5 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-accent/70 focus:border-accent-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
 
 /**
  * One conversational form field ("What's your name?").
@@ -33,7 +47,7 @@ const inputClass =
  */
 const Field = ({ label, name, as: Control = 'input', className = '', ...props }) => (
   <label className={`group block ${className}`}>
-    <span className="font-heading text-base font-bold tracking-[0.16em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
+    <span className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
       {label}
     </span>
     <Control name={name} className={inputClass} required {...props} />
@@ -97,8 +111,47 @@ const CopyEmail = () => {
 };
 
 /**
- * Contact: on the left, the direct line (email large in the display font, copy button, phone underneath); on the
- * right, a minimal form with underline inputs and a pill send button.
+ * One way to reach me: a round taupe icon badge, a small label over the value, and on the right either an action (the
+ * copy button) or an arrow for links that leave the site. The row's divider fills taupe from the left on hover, like
+ * the footer's old "Find me on" rows, which moved here (the owner found them redundant beside these).
+ */
+const ContactRow = ({ icon: Icon, label, href, external = false, action, children }) => (
+  <li className="group relative flex items-center gap-3 border-b border-line">
+    <a
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="flex min-w-0 flex-1 items-center gap-4 py-3.5"
+    >
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent-strong transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+        <Icon aria-hidden className="size-4" />
+      </span>
+      <span className="min-w-0">
+        {label && (
+          <span className="block font-display text-[0.8125rem] font-bold tracking-[0.14em] text-stone-400 uppercase">
+            {label}
+          </span>
+        )}
+        <span className="block font-display text-base font-semibold break-words text-white">{children}</span>
+      </span>
+    </a>
+    {action ??
+      (external && (
+        <LuArrowUpRight
+          aria-hidden
+          className="size-5 shrink-0 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
+        />
+      ))}
+    <span
+      aria-hidden
+      className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
+    />
+  </li>
+);
+
+/**
+ * Contact: on the left, every way to reach me as one list (email with a copy button, phone, LinkedIn, GitHub,
+ * JobStreet); on the right, a minimal form with outlined inputs and a pill send button. Both columns start at the
+ * same line.
  */
 const Contact = () => {
   const formRef = useRef(null);
@@ -134,32 +187,28 @@ const Contact = () => {
         className="tone-light tone-screen bg-ink"
         title="Let's work together"
       >
-        <div className="grid gap-14 lg:grid-cols-12 lg:items-center lg:gap-16">
-          {/* Direct line */}
+        <div className="grid gap-14 lg:grid-cols-12 lg:items-start lg:gap-16">
+          {/* Every way to reach me, as one list: email (with a copy button), phone and the profiles */}
           <Reveal x={-32} y={0} className="lg:col-span-5">
-            <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">
+            <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">
               Reach me directly
             </p>
-            <div className="mt-4 flex items-center gap-3">
-              <a
-                href={`mailto:${profile.email}`}
-                className="group min-w-0 font-display text-lg font-semibold text-white sm:text-xl"
-              >
-                <span className="bg-linear-to-r from-accent-strong to-accent-strong bg-size-[0%_2px] bg-bottom-left bg-no-repeat pb-1 transition-[background-size] duration-500 group-hover:bg-size-[100%_2px]">
-                  {/* If it must wrap (narrow phones), it breaks right after the @ */}
-                  {emailUser}@<wbr />
-                  {emailDomain}
-                </span>
-              </a>
-              <CopyEmail />
-            </div>
-            <a
-              href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}
-              className="mt-5 inline-flex items-center gap-3 text-stone-300 transition-colors hover:text-white"
-            >
-              <span className="font-heading text-base font-bold tracking-[0.16em] text-stone-400 uppercase">Phone</span>
-              {profile.phone}
-            </a>
+            <ul className="mt-3">
+              <ContactRow icon={LuMail} label="Email" href={`mailto:${profile.email}`} action={<CopyEmail />}>
+                {/* If it must wrap (narrow phones), it breaks right after the @ */}
+                {emailUser}@<wbr />
+                {emailDomain}
+              </ContactRow>
+              <ContactRow icon={LuPhone} label="Phone" href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}>
+                {profile.phone}
+              </ContactRow>
+              {/* Profiles show just the platform's name (the owner removed the handles: "Troy Bay", "ztreuse") */}
+              {socials.map(({ label, href, icon }) => (
+                <ContactRow key={label} icon={icon} href={href} external>
+                  {label}
+                </ContactRow>
+              ))}
+            </ul>
           </Reveal>
 
           {/* Form */}
@@ -172,22 +221,22 @@ const Contact = () => {
             onSubmit={handleSubmit}
             className="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:col-span-7"
           >
-            <Field label="What's your name?" name="user_name" placeholder="Your full name" autoComplete="name" />
+            <Field label="Name" name="user_name" placeholder="Your full name" autoComplete="name" />
             <Field
-              label="Your email"
+              label="Email"
               name="user_email"
               type="email"
               placeholder="Where can I reply?"
               autoComplete="email"
             />
             <Field
-              label="What's it about?"
+              label="Subject"
               name="subject"
               placeholder="A front-end role, a project, a quick hello…"
               className="sm:col-span-2"
             />
             <Field
-              label="Your message"
+              label="Message"
               name="message"
               as="textarea"
               rows={4}

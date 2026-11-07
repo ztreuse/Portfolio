@@ -8,39 +8,101 @@ const smooth = (x) => x * x * (3 - 2 * x);
 
 /**
  * Flood entrance, part one: one giant word in crema floats on the page's own smoky background (no box of its own,
- * so the smoke runs straight on from the hero). It fades up and sharpens as it arrives, then stays pinned for a
- * screen while the band (pulled up over that screen) rises over it with its wavy crema edge (`WaveEdge`), so the
- * projects come up together with the crema instead of after it. The word drifts up a little slower than the band,
- * so it climbs over it. Reverses going back up. It replaced a zoom into the "O" (up to 14x over two screens), which a
- * classmate found dizzying, and then two flooding layers that filled the whole screen before the content came.
+ * so the smoke runs straight on from the hero). It fades up and sharpens as it arrives and holds still while the
+ * band (pulled up over the runway's last screen) rises with its wavy crema edge (`WaveEdge`). Where the crema has
+ * reached it the word turns to ink, as if dipped in it. Then, as the section's heading comes up with the crema, the
+ * word shrinks and flies onto that heading's own copy of the word ("WORK" of "Selected work") and hands over to it,
+ * so the big word becomes the title instead of being covered. Scroll-scrubbed, so it all reverses going back up.
+ * It replaced the word being covered by the crema (a navbar trip made that sharp: fast, frozen, fast), a zoom into
+ * the "O" (dizzying, said a classmate) and two flooding layers that filled the screen before the content came.
  * `section` is the id of the section it leads into, so the navbar highlights that one during the stretch.
  */
 const Flood = ({ word, section }) => {
   const runway = useRef(null);
-  const { scrollYProgress } = useScroll({ target: runway, offset: ['start start', 'end end'] });
+  const layer = useRef(null);
+  const text = useRef(null);
   // The word's arrival, over the screen of scrolling before it pins
   const { scrollYProgress: arrival } = useScroll({ target: runway, offset: ['start end', 'start start'] });
-
   const enter = (p) => clamp01((p - 0.35) / 0.5);
   const wordOpacity = useTransform(arrival, (p) => enter(p));
   const wordBlur = useTransform(arrival, (p) => `blur(${(1 - enter(p)) * 12}px)`);
-  const wordY = useTransform([arrival, scrollYProgress], ([a, p]) => `${(1 - enter(a)) * 6 - 16 * p}svh`);
+  const wordY = useTransform(arrival, (a) => `${(1 - enter(a)) * 6}svh`);
+
+  // Every scroll frame: fly the word onto the heading's word as that comes up with the crema
+  const { scrollY } = useScroll();
+  const place = () => {
+    const w = text.current;
+    if (!w || !layer.current) return;
+    const vh = window.innerHeight;
+    const target = document.querySelector(`#${section} [data-word="${word.toLowerCase()}"]`);
+    // The flight: 0 as the heading's word comes up from the bottom of the screen, 1 when it's 30% down; then the
+    // real heading takes over
+    const t = target?.getBoundingClientRect();
+    const q = t ? clamp01((vh - t.top) / (vh * 0.7)) : 0;
+    const landed = q >= 1;
+    layer.current.style.visibility = landed ? 'hidden' : '';
+    if (target) {
+      target.style.visibility = landed ? '' : 'hidden';
+      // The heading's other words ("Selected") wait, then fade in beside it as it lands, so the big word never
+      // runs into them. Through the colour's alpha: their opacity belongs to the heading's reveal animation.
+      const ink = getComputedStyle(target.parentElement)
+        .color.match(/[\d.]+/g)
+        .slice(0, 3)
+        .join(' ');
+      const alpha = landed ? null : clamp01((q - 0.65) / 0.35);
+      target.parentElement.querySelectorAll('[data-word]').forEach((other) => {
+        if (other !== target) other.style.color = alpha === null ? '' : `rgb(${ink} / ${alpha})`;
+      });
+    }
+    const e = smooth(q);
+    // Its layout box (transforms don't move it), in screen coordinates: the layer is fixed at the top left
+    const scale = t ? 1 + (t.height / w.offsetHeight - 1) * e : 1;
+    const dx = t ? (t.left - w.offsetLeft) * e : 0;
+    const dy = t ? (t.top - w.offsetTop) * e : 0;
+    w.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
+  };
+  useMotionValueEvent(scrollY, 'change', place);
+  useLayoutEffect(() => {
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  });
+  // Give the heading's words back if this ever unmounts
+  useEffect(
+    () => () => {
+      const target = document.querySelector(`#${section} [data-word="${word.toLowerCase()}"]`);
+      if (!target) return;
+      target.style.visibility = '';
+      target.parentElement.querySelectorAll('[data-word]').forEach((other) => (other.style.color = ''));
+    },
+    [section, word],
+  );
 
   return (
-    <div ref={runway} aria-hidden data-section-of={section} className="relative h-[200svh]">
-      <div className="sticky top-0 h-svh overflow-hidden">
-        <motion.div style={{ opacity: wordOpacity, filter: wordBlur, y: wordY }} className="absolute inset-0">
-          <svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" className="size-full overflow-visible">
-            <text
-              x="500"
-              y="300"
-              textAnchor="middle"
-              dominantBaseline="central"
-              className="fill-crema font-heading text-[330px] font-black uppercase"
-            >
-              {word}
-            </text>
-          </svg>
+    <div ref={runway} aria-hidden data-section-of={section} className="relative h-[230svh]">
+      {/* A navbar glide into the section goes through the whole thing at one calm, steady pace (from the word's
+          arrival until it has landed on the heading), instead of rushing it. Rejected before: stopping dead on the
+          word for a second, then a quick flood (fast, frozen, fast) */}
+      <div
+        data-slow-glide="1.8"
+        data-slow-between={`hero ${section}`}
+        className="pointer-events-none absolute inset-x-0 -top-[65svh] h-[310svh]"
+      />
+      {/* Fixed, above the rising band, so the word stays on top of the crema while it flies to the heading. It's
+          blended with `difference`, so it shows light over the dark page and dark wherever the crema is behind it,
+          following the wave's exact edge, as if dipped in it. Its colour is crema minus the band's ink (#e6ddd2 -
+          #1a1714), so over the crema it comes out exactly the heading's ink and the hand-off doesn't show. */}
+      <div ref={layer} className="pointer-events-none fixed inset-0 z-20 mix-blend-difference">
+        <motion.div
+          style={{ opacity: wordOpacity, filter: wordBlur, y: wordY }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          <span
+            ref={text}
+            className="inline-block origin-top-left font-heading text-[min(34vw,60svh)] leading-[0.88] font-black tracking-[0.005em] text-[#ccc6be] uppercase"
+          >
+            {word}
+          </span>
         </motion.div>
       </div>
     </div>
@@ -102,7 +164,12 @@ const WaveEdge = ({ bottom = false }) => {
       >
         <path ref={shadowPath} d={stratum(5.1, 0, -0.9)} className="fill-espresso/35" />
       </svg>
-      <svg viewBox="0 0 2000 1000" preserveAspectRatio="none" style={sway} className="absolute inset-0 size-full animate-sway">
+      <svg
+        viewBox="0 0 2000 1000"
+        preserveAspectRatio="none"
+        style={sway}
+        className="absolute inset-0 size-full animate-sway"
+      >
         <path ref={path} d={stratum(5.1, 0, -0.9)} className="fill-crema" />
       </svg>
     </div>
@@ -193,9 +260,7 @@ const LightsDown = ({ bg, section, flyTo, children }) => {
   return (
     <div ref={box}>
       <div ref={content} style={{ top }} className="sticky">
-        <motion.div style={{ opacity, scale, transformOrigin: origin }}>
-          {children}
-        </motion.div>
+        <motion.div style={{ opacity, scale, transformOrigin: origin }}>{children}</motion.div>
       </div>
       {/* Counts as part of the section for the navbar */}
       <div aria-hidden data-section-of={section} className="h-[65svh]" />
@@ -267,8 +332,9 @@ const CremaBand = ({ flood, hold, landingFor, lightsDown, waveOut, tuck, childre
           )}
         </div>
       </div>
-      {/* Room for the wave hanging off the bottom, so a link landing on the next section never shows its edge */}
-      {waveOut && !reduceMotion && <div aria-hidden className="h-[30svh]" />}
+      {/* Room for the wave hanging off the bottom, so a link landing on the next section never shows its edge. It
+          still counts as this band's section for the navbar (unclaimed, the pinned hero won and it read "Home") */}
+      {waveOut && !reduceMotion && <div aria-hidden data-section-of={landingFor} className="h-[30svh]" />}
     </div>
   );
 };

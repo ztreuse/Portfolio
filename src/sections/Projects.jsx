@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { LuArrowUpRight, LuChevronLeft, LuChevronRight, LuLayoutGrid, LuList } from 'react-icons/lu';
+import { LuArrowUpRight, LuChevronDown, LuChevronLeft, LuChevronRight, LuLayoutGrid, LuList } from 'react-icons/lu';
 import IconButton from '../components/ui/IconButton';
 import Section from '../components/ui/Section';
 import Reveal, { RevealGroup, RevealItem } from '../components/ui/Reveal';
@@ -52,29 +52,60 @@ const MoreText = ({ text, className = '' }) => {
       <p ref={ref} className={`${className} ${expanded ? '' : 'line-clamp-3'}`}>
         {text}
       </p>
+      {/* A control of its own (a small outlined pill with a chevron that flips), not a line of text: as a bare
+          uppercase label it read as part of the description */}
       {(overflows || expanded) && (
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="relative z-10 mt-2 font-heading text-sm font-bold tracking-[0.16em] text-accent-strong uppercase underline-offset-4 transition-colors hover:text-white hover:underline"
+          className="relative z-10 mt-4 inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 py-1.5 pr-2.5 pl-3.5 font-display text-[0.8125rem] font-bold tracking-[0.12em] text-stone-300 uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink"
         >
           {expanded ? 'Show less' : 'Show more'}
+          <LuChevronDown
+            aria-hidden
+            className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${expanded ? 'rotate-180' : ''}`}
+          />
         </button>
       )}
     </>
   );
 };
 
-/** Role, name and description, plus the link; used by the list row. */
-const ProjectInfo = ({ project, alignRight = false }) => (
-  <div className={`flex flex-col ${alignRight ? 'md:items-end md:text-right' : ''}`}>
-    <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">{project.role}</p>
-    <h3 className="mt-2 font-heading text-2xl leading-[0.95] font-extrabold tracking-[0.01em] text-white uppercase sm:text-3xl">
-      {project.name}
-    </h3>
-    <MoreText text={project.description} className="mt-3 leading-relaxed text-stone-400" />
-    <ViewLink project={project} className="mt-6" />
+/**
+ * What a project was built with, as small outlined chips like the Skills chips (text only: several brand logos are
+ * white versions that vanish on the crema). Shown in the list view, which is the detailed one; the grid stays clean.
+ */
+const StackList = ({ tools, className = '' }) => (
+  <ul aria-label="Built with" className={`flex flex-wrap gap-1.5 ${className}`}>
+    {tools.map((tool) => (
+      <li key={tool} className="rounded-lg border border-white/15 px-2.5 py-1 text-sm text-stone-300">
+        {tool}
+      </li>
+    ))}
+  </ul>
+);
+
+/**
+ * Number and role, the name beside its arrow link (like the grid's caption), the description and the stack; used
+ * by the list row. Always left-aligned: rows that alternated to right-aligned paragraphs were hard to read.
+ */
+const ProjectInfo = ({ project, number }) => (
+  <div className="flex flex-col">
+    <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">
+      <span className="tabular-nums">{number}</span> — {project.role}
+    </p>
+    <div className="mt-3 flex items-end justify-between gap-5">
+      <h3 className="font-heading text-4xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-hover:translate-x-2 group-hover:text-accent-strong motion-reduce:translate-x-0 sm:text-5xl">
+        {project.name}
+      </h3>
+      <ViewLink
+        project={project}
+        className="shrink-0 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
+      />
+    </div>
+    <MoreText text={project.description} className="mt-4 text-base leading-relaxed text-pretty text-stone-300" />
+    <StackList tools={project.tools} className="mt-5" />
   </div>
 );
 
@@ -165,7 +196,7 @@ const ProjectCard = ({ project, number }) => {
         <span aria-hidden className="relative h-px min-w-8 flex-1 bg-line">
           <span className="absolute inset-0 origin-left scale-x-0 bg-accent transition-transform duration-700 ease-out group-hover:scale-x-100 motion-reduce:transition-none" />
         </span>
-        <p className="max-w-[65%] text-right font-heading text-sm leading-snug font-bold tracking-[0.16em] text-accent uppercase">
+        <p className="max-w-[65%] text-right font-display text-[0.8125rem] leading-snug font-bold tracking-[0.14em] text-accent uppercase">
           {project.role}
         </p>
       </div>
@@ -183,8 +214,8 @@ const ProjectCard = ({ project, number }) => {
   );
 };
 
-/** List view: large screenshot beside the details, switching sides every row. */
-const ProjectRow = ({ project, flipped }) => (
+/** List view on touch screens: large screenshot beside the details, the image switching sides every row. */
+const ProjectRow = ({ project, number, flipped }) => (
   <article className="group grid items-center gap-8 md:grid-cols-12 md:gap-12">
     <RevealGroup className={`md:col-span-7 ${flipped ? 'md:order-last' : ''}`}>
       <ProjectImage
@@ -193,7 +224,7 @@ const ProjectRow = ({ project, flipped }) => (
       />
     </RevealGroup>
     <Reveal delay={0.1} className="md:col-span-5">
-      <ProjectInfo project={project} alignRight={!flipped} />
+      <ProjectInfo project={project} number={number} />
     </Reveal>
   </article>
 );
@@ -204,7 +235,9 @@ const pad = (n) => String(n).padStart(2, '0');
 /**
  * List view on desktops with a mouse: an editorial index of the projects, one big row each (number, name, role and
  * a short description). Hovering or focusing a row slides its name in and brings up a preview of that project that
- * glides after the cursor; the previews cross-fade as you move between rows. The whole row is the link.
+ * glides sideways after the cursor while sitting just above the hovered row, so it never covers the name you're
+ * pointing at (centred on the cursor, it hid the hovered title); the previews cross-fade as you move between rows.
+ * The whole row is the link.
  */
 const ProjectIndex = ({ items, offset }) => {
   const ref = useRef(null);
@@ -217,13 +250,24 @@ const ProjectIndex = ({ items, offset }) => {
   const [overText, setOverText] = useState(false);
   const preview = useRef(null);
 
-  // The preview follows the cursor but stays on the name's side of the row, never over the description
+  // Rests the preview on the row's top edge (dipping 1rem into its top padding), so the row's name stays visible;
+  // when there's no room above (the row is near the top of the screen, under the navbar) it hangs below the row
+  const rest = (row) => {
+    const rect = ref.current.getBoundingClientRect();
+    const box = row.getBoundingClientRect();
+    const h = preview.current?.offsetHeight ?? 0;
+    const above = box.top - h + 16 > 80;
+    y.set(above ? box.top - rect.top - h + 16 : box.bottom - rect.top - 16);
+  };
+
+  // The preview follows the cursor sideways but stays on the name's side of the row, never over the description
   const follow = (e) => {
     const rect = ref.current.getBoundingClientRect();
     const half = (preview.current?.offsetWidth ?? 0) / 2;
     // The description column starts at 7/12 of the row; keep a gap before it
     x.set(Math.min(Math.max(e.clientX - rect.left, half), (rect.width * 7) / 12 - 32 - half));
-    y.set(e.clientY - rect.top);
+    const row = e.target.closest?.('li');
+    if (row) rest(row);
   };
 
   return (
@@ -234,7 +278,7 @@ const ProjectIndex = ({ items, offset }) => {
             as="li"
             key={project.name}
             onPointerEnter={() => setActive(i)}
-            className="group relative grid grid-cols-12 items-center gap-6 border-b border-line py-9"
+            className="group relative grid grid-cols-12 items-start gap-6 border-b border-line py-8"
           >
             {/* The whole row opens the project: a link stretched over it, under the "Show more" toggle */}
             <a
@@ -243,28 +287,34 @@ const ProjectIndex = ({ items, offset }) => {
               rel="noopener noreferrer"
               aria-label={`View ${project.name}`}
               onFocus={(e) => {
-                const rect = ref.current.getBoundingClientRect();
-                const row = e.currentTarget.getBoundingClientRect();
-                x.set(rect.width * 0.3);
-                y.set(row.top - rect.top + row.height / 2);
+                x.set(ref.current.getBoundingClientRect().width * 0.3);
+                rest(e.currentTarget.closest('li'));
                 setActive(i);
               }}
               onBlur={() => setActive(null)}
               className="absolute inset-0 outline-offset-4"
             />
-            <span className="pointer-events-none col-span-1 font-heading text-2xl font-extrabold text-accent tabular-nums">
+            <span className="pointer-events-none col-span-1 pt-1 font-heading text-2xl font-extrabold text-accent tabular-nums">
               {pad(offset + i + 1)}
             </span>
-            <span className="pointer-events-none col-span-6 font-heading text-5xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-focus-within:translate-x-4 group-hover:translate-x-4 group-hover:text-accent-strong motion-reduce:transition-none lg:text-7xl">
-              {project.name}
-            </span>
+            {/* The name with the stack under it, which fills the space that used to sit empty below the name */}
+            <div className="pointer-events-none col-span-6">
+              <span className="block font-heading text-5xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-focus-within:translate-x-4 group-hover:translate-x-4 group-hover:text-accent-strong motion-reduce:transition-none lg:text-7xl">
+                {project.name}
+              </span>
+              <StackList tools={project.tools} className="mt-5" />
+            </div>
             <div
               onPointerEnter={() => setOverText(true)}
               onPointerLeave={() => setOverText(false)}
               className="relative z-10 col-span-4 min-w-0"
             >
-              <p className="font-heading text-base font-bold tracking-[0.16em] text-accent uppercase">{project.role}</p>
-              <MoreText text={project.description} className="mt-2 text-sm leading-relaxed text-stone-400" />
+              <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">{project.role}</p>
+              {/* Body size, like every other section's text (it was a smaller, lighter 14px) */}
+              <MoreText
+                text={project.description}
+                className="mt-2 text-base leading-relaxed text-pretty text-stone-300"
+              />
             </div>
             <span
               aria-hidden
@@ -276,8 +326,9 @@ const ProjectIndex = ({ items, offset }) => {
         ))}
       </RevealGroup>
 
-      {/* The floating preview: follows the cursor on a spring (on the name's side), hidden when no row is hovered or
-          the pointer is over a description */}
+      {/* The floating preview: follows the cursor sideways on a spring (on the name's side), resting on the hovered
+          row's top edge (or under the row near the top of the screen), hidden when no row is hovered or the pointer
+          is over a description */}
       <motion.div
         ref={preview}
         aria-hidden
@@ -288,7 +339,7 @@ const ProjectIndex = ({ items, offset }) => {
           scale: active === null || overText || reduceMotion ? 0.85 : 1,
         }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="pointer-events-none absolute top-0 left-0 z-20 w-[min(30vw,400px)] -translate-x-1/2 -translate-y-1/2"
+        className="pointer-events-none absolute top-0 left-0 z-20 w-[min(30vw,400px)] -translate-x-1/2"
       >
         <div className="relative aspect-video overflow-hidden rounded-xl border border-line shadow-[0_30px_70px_-25px_rgb(0_0_0/0.55)]">
           {items.map((project, i) => (
@@ -382,13 +433,7 @@ const Projects = () => {
   );
 
   return (
-    <Section
-      id="projects"
-      eyebrow="01 — Projects"
-      title="Selected work"
-      action={viewToggle}
-      focus
-    >
+    <Section id="projects" eyebrow="01 — Projects" title="Selected work" action={viewToggle}>
       {/* Keyed by page (and view) so items replay their reveal when either changes */}
       {isList ? (
         <>
@@ -397,9 +442,14 @@ const Projects = () => {
             <ProjectIndex items={visibleProjects} offset={page * PAGE_SIZE} />
           </div>
           {/* Touch screens: large alternating rows */}
-          <div key={`list-${page}`} className="flex flex-col gap-20 md:gap-28 md:[@media(hover:hover)]:hidden">
+          <div key={`list-${page}`} className="flex flex-col gap-14 md:gap-16 md:[@media(hover:hover)]:hidden">
             {visibleProjects.map((project, i) => (
-              <ProjectRow key={project.name} project={project} flipped={i % 2 === 1} />
+              <ProjectRow
+                key={project.name}
+                project={project}
+                number={pad(page * PAGE_SIZE + i + 1)}
+                flipped={i % 2 === 1}
+              />
             ))}
           </div>
         </>

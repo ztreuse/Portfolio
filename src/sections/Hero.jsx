@@ -1,11 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { TypeAnimation } from 'react-type-animation';
-import { LuArrowRight, LuDownload } from 'react-icons/lu';
+import { LuArrowDown, LuArrowRight, LuDownload } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Container from '../components/ui/Container';
 import FluidImage from '../components/ui/FluidImage';
-import MorphText from '../components/ui/MorphText';
 import SocialIcon from '../components/ui/SocialIcon';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { profile, socials } from '../data/site';
@@ -84,20 +83,57 @@ const HeroBackground = ({ paused, scale, y, ready, reduceMotion }) => (
   </div>
 );
 
-// Sits in the middle of the bottom strip; hidden on phones and on short screens.
+/**
+ * The cycling role ("Front-End Developer", "UI/UX Designer", ...), typed out with a slim taupe caret. It starts
+ * typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts. `min-h` reserves the line
+ * so the layout doesn't jump between roles.
+ */
+const RoleLine = ({ ready, className = '' }) => (
+  <RevealItem
+    as="p"
+    className={`flex min-h-[1.2em] items-center font-heading text-2xl font-semibold tracking-[0.04em] text-stone-200 uppercase sm:text-3xl ${className}`}
+  >
+    <span className="sr-only">{profile.role}</span>
+    {ready && (
+      <TypeAnimation
+        aria-hidden
+        sequence={profile.roles.flatMap((role) => [role, 2200])}
+        wrapper="span"
+        speed={50}
+        deletionSpeed={70}
+        repeat={Infinity}
+        cursor={false}
+      />
+    )}
+    {/* Slim taupe caret instead of the default "|" */}
+    <span
+      aria-hidden
+      className="ml-1.5 inline-block h-[0.95em] w-[3px] rounded-full bg-accent animate-caret motion-reduce:animate-none"
+    />
+  </RevealItem>
+);
+
+// In the bottom strip: in the middle from sm up, on the right on phones; hidden on short screens. It says where it goes (the work)
+// beside a round down arrow, the counterpart of the footer's "Back to top"; the generic "SCROLL" word over a
+// running line read as an AI template.
 const ScrollCue = () => (
   <a
     {...sectionLink('projects')}
-    aria-label="Scroll to Projects"
-    className="hidden items-center gap-3 font-heading text-sm font-bold tracking-[0.25em] text-stone-400 uppercase transition-colors hover:text-accent-strong sm:flex [@media(max-height:620px)]:hidden"
+    className="group flex items-center gap-3 font-display text-[0.8125rem] font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors hover:text-accent-strong [@media(max-height:620px)]:hidden"
   >
-    Scroll
-    <span className="relative h-8 w-px overflow-hidden bg-line">
-      <motion.span
-        className="absolute inset-x-0 top-0 h-1/2 bg-accent"
-        animate={{ y: ['-100%', '200%'] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-      />
+    See my work
+    <span className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-ink/40 backdrop-blur-sm transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+      {/* On hover the arrow drops out of the circle and a new one drops in from the top */}
+      <span className="relative block size-4">
+        <LuArrowDown
+          aria-hidden
+          className="absolute inset-0 size-4 transition-transform duration-300 group-hover:translate-y-6 motion-reduce:transition-none"
+        />
+        <LuArrowDown
+          aria-hidden
+          className="absolute inset-0 size-4 -translate-y-6 transition-transform duration-300 group-hover:translate-y-0 motion-reduce:transition-none"
+        />
+      </span>
     </span>
   </a>
 );
@@ -230,7 +266,7 @@ const Hero = ({ ready }) => {
             <RevealGroup play={ready} delay={0.35} stagger={0.12}>
               <RevealItem
                 as="p"
-                className={`flex items-center gap-4 font-heading text-lg font-bold tracking-[0.18em] text-accent uppercase sm:text-xl ${float.label}`}
+                className={`flex items-center gap-4 font-display text-sm font-bold tracking-[0.2em] text-accent uppercase sm:text-base ${float.label}`}
               >
                 {/* The rule draws itself in from the left as the label appears */}
                 <motion.span
@@ -255,29 +291,19 @@ const Hero = ({ ready }) => {
                       cut off the "y" arm that the tight tracking pushes past it */}
                   <MaskedWord className="text-accent-strong max-sm:block">{otherNames.join(' ')}</MaskedWord>
                 </span>
-                {/* The letters bend like liquid where the cursor touches them */}
-                <MorphText fit={nameSize} />
               </RevealItem>
 
-              {/* Equal halves with short labels on phones, natural widths from sm up */}
-              <RevealItem className={`mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:flex sm:gap-4 ${float.actions}`}>
-                <Button
-                  href={profile.resume}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  icon={LuDownload}
-                  nudge="y"
-                  className="max-sm:justify-between max-sm:pl-5"
-                >
+              {/* Phones: the role sits right under the name, with the full width (in the bottom strip beside the
+                  socials it had about 190px, so "Mobile App Developer" wrapped and the strip jumped while it typed) */}
+              <RoleLine ready={ready} className="mt-5 sm:hidden" />
+
+              {/* Natural widths (short labels on phones); stretched into equal halves they looked odd */}
+              <RevealItem className={`mt-8 flex flex-wrap gap-3 sm:mt-10 sm:gap-4 ${float.actions}`}>
+                <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuDownload} nudge="y">
                   <span className="sm:hidden">Resume</span>
                   <span className="max-sm:hidden">Download Resume</span>
                 </Button>
-                <Button
-                  {...sectionLink('contact')}
-                  variant="outline"
-                  icon={LuArrowRight}
-                  className="max-sm:justify-between max-sm:pl-5"
-                >
+                <Button {...sectionLink('contact')} variant="outline" icon={LuArrowRight}>
                   <span className="sm:hidden">Contact</span>
                   <span className="max-sm:hidden">Get in Touch</span>
                 </Button>
@@ -286,8 +312,8 @@ const Hero = ({ ready }) => {
           </Container>
         </motion.div>
 
-        {/* Bottom strip on the screen's bottom edge: the cycling role, the scroll cue and the socials above a
-            hairline. It leaves the middle to the name and fills the bottom of the first screen. */}
+        {/* Bottom strip on the screen's bottom edge, above a hairline: the cycling role, the scroll cue and the
+            socials (on phones just the socials and the cue). It leaves the middle to the name. */}
         <motion.div style={{ opacity: textOpacity }} className="absolute inset-x-0 bottom-0">
           <Container>
             <RevealGroup
@@ -296,36 +322,15 @@ const Hero = ({ ready }) => {
               stagger={0.12}
               className="grid grid-cols-[1fr_auto] items-center gap-4 border-t border-white/10 py-5 sm:grid-cols-[1fr_auto_1fr] sm:py-6"
             >
-              {/* min-h reserves the line so the layout doesn't jump between roles */}
-              <RevealItem
-                as="p"
-                className="flex min-h-[1.2em] items-center font-heading text-2xl font-semibold tracking-[0.04em] text-stone-200 uppercase sm:text-3xl"
-              >
-                <span className="sr-only">{profile.role}</span>
-                {/* Starts typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts */}
-                {ready && (
-                  <TypeAnimation
-                    aria-hidden
-                    sequence={profile.roles.flatMap((role) => [role, 2200])}
-                    wrapper="span"
-                    speed={50}
-                    deletionSpeed={70}
-                    repeat={Infinity}
-                    cursor={false}
-                  />
-                )}
-                {/* Slim taupe caret instead of the default "|" */}
-                <span
-                  aria-hidden
-                  className="ml-1.5 inline-block h-[0.95em] w-[3px] rounded-full bg-accent animate-caret motion-reduce:animate-none"
-                />
-              </RevealItem>
+              {/* From sm up the role sits on the left; on phones it's under the name instead */}
+              <RoleLine ready={ready} className="max-sm:hidden" />
 
-              <RevealItem className="max-sm:hidden">
+              {/* Phones: the socials on the left and the scroll cue on the right */}
+              <RevealItem className="justify-self-end sm:justify-self-auto">
                 <ScrollCue />
               </RevealItem>
 
-              <RevealItem as="ul" className="flex justify-end gap-2 sm:gap-3">
+              <RevealItem as="ul" className="flex gap-2 max-sm:order-first sm:justify-end sm:gap-3">
                 {socials.map((social) => (
                   <li key={social.label}>
                     <SocialIcon {...social} />

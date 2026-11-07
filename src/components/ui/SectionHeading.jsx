@@ -14,7 +14,8 @@ const MaskedTitle = ({ text }) =>
   text.split(' ').map((word, i) => (
     // The space sits outside the word's inline-block, which would otherwise swallow it
     <Fragment key={`${word}-${i}`}>
-      <motion.span variants={wordRise} className="inline-block">
+      {/* `data-word` lets the Projects flood find "work" and land the giant WORK on it */}
+      <motion.span variants={wordRise} data-word={word.toLowerCase()} className="inline-block">
         {word}
       </motion.span>{' '}
     </Fragment>

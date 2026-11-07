@@ -10,9 +10,10 @@ const smooth = (x) => x * x * (3 - 2 * x);
 
 /**
  * One tool: its brand logo (or generic icon) and name; hovering tints it in the brand colour and shows what it is.
+ * `wide` logos (Cisco's bridge, the CCST badge) use the box's full width, or they'd shrink to a sliver.
  * `flashDelay` (ms) plays the "lights on" flicker in its brand colour when its card lands.
  */
-const SkillChip = ({ name, description, logo, icon: Icon, color, flashDelay }) => (
+const SkillChip = ({ name, description, logo, wide = false, icon: Icon, color, flashDelay }) => (
   <li
     title={description}
     style={{ '--brand': color, animationDelay: flashDelay === undefined ? undefined : `${flashDelay}ms` }}
@@ -20,7 +21,7 @@ const SkillChip = ({ name, description, logo, icon: Icon, color, flashDelay }) =
   >
     <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]">
       {logo ? (
-        <img src={logo} alt="" className="size-3.5 object-contain" />
+        <img src={logo} alt="" className={`${wide ? 'h-3.5 w-5' : 'size-3.5'} object-contain`} />
       ) : (
         <Icon aria-hidden className="size-3.5" style={{ color }} />
       )}
@@ -40,8 +41,8 @@ const trackSpotlight = (e) => {
  * One category card: its title and its tools as chips. It deals in as it scrolls into view: rising from below,
  * tilted back and turned a little (outward from the middle column), then settling flat into the grid like a card
  * landing on a table; cards in a row land in a quick left-to-right wave. Tied to the scroll, so it reverses going
- * back up. When it lands, its chips flick on one after another in their brand colours; that replays each time the
- * card lands again. Still for reduced motion.
+ * back up. The first time it lands, its chips flick on one after another in their brand colours (once only; it
+ * doesn't replay when you scroll back past). Still for reduced motion.
  */
 const CategoryCard = ({ group, index }) => {
   const ref = useRef(null);
@@ -55,15 +56,10 @@ const CategoryCard = ({ group, index }) => {
   const scale = useTransform(landed, (v) => 0.9 + 0.1 * v);
   const opacity = useTransform(landed, (v) => Math.min(1, v * 1.6));
 
-  // Lights on: each landing bumps the count, which restarts the chips' flicker (re-armed once the card leaves)
-  const [flashes, setFlashes] = useState(0);
-  const armed = useRef(true);
+  // Lights on: the chips flicker once, the first time the card lands, and never again on later passes
+  const [lit, setLit] = useState(false);
   useMotionValueEvent(landed, 'change', (v) => {
-    if (v > 0.97 && armed.current) {
-      armed.current = false;
-      setFlashes((n) => n + 1);
-    }
-    if (v < 0.2) armed.current = true;
+    if (v > 0.97 && !lit) setLit(true);
   });
 
   return (
@@ -80,10 +76,9 @@ const CategoryCard = ({ group, index }) => {
       <h3 className="font-heading text-2xl leading-none font-extrabold tracking-[0.01em] text-white uppercase">
         {group.title}
       </h3>
-      {/* Keyed by the landing count, so the chips' flicker restarts on each landing */}
-      <ul key={flashes} className="mt-5 flex flex-wrap gap-2">
+      <ul className="mt-5 flex flex-wrap gap-2">
         {group.items.map((skill, i) => (
-          <SkillChip key={skill.name} {...skill} flashDelay={flashes > 0 ? 120 + i * 70 : undefined} />
+          <SkillChip key={skill.name} {...skill} flashDelay={lit ? 120 + i * 70 : undefined} />
         ))}
       </ul>
     </motion.li>

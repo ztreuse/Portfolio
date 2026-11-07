@@ -2,9 +2,10 @@
 
 /* Design tokens — every color and font in the site comes from here. */
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  /* UI type: Inter for body text, buttons and nav links (small uppercase labels use the heading font). */
-  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  /* UI type: Manrope for body text, buttons, nav links and the small uppercase labels (they were Big Shoulders,
+     which looked thin and stretched that small; the big display type stays Big Shoulders). */
+  --font-display: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   /* Display headings: a tall condensed poster face, always uppercase and heavy (hero name, section titles,
      card and job titles, the footer sign-off and wordmark, chapter numbers, the loader percentage). */
   --font-heading: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;

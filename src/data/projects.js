@@ -3,8 +3,18 @@ import ticap from '../assets/projects/ticap.webp';
 import tourisla from '../assets/projects/tourisla.webp';
 import ecocool from '../assets/projects/ecocool.webp';
 import grooveGrounds from '../assets/projects/groove-grounds.webp';
+import nirvana from '../assets/projects/nirvana.webp';
 
 const projects = [
+  {
+    name: 'Nirvana',
+    role: 'UI/UX Designer & Full-Stack Developer',
+    image: nirvana,
+    description:
+      'A manhwa reading website under an animated aurora sky, with a full-screen reader, a personal library, a community feed and Aura, a comet mascot who guides you around. Built in Laravel and Tailwind, deployed on Vercel.',
+    tools: ['Laravel', 'PHP', 'Blade', 'Tailwind CSS', 'JavaScript', 'PostgreSQL', 'Neon', 'Vercel', 'MangaDex API', 'Pest'],
+    link: 'https://nirvana-reader.vercel.app',
+  },
   {
     name: 'Groove Grounds',
     role: 'UI/UX Designer & Full-Stack Developer',

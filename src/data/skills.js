@@ -42,6 +42,8 @@ import vite from '../assets/brand-logos/vitejs.svg';
 import cisco from '../assets/brand-logos/cisco.svg';
 import ccst from '../assets/brand-logos/ccst.svg';
 import pmi from '../assets/brand-logos/pmi.svg';
+import neon from '../assets/brand-logos/neon.svg';
+import pest from '../assets/brand-logos/pest.svg';
 
 // Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
 // show on the dark theme). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
@@ -80,10 +82,12 @@ const skillGroups = [
       { name: 'Node.js', description: 'JavaScript runtime', logo: nodejs, color: '#5FA04E' },
       { name: 'CodeIgniter', description: 'PHP framework', logo: codeigniter, color: '#EF4223' },
       { name: 'Laravel', description: 'PHP framework', logo: laravel, color: '#FF2D20' },
+      { name: 'Pest', description: 'PHP testing', logo: pest, color: '#F43F5E' },
       { name: 'PostgreSQL', description: 'Relational database', logo: postgresql, color: '#4169E1' },
       { name: 'SQLite', description: 'Embedded database', logo: sqlite, color: '#0F80CC' },
       { name: 'Firebase', description: 'Backend platform', logo: firebase, color: '#FFCA28' },
       { name: 'Supabase', description: 'Postgres backend', logo: supabase, color: '#3ECF8E' },
+      { name: 'Neon', description: 'Serverless Postgres', logo: neon, color: '#00E599' },
       { name: 'Swagger UI', description: 'API documentation', logo: swagger, color: '#85EA2D' },
     ],
   },

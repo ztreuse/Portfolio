@@ -111,14 +111,15 @@ const ProjectInfo = ({ project, number }) => (
 
 /**
  * The screenshot, linking to the project (hidden from keyboard and screen readers, since the arrow duplicates it),
- * framed like a window: the image is slightly larger than its frame and moves slower than the page
- * (about 5% either way as the card crosses the screen), so it has depth while you scroll. Still for reduced motion.
+ * framed like a window. Its top edge always sits exactly on the frame's top, so each site's navbar shows whole: the
+ * zoom is anchored to the top, and instead of sliding with the scroll (which cropped the navbars) it zooms in
+ * slightly (1 to 1.08) as the card crosses the screen, so it still has depth. Still for reduced motion.
  */
 const ProjectImage = ({ project, className = '' }) => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, (p) => `${reduceMotion ? 0 : (p - 0.5) * 10}%`);
+  const scale = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : 1 + 0.08 * p));
 
   return (
     <a
@@ -132,14 +133,14 @@ const ProjectImage = ({ project, className = '' }) => {
     >
       {/* Image reveal follows the surrounding reveal group's timing */}
       <motion.div variants={imageReveal}>
-        <motion.div style={{ y }}>
+        <motion.div style={{ scale }} className="origin-top">
           <img
             src={project.image}
             alt=""
             loading="lazy"
             width={1600}
             height={900}
-            className="aspect-video size-full scale-[1.12] object-cover transition-[scale] duration-500 group-hover:scale-[1.17] motion-reduce:scale-100"
+            className="aspect-video size-full origin-top object-cover object-top transition-[scale] duration-500 group-hover:scale-[1.05] motion-reduce:group-hover:scale-100"
           />
         </motion.div>
       </motion.div>
@@ -454,11 +455,20 @@ const Projects = () => {
           </div>
         </>
       ) : (
-        <RevealGroup key={`grid-${page}`} className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <>
+          {/* Phones have no view toggle, so they always get the list rows: in one column the grid would show the
+              same image and title but hide the description and stack (the owner noticed the missing details) */}
+          <div key={`phone-${page}`} className="flex flex-col gap-14 md:hidden">
+            {visibleProjects.map((project, i) => (
+              <ProjectRow key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
+            ))}
+          </div>
+          <RevealGroup key={`grid-${page}`} className="grid grid-cols-2 gap-8 max-md:hidden">
           {visibleProjects.map((project, i) => (
             <ProjectCard key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
           ))}
         </RevealGroup>
+        </>
       )}
 
       <Pagination page={page} onChange={goToPage} />

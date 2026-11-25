@@ -130,13 +130,9 @@ const Fact = ({ icon: Icon, children }) => (
   </li>
 );
 
-/** The grad photo in its card; hovering twists it one way and swings the offset frame behind it the other way. */
+/** The grad photo in its card, twisting slightly on hover (no offset frame behind it: the owner removed it). */
 const Portrait = () => (
   <RevealItem variants={imageReveal} className="group relative w-28 sm:w-36 lg:w-full">
-    <span
-      aria-hidden
-      className="absolute inset-0 translate-2 rounded-2xl border border-accent/40 transition-[translate,rotate] duration-500 ease-out group-hover:translate-4 group-hover:rotate-2 motion-reduce:transition-none lg:translate-4 lg:group-hover:translate-6"
-    />
     <div className="relative overflow-hidden rounded-2xl border border-line transition-[rotate] duration-500 ease-out group-hover:-rotate-2 motion-reduce:transition-none">
       <img
         src={profileImg}

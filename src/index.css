@@ -27,6 +27,7 @@
   --color-accent-strong: #c9bcaf;
   --color-dimension: #403b37; /* the veil over Experience's desk photo */
   --color-danger: #f87171;
+  --color-stone-500: #908780; /* faintest text (placeholders); Tailwind's own is only 3.8:1 on ink */
 
   /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
      clash with motion's `transform`. Set the height with --float and vary duration/delay per element. */
@@ -126,7 +127,7 @@
   --color-stone-200: #e7e5e4;
   --color-stone-300: #d6d3d1;
   --color-stone-400: #a8a29e;
-  --color-stone-500: #78716c;
+  --color-stone-500: #908780;
   --color-ink: #161513;
   --color-band: #1d1b18;
   --color-surface: #24211d;

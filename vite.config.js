@@ -30,8 +30,6 @@ export default defineConfig({
       'three/examples/jsm/postprocessing/OutputPass.js',
     ],
   },
-  // The main page, plus one small page per case study
-  build: { rollupOptions: { input: ['index.html', 'groove-grounds/index.html'] } },
   // GitHub Pages serves the site under /Portfolio/; Vercel serves it from the domain root (it sets VERCEL=1 when building).
   base: process.env.VERCEL ? '/' : '/Portfolio/',
 });

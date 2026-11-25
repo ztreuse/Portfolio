@@ -1,18 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
-import {
-  LuArrowRight,
-  LuArrowUpRight,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuLayoutGrid,
-  LuList,
-} from 'react-icons/lu';
+import { LuArrowUpRight, LuChevronDown, LuChevronLeft, LuChevronRight, LuLayoutGrid, LuList } from 'react-icons/lu';
 import IconButton from '../components/ui/IconButton';
 import Section from '../components/ui/Section';
 import Reveal, { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { imageReveal } from '../components/ui/revealVariants';
+import ProjectDetails, { DetailsButton } from './ProjectDetails';
 import projects from '../data/projects';
 
 const PAGE_SIZE = 6;
@@ -35,22 +28,9 @@ const ViewLink = ({ project, className = '' }) => (
   />
 );
 
-/** Opens the project's case study, when it has one (a small outlined pill, like "Show more"). */
-const CaseStudyLink = ({ project, className = '' }) =>
-  project.caseStudy ? (
-    <a
-      href={`${import.meta.env.BASE_URL}${project.caseStudy}/`}
-      aria-label={`Read the ${project.name} case study`}
-      className={`relative z-10 inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 py-1.5 pr-2.5 pl-3.5 font-display text-label font-bold tracking-[0.12em] text-accent-strong uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink ${className}`}
-    >
-      Case study
-      <LuArrowRight aria-hidden className="size-4" />
-    </a>
-  ) : null;
-
 /**
  * A description cut to three lines, with a "Show more" / "Show less" toggle that only appears when the text is
- * actually longer (re-checked whenever it resizes). `className` styles the text.
+ * actually longer (re-checked whenever it resizes). `className` styles the text. Only for projects without details.
  */
 const MoreText = ({ text, className = '' }) => {
   const ref = useRef(null);
@@ -107,11 +87,19 @@ const StackList = ({ tools, className = '' }) => (
   </ul>
 );
 
+/** With details to open, the description is just its first lines; without, it can be read in full in place. */
+const Description = ({ project, className }) =>
+  project.details ? (
+    <p className={`${className} line-clamp-3`}>{project.description}</p>
+  ) : (
+    <MoreText text={project.description} className={className} />
+  );
+
 /**
  * Number and role, the name beside its arrow link (like the grid's caption), the description and the stack; used
  * by the list row. Always left-aligned: rows that alternated to right-aligned paragraphs were hard to read.
  */
-const ProjectInfo = ({ project, number }) => (
+const ProjectInfo = ({ project, number, open, onToggle }) => (
   <div className="flex flex-col">
     <p className="font-display text-label font-bold tracking-[0.14em] text-accent uppercase">
       <span className="tabular-nums">{number}</span> — {project.role}
@@ -125,9 +113,10 @@ const ProjectInfo = ({ project, number }) => (
         className="shrink-0 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
       />
     </div>
-    <MoreText text={project.description} className="mt-2 text-copy leading-relaxed text-pretty text-stone-300" />
-    <StackList tools={project.tools} className="mt-4" />
-    <CaseStudyLink project={project} className="mt-4 self-start" />
+    <Description project={project} className="mt-2 text-copy leading-relaxed text-pretty text-stone-300" />
+    {/* With details, the stack is a tab in them */}
+    {!project.details && <StackList tools={project.tools} className="mt-4" />}
+    <DetailsButton project={project} open={open} onToggle={onToggle} className="mt-4" />
   </div>
 );
 
@@ -168,7 +157,7 @@ const MAX_TILT = 3; // degrees
  * and the role, and the project's name with the start of its description beside the arrow link. Hovering fills the
  * rule in taupe from the left, warms the name and fills the arrow. No tilt or sweep for reduced motion.
  */
-const ProjectCard = ({ project, number }) => {
+const ProjectCard = ({ project, number, open, onToggle }) => {
   const frame = useRef(null);
   const reduceMotion = useReducedMotion();
   const rotateX = useSpring(useMotionValue(0), tiltSpring);
@@ -221,7 +210,7 @@ const ProjectCard = ({ project, number }) => {
           <p className="mt-1 line-clamp-2 text-copy leading-relaxed text-pretty text-stone-300">
             {project.description}
           </p>
-          <CaseStudyLink project={project} className="mt-3" />
+          <DetailsButton project={project} open={open} onToggle={onToggle} className="mt-3" />
         </div>
         <ViewLink
           project={project}
@@ -233,7 +222,7 @@ const ProjectCard = ({ project, number }) => {
 };
 
 /** List view on touch screens: large screenshot beside the details, the image switching sides every row. */
-const ProjectRow = ({ project, number, flipped }) => (
+const ProjectRow = ({ project, number, flipped, open, onToggle }) => (
   <article className="group grid items-center gap-5 md:grid-cols-12 md:gap-10">
     <RevealGroup className={`md:col-span-7 ${flipped ? 'md:order-last' : ''}`}>
       <ProjectImage
@@ -242,8 +231,9 @@ const ProjectRow = ({ project, number, flipped }) => (
       />
     </RevealGroup>
     <Reveal delay={0.1} className="md:col-span-5">
-      <ProjectInfo project={project} number={number} />
+      <ProjectInfo project={project} number={number} open={open} onToggle={onToggle} />
     </Reveal>
+    <ProjectDetails project={project} open={open} className="order-last md:col-span-12" />
   </article>
 );
 
@@ -257,7 +247,7 @@ const pad = (n) => String(n).padStart(2, '0');
  * pointing at (centred on the cursor, it hid the hovered title); the previews cross-fade as you move between rows.
  * The whole row is the link.
  */
-const ProjectIndex = ({ items, offset }) => {
+const ProjectIndex = ({ items, offset, opened, toggle }) => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
   const [active, setActive] = useState(null);
@@ -267,6 +257,7 @@ const ProjectIndex = ({ items, offset }) => {
   // True while the pointer is over a description, where the preview must not cover the text or its toggle
   const [overText, setOverText] = useState(false);
   const preview = useRef(null);
+  const hidePreview = active === null || overText || items[active]?.name === opened;
 
   // Rests the preview on the row's top edge (dipping 1rem into its top padding), so the row's name stays visible;
   // when there's no room above (the row is near the top of the screen, under the navbar) it hangs below the row
@@ -321,7 +312,12 @@ const ProjectIndex = ({ items, offset }) => {
                 {project.name}
               </span>
               <StackList tools={project.tools} className="mt-3" />
-              <CaseStudyLink project={project} className="pointer-events-auto mt-3" />
+              <DetailsButton
+                project={project}
+                open={opened === project.name}
+                onToggle={() => toggle(project.name)}
+                className="pointer-events-auto mt-3"
+              />
             </div>
             <div
               onPointerEnter={() => setOverText(true)}
@@ -332,10 +328,7 @@ const ProjectIndex = ({ items, offset }) => {
                 {project.role}
               </p>
               {/* Body size, like every other section's text (it was a smaller, lighter 14px) */}
-              <MoreText
-                text={project.description}
-                className="mt-2 text-copy leading-relaxed text-pretty text-stone-300"
-              />
+              <Description project={project} className="mt-2 text-copy leading-relaxed text-pretty text-stone-300" />
             </div>
             <span
               aria-hidden
@@ -343,6 +336,14 @@ const ProjectIndex = ({ items, offset }) => {
             >
               <LuArrowUpRight className="size-5 transition-transform duration-300 group-hover:rotate-45 motion-reduce:transition-none" />
             </span>
+            {/* Opened, the row shows its picture here, so the floating preview stays away */}
+            <div
+              onPointerEnter={() => setOverText(true)}
+              onPointerLeave={() => setOverText(false)}
+              className="col-span-12 empty:hidden"
+            >
+              <ProjectDetails project={project} open={opened === project.name} picture />
+            </div>
           </RevealItem>
         ))}
       </RevealGroup>
@@ -356,8 +357,8 @@ const ProjectIndex = ({ items, offset }) => {
         style={{ x, y }}
         initial={false}
         animate={{
-          opacity: active === null || overText ? 0 : 1,
-          scale: active === null || overText || reduceMotion ? 0.85 : 1,
+          opacity: hidePreview ? 0 : 1,
+          scale: hidePreview || reduceMotion ? 0.85 : 1,
         }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="pointer-events-none absolute top-0 left-0 z-20 w-[min(30vw,400px)] -translate-x-1/2"
@@ -418,6 +419,10 @@ const Projects = () => {
   const [view, setView] = useState('grid');
   const [page, setPage] = useState(0);
   const isList = view === 'list';
+  // The project whose details are open (one at a time)
+  const [opened, setOpened] = useState(null);
+  const toggle = (name) => setOpened((now) => (now === name ? null : name));
+  const detailsProps = (project) => ({ open: opened === project.name, onToggle: () => toggle(project.name) });
   const visibleProjects = projects.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   const goToPage = (next) => {
@@ -460,7 +465,7 @@ const Projects = () => {
         <>
           {/* Desktop with a mouse: the hover index */}
           <div key={`index-${page}`} className="hidden md:[@media(hover:hover)]:block">
-            <ProjectIndex items={visibleProjects} offset={page * PAGE_SIZE} />
+            <ProjectIndex items={visibleProjects} offset={page * PAGE_SIZE} opened={opened} toggle={toggle} />
           </div>
           {/* Touch screens: large alternating rows */}
           <div key={`list-${page}`} className="flex flex-col gap-10 md:gap-12 md:[@media(hover:hover)]:hidden">
@@ -470,6 +475,7 @@ const Projects = () => {
                 project={project}
                 number={pad(page * PAGE_SIZE + i + 1)}
                 flipped={i % 2 === 1}
+                {...detailsProps(project)}
               />
             ))}
           </div>
@@ -480,13 +486,32 @@ const Projects = () => {
               same image and title but hide the description and stack (the owner noticed the missing details) */}
           <div key={`phone-${page}`} className="flex flex-col gap-10 md:hidden">
             {visibleProjects.map((project, i) => (
-              <ProjectRow key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
+              <ProjectRow
+                key={project.name}
+                project={project}
+                number={pad(page * PAGE_SIZE + i + 1)}
+                {...detailsProps(project)}
+              />
             ))}
           </div>
           <RevealGroup key={`grid-${page}`} className="grid grid-cols-2 gap-x-8 gap-y-10 max-md:hidden">
-            {visibleProjects.map((project, i) => (
-              <ProjectCard key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
-            ))}
+            {visibleProjects.map((project, i) => {
+              // The row's details go after its last card, across both columns
+              const endsRow = i % 2 === 1 || i === visibleProjects.length - 1;
+              const row = visibleProjects.slice(i - (i % 2), i + 1);
+              return (
+                <Fragment key={project.name}>
+                  <ProjectCard project={project} number={pad(page * PAGE_SIZE + i + 1)} {...detailsProps(project)} />
+                  {endsRow && (
+                    <div className="col-span-2 empty:hidden">
+                      {row.map((p) => (
+                        <ProjectDetails key={p.name} project={p} open={opened === p.name} />
+                      ))}
+                    </div>
+                  )}
+                </Fragment>
+              );
+            })}
           </RevealGroup>
         </>
       )}

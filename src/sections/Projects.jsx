@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
-import { LuArrowUpRight, LuChevronDown, LuChevronLeft, LuChevronRight, LuLayoutGrid, LuList } from 'react-icons/lu';
+import {
+  LuArrowRight,
+  LuArrowUpRight,
+  LuChevronDown,
+  LuChevronLeft,
+  LuChevronRight,
+  LuLayoutGrid,
+  LuList,
+} from 'react-icons/lu';
 import IconButton from '../components/ui/IconButton';
 import Section from '../components/ui/Section';
 import Reveal, { RevealGroup, RevealItem } from '../components/ui/Reveal';
@@ -26,6 +34,19 @@ const ViewLink = ({ project, className = '' }) => (
     className={className}
   />
 );
+
+/** Opens the project's case study, when it has one (a small outlined pill, like "Show more"). */
+const CaseStudyLink = ({ project, className = '' }) =>
+  project.caseStudy ? (
+    <a
+      href={`${import.meta.env.BASE_URL}${project.caseStudy}/`}
+      aria-label={`Read the ${project.name} case study`}
+      className={`relative z-10 inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 py-1.5 pr-2.5 pl-3.5 font-display text-label font-bold tracking-[0.12em] text-accent-strong uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink ${className}`}
+    >
+      Case study
+      <LuArrowRight aria-hidden className="size-4" />
+    </a>
+  ) : null;
 
 /**
  * A description cut to three lines, with a "Show more" / "Show less" toggle that only appears when the text is
@@ -106,6 +127,7 @@ const ProjectInfo = ({ project, number }) => (
     </div>
     <MoreText text={project.description} className="mt-2 text-copy leading-relaxed text-pretty text-stone-300" />
     <StackList tools={project.tools} className="mt-4" />
+    <CaseStudyLink project={project} className="mt-4 self-start" />
   </div>
 );
 
@@ -199,6 +221,7 @@ const ProjectCard = ({ project, number }) => {
           <p className="mt-1 line-clamp-2 text-copy leading-relaxed text-pretty text-stone-300">
             {project.description}
           </p>
+          <CaseStudyLink project={project} className="mt-3" />
         </div>
         <ViewLink
           project={project}
@@ -298,6 +321,7 @@ const ProjectIndex = ({ items, offset }) => {
                 {project.name}
               </span>
               <StackList tools={project.tools} className="mt-3" />
+              <CaseStudyLink project={project} className="pointer-events-auto mt-3" />
             </div>
             <div
               onPointerEnter={() => setOverText(true)}

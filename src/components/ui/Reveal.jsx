@@ -1,5 +1,4 @@
 import { motion } from 'motion/react';
-import { imageReveal } from './revealVariants';
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -51,20 +50,6 @@ export const RevealItem = ({ as = 'div', children, ...props }) => {
     <Component variants={fadeUp} {...props}>
       {children}
     </Component>
-  );
-};
-
-/**
- * Wrapper that fades its contents (usually an <img>) into focus when it scrolls into view.
- * Inside a RevealGroup, use `<RevealItem variants={imageReveal}>` instead so it follows the group's timing.
- */
-export const RevealImage = ({ className = '', play, children }) => {
-  const trigger = play === undefined ? { whileInView: 'visible', viewport } : { animate: play ? 'visible' : 'hidden' };
-
-  return (
-    <motion.div initial="hidden" {...trigger} variants={imageReveal} className={className}>
-      {children}
-    </motion.div>
   );
 };
 

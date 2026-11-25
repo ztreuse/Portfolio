@@ -215,13 +215,13 @@ const Contact = () => {
       <Section
         id="contact"
         eyebrow="05 — Contact"
-        // On the colour the desk film settles onto. It's pulled up over the film's last 70svh, see-through there and
+        // On the colour the desk film settles onto. It's pulled up over the film's last 70lvh, see-through there and
         // fading in as the film settles, so it arrives with the colour instead of after an empty screen of it
-        className={`tone-light tone-screen z-10 ${reduceMotion ? '' : '-mt-[70svh]'}`}
+        className={`tone-light tone-screen z-10 ${reduceMotion ? '' : '-mt-[70lvh]'}`}
         background={
           <div
             aria-hidden
-            className={`absolute inset-x-0 bottom-0 -z-10 bg-ink ${reduceMotion ? 'top-0' : 'top-[70svh]'}`}
+            className={`absolute inset-x-0 bottom-0 -z-10 bg-ink ${reduceMotion ? 'top-0' : 'top-[70lvh]'}`}
           />
         }
         title="Let's work together"

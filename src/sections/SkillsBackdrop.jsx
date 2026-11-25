@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { FILM_GRADE } from './filmGrade';
 
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
@@ -25,6 +25,8 @@ const Photo = ({ file }) => (
 const SkillsBackdrop = () => {
   const ref = useRef(null);
   const still = useReducedMotion();
+  // The photos load only once Skills is a screen or so away (fixed layers count as on screen, so `lazy` can't tell)
+  const near = useInView(ref, { once: true, margin: '150% 0px' });
   // Into focus over the half screen after the cards, done just before the film's stage pins
   const { scrollYProgress: end } = useScroll({ target: ref, offset: ['end 1.35', 'end 1.02'] });
   // A function transform, so motion keeps it on the JS side (a plain opacity map can stick)
@@ -32,12 +34,12 @@ const SkillsBackdrop = () => {
 
   return (
     <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-ink [clip-path:inset(0)]">
-      <div className="fixed inset-0 overflow-hidden bg-ink">
+      <div className="fixed inset-x-0 top-0 h-lvh overflow-hidden bg-ink">
         <div style={{ filter: FILM_GRADE }} className="absolute inset-0">
-          <Photo file="001" />
+          {near && <Photo file="001" />}
         </div>
         <motion.div style={{ opacity: soft }} className="absolute inset-0">
-          <Photo file="soft" />
+          {near && <Photo file="soft" />}
           <div className="absolute inset-0 bg-ink/60" />
         </motion.div>
       </div>

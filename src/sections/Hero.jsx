@@ -11,7 +11,7 @@ import { imageReveal } from '../components/ui/revealVariants';
 import { profile, socials } from '../data/site';
 import { education } from '../data/experience';
 import heroBg from '../assets/images/hero-bg.jpg';
-import profileImg from '../assets/images/profile.jpg';
+import profileImg from '../assets/images/profile.webp';
 import { sectionLink } from '../hooks/useCleanAnchorLinks';
 
 // Fixed positions (left %, top %, delay s) keep renders pure while looking scattered.

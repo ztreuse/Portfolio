@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { introSeen } from './intro';
 
-const MIN_DURATION = 600; // ms: a quick pour
+const MIN_DURATION = 450; // ms: a quick pour
 const MAX_DURATION = 2500; // ms: never block the site longer than this on slow connections
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,9 +30,9 @@ const scene3DModule = canUse3D() ? import('../../three/coffeeScene.js').catch(()
 // While the scene loads only the counter shows. If it isn't ready by then (slow network) the flat cup takes over
 // for good, so the cup never swaps mid-load.
 const SCENE_WAIT = 1200; // ms
-// 3D finale: the scene's dive into the coffee ends at 1.1s (FINALE_END in coffeeScene.js); the screen fades to
+// 3D finale: the scene's dive into the coffee ends at 0.85s (FINALE_END in coffeeScene.js); the screen fades to
 // coffee over its last moments.
-const DIVE_FADE_AT = 700; // ms after full
+const DIVE_FADE_AT = 520; // ms after full
 
 const pageLoaded = () =>
   new Promise((resolve) => {
@@ -409,7 +409,7 @@ const Preloader = ({ onDone }) => {
       if (cancelled) return;
       fill.stop();
       animate(progress, 100, {
-        duration: 0.2,
+        duration: 0.12,
         ease: 'easeOut',
         onComplete: () => {
           if (cancelled) return;
@@ -421,7 +421,7 @@ const Preloader = ({ onDone }) => {
           if (scene3D) {
             // 3D: overflow, swoop and dive into the coffee, fading to coffee, then the splash reveal.
             animate(counterOpacity, 0, { duration: 0.25 });
-            timers.push(setTimeout(() => animate(diveFade, 1, { duration: 0.35, ease: 'easeIn' }), DIVE_FADE_AT));
+            timers.push(setTimeout(() => animate(diveFade, 1, { duration: 0.3, ease: 'easeIn' }), DIVE_FADE_AT));
             scene3D.finale(() => {
               if (cancelled) return;
               window.dispatchEvent(new CustomEvent('coffee-splash'));

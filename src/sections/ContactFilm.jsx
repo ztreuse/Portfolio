@@ -30,7 +30,7 @@ const SCREEN = { wide: [0.516, 0.46], tall: [0.5, 0.45] };
  * Into it, a seamless hand-off: Skills' backdrop is this film's first frame, fixed to the screen, and it comes into
  * focus as Skills ends. The runway is pulled up a screen, so the stage pins just as that happens; it stays invisible
  * until it has pinned and drawn a frame, then simply appears over the identical picture and the dolly plays. (While
- * still rising it would draw a second, offset copy of the desk.) At the end Contact, pulled up by 70svh and see-through
+ * still rising it would draw a second, offset copy of the desk.) At the end Contact, pulled up by 70lvh and see-through
  * there, fades in and rises over the settled colour, so there's no empty screen of it to scroll through. Frames load only when it's near. Render it only when motion is allowed.
  */
 const ContactFilm = () => {
@@ -175,14 +175,16 @@ const ContactFilm = () => {
       data-slow-glide="1"
       data-slow-between="skills contact"
       aria-hidden
-      className="pointer-events-none relative -mt-[100svh] h-[200svh]"
+      className="pointer-events-none relative -mt-[100lvh] h-[200lvh]"
     >
       {/* Counts as Contact for the navbar once Skills has gone */}
-      <span data-section-of="contact" className="absolute inset-x-0 bottom-0 h-[160svh]" />
+      <span data-section-of="contact" className="absolute inset-x-0 bottom-0 h-[160lvh]" />
       {/* Its start, while the film is still rising after Skills, still counts as Skills (unmarked, the pinned hero made
           the navbar show Home) */}
-      <span data-section-of="skills" className="absolute inset-x-0 top-0 h-[40svh]" />
-      <div ref={stage} className="sticky top-0 h-svh overflow-hidden bg-ink opacity-0">
+      <span data-section-of="skills" className="absolute inset-x-0 top-0 h-[40lvh]" />
+      {/* lvh throughout (also in Skills, its backdrop and Contact): the screen with the phone's browser bar hidden. Sized
+          by svh, hiding the bar left a dark strip under the film */}
+      <div ref={stage} className="sticky top-0 h-lvh overflow-hidden bg-ink opacity-0">
         {/* The grade is a CSS filter on the canvas: drawn per frame inside it, Safari ignores it and phones can't keep up */}
         <canvas ref={canvas} style={{ filter: FILM_GRADE }} className="absolute inset-0 size-full" />
         <div ref={wash} className="absolute inset-0 bg-crema opacity-0" />

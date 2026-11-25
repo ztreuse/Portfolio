@@ -51,13 +51,13 @@ const LEVEL_FULL = CUP_H - 0.1;
 const LEVEL_BRIM = CUP_H + 0.006;
 const TABLE_Y = -0.047;
 // Finale timeline (seconds after 100%)
-const OVERFLOW_TIME = 0.9; // rise to the brim, dome up and creep over the rim, as one motion
+const OVERFLOW_TIME = 0.7; // rise to the brim, dome up and creep over the rim, as one motion
 const SPILL_AT = 0.75; // drips start (hidden under the dome over the lip) as it nears the lip's outer side
 // The camera swoops and dives while the coffee is still rising to the brim, so the intro stays about a second long (it was
 // a 4.4 s overflow: the drips and pool below still exist but the dive now ends before they run)
-const SWOOP_AT = 0.05;
-const DIVE_AT = 0.4;
-const FINALE_END = 1.1;
+const SWOOP_AT = 0;
+const DIVE_AT = 0.25;
+const FINALE_END = 0.85;
 // The rim is a half-round lip as wide as the wall
 const LIP = WALL / 2;
 const LIP_Y = CUP_H - LIP;
@@ -830,8 +830,8 @@ export const createCoffeeScene = (canvas, { getProgress, onReady, frameEl }) => 
     const flow = ease(clamp01(f / OVERFLOW_TIME));
     const rise = clamp01(flow / 0.4); // coffee rises to the brim
     const spill = Math.max(0, f - SPILL_AT); // seconds since the coffee started over the rim
-    const swoop = ease(clamp01((f - SWOOP_AT) / 0.7)); // camera rises over the cup
-    const dive = ease(clamp01((f - DIVE_AT) / 0.65)); // camera dives into the coffee
+    const swoop = ease(clamp01((f - SWOOP_AT) / 0.6)); // camera rises over the cup
+    const dive = ease(clamp01((f - DIVE_AT) / 0.6)); // camera dives into the coffee
 
     // Coffee level and crema
     const level = LEVEL_EMPTY + (LEVEL_FULL - LEVEL_EMPTY) * fill + (LEVEL_BRIM - LEVEL_FULL) * rise;
@@ -857,11 +857,11 @@ export const createCoffeeScene = (canvas, { getProgress, onReady, frameEl }) => 
     // Stream: falls in at the start, pours while filling, stops at 100%
     const pourIn = clamp01(t / 0.5);
     // At 100% the pour is cut off at the top and its tail falls into the cup, instead of the stream just thinning out
-    // (it keeps pouring a moment into the overflow, which is what pushes the coffee over the rim)
-    const cut = finaleStart === null ? 0 : clamp01((f - 0.1) / 0.3);
+    // (and it's gone before the camera swoops up over the cup, where a leftover piece looked like a rod in the coffee)
+    const cut = finaleStart === null ? 0 : clamp01(f / 0.16);
     const streamBottom = STREAM_TOP - (STREAM_TOP - level) * (pourIn * pourIn);
     const streamTop = STREAM_TOP - (STREAM_TOP - level) * cut * cut;
-    stream.visible = streamTop - streamBottom > 0.005;
+    stream.visible = cut < 1 && streamTop - streamBottom > 0.005;
     stream.scale.set(1, Math.max(streamTop - streamBottom, 0.001), 1);
     stream.position.set(Math.sin(t * 6) * 0.003, (streamTop + streamBottom) / 2, 0);
 

@@ -1,7 +1,4 @@
 import { FaBriefcase, FaGithub, FaLinkedinIn } from 'react-icons/fa6';
-import linkedinLogo from '../assets/brand-logos/linkedin.svg';
-import githubLogo from '../assets/brand-logos/github.svg';
-import jobstreetLogo from '../assets/brand-logos/jobstreet.png';
 
 export const profile = {
   name: 'Troy Bay',
@@ -31,11 +28,11 @@ export const navLinks = [
 
 // Professional profiles only (no personal social media). `handle` is the link text shown in the Contact list; a
 // profile without one (JobStreet) is left out of that list and only appears as a round icon.
-// `icon` is the one-color mark for round icon buttons; `logo` is the original brand logo for the Contact list.
+// `icon` is the one-color mark for the round icon buttons and the Contact list.
 export const socials = [
-  { label: 'LinkedIn', handle: 'in/troy-bay-57aa90391', href: 'https://www.linkedin.com/in/troy-bay-57aa90391/', icon: FaLinkedinIn, logo: linkedinLogo },
-  { label: 'GitHub', handle: 'github.com/ztreuse', href: 'https://github.com/ztreuse', icon: FaGithub, logo: githubLogo },
-  { label: 'JobStreet', href: 'https://ph.jobstreet.com/profiles/troy-bay-q77cg9r0z8', icon: FaBriefcase, logo: jobstreetLogo },
+  { label: 'LinkedIn', handle: 'in/troy-bay-57aa90391', href: 'https://www.linkedin.com/in/troy-bay-57aa90391/', icon: FaLinkedinIn },
+  { label: 'GitHub', handle: 'github.com/ztreuse', href: 'https://github.com/ztreuse', icon: FaGithub },
+  { label: 'JobStreet', href: 'https://ph.jobstreet.com/profiles/troy-bay-q77cg9r0z8', icon: FaBriefcase },
 ];
 
 // EmailJS public identifiers (safe to ship to the browser).

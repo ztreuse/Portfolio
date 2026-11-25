@@ -73,7 +73,7 @@ const Credential = ({ cert }) => {
           style={{ rotateX, rotateY, transformPerspective: 500 }}
           className="relative block size-13 sm:size-16"
         >
-          <img src={cert.image} alt="" loading="lazy" width="340" height="340" className="size-full object-contain" />
+          <img src={cert.image} alt="" loading="lazy" width="192" height="192" className="size-full object-contain" />
           <span
             ref={glint}
             aria-hidden

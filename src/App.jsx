@@ -6,7 +6,7 @@ import Preloader from './components/layout/Preloader';
 import CremaBand from './components/layout/CremaBand';
 import { introSeen, markIntroSeen } from './components/layout/intro';
 import useCleanAnchorLinks from './hooks/useCleanAnchorLinks';
-import useSmoothScroll, { setScrollLocked } from './hooks/useSmoothScroll';
+import useSmoothScroll, { getLenis, setScrollLocked } from './hooks/useSmoothScroll';
 import Hero from './sections/Hero';
 import Experience from './sections/Experience';
 import Certifications from './sections/Certifications';
@@ -28,6 +28,21 @@ const App = () => {
   // Keep the page from scrolling behind the preloader.
   useEffect(() => {
     setScrollLocked(loading);
+  }, [loading]);
+
+  // Opening a link such as /#contact: the browser looks for the section before React has drawn it, so go there once the
+  // page is shown. A reload keeps its place instead.
+  useEffect(() => {
+    if (loading || performance.getEntriesByType('navigation')[0]?.type === 'reload') return;
+    const target = window.location.hash.length > 1 && document.getElementById(window.location.hash.slice(1));
+    if (!target) return;
+    document.fonts.ready.then(() => {
+      const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const lenis = getLenis();
+      if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+      else window.scrollTo(0, top);
+    });
   }, [loading]);
 
   return (

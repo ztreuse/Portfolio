@@ -106,7 +106,7 @@ const Skills = () => {
         </SkillsFade>
       </Section>
       {/* Where the backdrop comes into focus before the Contact film takes over */}
-      {!reduceMotion && <div aria-hidden data-section-of="skills" className="h-[50svh]" />}
+      {!reduceMotion && <div aria-hidden data-section-of="skills" className="h-[50lvh]" />}
     </div>
   );
 };

@@ -1,18 +1,18 @@
-import itSpecialistHtmlAndCss from '../assets/certifications/it-specialist-html-and-css.png';
-import itSpecialistJavascript from '../assets/certifications/it-specialist-javascript.png';
-import itSpecialistNetworking from '../assets/certifications/it-specialist-networking.png';
-import itSpecialistPython from '../assets/certifications/it-specialist-python.png';
-import ccnaIntroductionToNetworks from '../assets/certifications/ccna-introduction-to-networks.png';
-import ccnaSwitchingRoutingAndWirelessEssentials from '../assets/certifications/ccna-switching-routing-and-wireless-essentials.png';
-import ccnaEnterpriseNetworkingSecurityAndAutomation from '../assets/certifications/ccna-enterprise-networking-security-and-automation.png';
-import devnetAssociate from '../assets/certifications/devnet-associate.png';
-import cyberopsAssociate from '../assets/certifications/cyberops-associate.png';
-import ciscoCertifiedSupportTechnicianCybersecurity from '../assets/certifications/cisco-certified-support-technician-cybersecurity.png';
-import pmiProjectManagementReady from '../assets/certifications/pmi-project-management-ready.png';
+import itSpecialistHtmlAndCss from '../assets/certifications/it-specialist-html-and-css.webp';
+import itSpecialistJavascript from '../assets/certifications/it-specialist-javascript.webp';
+import itSpecialistNetworking from '../assets/certifications/it-specialist-networking.webp';
+import itSpecialistPython from '../assets/certifications/it-specialist-python.webp';
+import ccnaIntroductionToNetworks from '../assets/certifications/ccna-introduction-to-networks.webp';
+import ccnaSwitchingRoutingAndWirelessEssentials from '../assets/certifications/ccna-switching-routing-and-wireless-essentials.webp';
+import ccnaEnterpriseNetworkingSecurityAndAutomation from '../assets/certifications/ccna-enterprise-networking-security-and-automation.webp';
+import devnetAssociate from '../assets/certifications/devnet-associate.webp';
+import cyberopsAssociate from '../assets/certifications/cyberops-associate.webp';
+import ciscoCertifiedSupportTechnicianCybersecurity from '../assets/certifications/cisco-certified-support-technician-cybersecurity.webp';
+import pmiProjectManagementReady from '../assets/certifications/pmi-project-management-ready.webp';
 
 // Dates are ISO (YYYY-MM-DD) so they can be formatted consistently.
 // `badgeId` is the Credly badge ID from the badge's embed code (data-share-badge-id); it builds the
-// public verification link. `image` is the badge artwork downloaded from Credly (340px).
+// public verification link. `image` is the badge artwork downloaded from Credly (192px WebP).
 const certifications = [
   {
     name: 'IT Specialist - HTML and CSS',

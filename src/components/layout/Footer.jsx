@@ -11,7 +11,7 @@ const [taglineLead, taglineRest] =
 
 /** A compact sign-off on Contact's colour: the tagline, the copyright line and a way back to the top. */
 const Footer = () => (
-  <footer className="tone-light tone-screen relative z-10 border-t border-accent/40 bg-ink">
+  <footer className="relative z-10 border-t border-accent/40 bg-ink">
     <Container className="flex flex-col gap-6 py-10 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="font-display text-item leading-snug font-bold text-balance">
@@ -22,6 +22,7 @@ const Footer = () => (
         <p className="mt-4 text-sm text-stone-400">
           &copy; {new Date().getFullYear()} {profile.name}. All rights reserved.
         </p>
+        <p className="mt-1 text-sm text-stone-400">Built with React, Vite and Tailwind CSS.</p>
       </div>
       <Button
         variant="outline"

@@ -23,7 +23,7 @@ const SCREEN = { wide: [0.516, 0.46], tall: [0.5, 0.45] };
  * `public/contact-film/` (`wide` 1280×720, cropped to cut out the generator's watermark; `tall` 720×1280, a slice
  * centred on the monitors), scrubbed by the scroll frame by frame like a video. The camera dollies across the dark
  * room toward the desk and the left monitor; after the last frame it keeps pushing into that monitor's glowing screen
- * (a digital zoom) and settles onto the screen's flat colour, which is Contact's background (`screen`, `.tone-screen`),
+ * (a digital zoom) and settles onto the screen's flat colour, which is Contact's background (the theme's page colour),
  * as if you've flown into the screen. The frames are colour-graded toward the site's taupes (baked in: saturate 0.45,
  * sepia 0.12, brightness 0.92; the raw clip read yellow).
  *
@@ -91,8 +91,9 @@ const ContactFilm = () => {
     // Then the push into the left monitor's screen, settling onto its flat colour (Contact's background)
     const push = smooth(clamp01((p - 0.5) / 0.2));
     const dim = smooth(clamp01((p - 0.54) / 0.16));
-    // Once it has settled on Contact's light colour, the navbar turns to light glass over it too
-    stage.current.toggleAttribute('data-nav-light', dim > 0.5);
+    // Until it settles on Contact's colour, the navbar over it stays dark in the light theme too
+    stage.current.toggleAttribute('data-nav-dark', pinned && dim < 0.5);
+    stage.current.toggleAttribute('data-nav-clear', pinned && dim >= 0.5);
     // Contact, rising over the film's end, fades in as the film settles (see Contact)
     // (straight on the section: a CSS variable on the page made the browser restyle everything, every frame)
     const contact = runway.current.nextElementSibling;
@@ -184,10 +185,10 @@ const ContactFilm = () => {
       <span data-section-of="skills" className="absolute inset-x-0 top-0 h-[40lvh]" />
       {/* lvh throughout (also in Skills, its backdrop and Contact): the screen with the phone's browser bar hidden. Sized
           by svh, hiding the bar left a dark strip under the film */}
-      <div ref={stage} className="sticky top-0 h-lvh overflow-hidden bg-ink opacity-0">
+      <div ref={stage} className="sticky top-0 h-lvh overflow-hidden bg-[#161513] opacity-0">
         {/* The grade is a CSS filter on the canvas: drawn per frame inside it, Safari ignores it and phones can't keep up */}
         <canvas ref={canvas} style={{ filter: FILM_GRADE }} className="absolute inset-0 size-full" />
-        <div ref={wash} className="absolute inset-0 bg-crema opacity-0" />
+        <div ref={wash} className="absolute inset-0 bg-ink opacity-0" />
       </div>
     </div>
   );

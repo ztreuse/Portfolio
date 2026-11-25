@@ -1,55 +1,17 @@
+import { useState } from 'react';
+import { LuChevronDown } from 'react-icons/lu';
 import Section from '../components/ui/Section';
-import { RevealGroup, RevealItem } from '../components/ui/Reveal';
-import { education, experience } from '../data/experience';
+import Timeline from '../components/ui/Timeline';
+import { experience } from '../data/experience';
 import desk from '../assets/images/desk-soft.webp'; // desk.webp, pre-blurred (a live blur made phones stutter)
 
-/** The organization's logo in a round badge, or its initials as a fallback. */
-const OrgBadge = ({ logo, initials, organization }) => (
-  <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface">
-    {logo ? (
-      <img src={logo} alt={`${organization} logo`} className="size-full bg-white object-contain p-1" />
-    ) : (
-      <span aria-hidden className="font-display text-label font-bold tracking-wide text-accent-strong">
-        {initials}
-      </span>
-    )}
-  </span>
-);
-
-/**
- * One job or degree as a row: where and when on the left (logo, organization, dates), what on the right (title and
- * its points). A hairline divides the rows. Stacked on smaller screens.
- */
-const Entry = ({ entry: { role, organization, logo, initials, period, points } }) => (
-  <RevealItem
-    as="li"
-    className="grid gap-4 border-b border-white/15 py-7 first:pt-0 last:border-b-0 last:pb-0 md:grid-cols-12 md:gap-8"
-  >
-    <div className="flex items-start gap-4 md:col-span-4">
-      <OrgBadge logo={logo} initials={initials} organization={organization} />
-      <div>
-        <p className="font-display text-copy font-semibold text-white">{organization}</p>
-        <p className="mt-1 font-display text-label font-bold tracking-[0.14em] text-accent uppercase">{period}</p>
-      </div>
-    </div>
-    <div className="md:col-span-8">
-      <h3 className="font-display text-item leading-snug font-bold text-balance text-white">{role}</h3>
-      <ul className="mt-3 space-y-2">
-        {points.map((point) => (
-          <li key={point} className="relative max-w-2xl pl-5 text-copy leading-relaxed text-pretty text-stone-300">
-            <span aria-hidden className="absolute top-[0.8em] left-0 h-px w-2.5 bg-accent" />
-            {point}
-          </li>
-        ))}
-      </ul>
-    </div>
-  </RevealItem>
-);
+const SHOWN = 3; // roles before the rest fold behind "Show earlier roles"
 
 /**
  * The owner's desk at night (their own setup, the same scene as the Contact film, graded to the site's taupes), softly
- * blurred under a veil so the text stays readable. From tablets up it stays put while the section scrolls over it,
- * like looking through a window (a fixed layer clipped to the section); on phones it's a plain background.
+ * blurred under a veil in the theme's colour so the text stays readable. From tablets up it stays put while the section
+ * scrolls over it, like looking through a window (a fixed layer clipped to the section); on phones it's a plain
+ * background.
  */
 const DeskBackdrop = () => (
   <div
@@ -58,30 +20,54 @@ const DeskBackdrop = () => (
   >
     <div className="absolute inset-0 md:fixed">
       <img src={desk} alt="" width="640" height="360" className="absolute inset-0 size-full object-cover" />
-      <div className="absolute inset-0 bg-dimension/70" />
+      <div className="absolute inset-0 bg-dimension/70 light:bg-dimension/88" />
     </div>
   </div>
 );
 
-// On the desk photo's lighter taupe, muted text steps up one shade
+// Over the desk photo, muted text steps up one shade
 const ON_DESK =
   '[--color-accent:var(--color-accent-strong)] [--color-stone-400:var(--color-stone-300)] [--color-stone-300:var(--color-stone-200)]';
 
-/** Work first, then education, newest first in each. New entries go in data/experience.js. */
-const Experience = () => (
-  <Section
-    id="experience"
-    eyebrow="02 — Experience"
-    title="Where I've worked and studied"
-    className={ON_DESK}
-    background={<DeskBackdrop />}
-  >
-    <RevealGroup as="ol" stagger={0.08}>
-      {[...experience, ...education].map((entry) => (
-        <Entry key={entry.role} entry={entry} />
-      ))}
-    </RevealGroup>
-  </Section>
-);
+/**
+ * Work only, newest first; new jobs go in data/experience.js. Past three, the older ones fold away, so the section stays
+ * short however many there are (Education has its own section, so it never gets pushed down by them).
+ */
+const Experience = () => {
+  const [all, setAll] = useState(false);
+  const folds = experience.length > SHOWN;
+
+  return (
+    <Section
+      id="experience"
+      eyebrow="02 — Experience"
+      title="Where I've worked"
+      className={ON_DESK}
+      background={<DeskBackdrop />}
+    >
+      <Timeline entries={experience.slice(0, SHOWN)} />
+      {/* Its own list, so it reveals when it opens (added to the one above, which has already played, it stayed hidden) */}
+      {all && (
+        <div className="mt-7 border-t border-white/15 pt-7">
+          <Timeline entries={experience.slice(SHOWN)} />
+        </div>
+      )}
+      {folds && (
+        <button
+          type="button"
+          onClick={() => setAll((v) => !v)}
+          aria-expanded={all}
+          className="mt-8 inline-flex items-center gap-1.5 rounded-full border border-white/20 py-1.5 pr-2.5 pl-3.5 font-display text-label font-bold tracking-[0.12em] text-stone-300 uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink"
+        >
+          {all ? 'Show fewer roles' : `Show ${experience.length - SHOWN} earlier`}
+          <LuChevronDown
+            aria-hidden
+            className={`size-4 transition-transform duration-300 motion-reduce:transition-none ${all ? 'rotate-180' : ''}`}
+          />
+        </button>
+      )}
+    </Section>
+  );
+};
 
 export default Experience;

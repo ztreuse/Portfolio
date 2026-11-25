@@ -67,7 +67,7 @@ const Credential = ({ cert }) => {
       onPointerLeave={settle}
       className="group flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-2.5 pr-4 sm:p-3 sm:pr-4 transition-[border-color,box-shadow] duration-300 hover:border-accent/60 hover:shadow-[0_18px_40px_-24px_rgb(60_45_30/0.6)]"
     >
-      {/* A fixed warm paper white (inside the crema band "white" turns dark), so dark badges like CCST read too */}
+      {/* A fixed warm paper white (in the light theme "white" is dark), so dark badges like CCST read too */}
       <span className="flex size-16 shrink-0 items-center justify-center rounded-xl sm:size-20 bg-[radial-gradient(ellipse_at_50%_42%,#fffdf9_0%,#f4eee6_60%,#e9e0d4_100%)]">
         <motion.span
           style={{ rotateX, rotateY, transformPerspective: 500 }}
@@ -102,7 +102,7 @@ const Credential = ({ cert }) => {
  * card at a time and needed arrows, dragging and autoplay.
  */
 const Certifications = () => (
-  <Section id="certifications" eyebrow="03 — Certifications" title="Credentials I've earned">
+  <Section id="certifications" eyebrow="04 — Certifications" title="Credentials I've earned">
     {issuers.map(({ issuer, items }) => (
       <div
         key={issuer}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import emailjs from '@emailjs/browser';
 import {
@@ -14,6 +14,7 @@ import {
   LuPhone,
 } from 'react-icons/lu';
 import Button from '../components/ui/Button';
+import LocalTime from '../components/ui/LocalTime';
 import Section from '../components/ui/Section';
 import Reveal from '../components/ui/Reveal';
 import ContactFilm from './ContactFilm';
@@ -30,7 +31,7 @@ const statusMessages = {
   error: {
     text: 'Something went wrong. Please try again or email me directly.',
     icon: LuCircleAlert,
-    className: 'text-red-400',
+    className: 'text-danger',
   },
 };
 
@@ -111,32 +112,6 @@ const CopyEmail = () => {
   );
 };
 
-const timeFormat = new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric',
-  minute: '2-digit',
-  timeZone: profile.timeZone,
-  timeZoneName: 'shortOffset',
-});
-
-/** The current time where I am ("5:31 PM · GMT+8"), ticking over on the minute. */
-const LocalTime = () => {
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const timer = setTimeout(() => setNow(new Date()), 60000 - (Date.now() % 60000));
-    return () => clearTimeout(timer);
-  }, [now]);
-
-  const parts = timeFormat.formatToParts(now);
-  const part = (type) => parts.find((p) => p.type === type)?.value;
-
-  return (
-    <time dateTime={now.toISOString()} className="tabular-nums">
-      {part('hour')}:{part('minute')} {part('dayPeriod')} · {part('timeZoneName')}
-    </time>
-  );
-};
-
 /**
  * One way to reach me: a round taupe icon badge, a small label over the value, and on the right either an action (the
  * copy button) or an arrow for links that leave the site. The row's divider fills taupe from the left on hover, like
@@ -214,10 +189,10 @@ const Contact = () => {
       {!reduceMotion && <ContactFilm />}
       <Section
         id="contact"
-        eyebrow="05 — Contact"
+        eyebrow="06 — Contact"
         // On the colour the desk film settles onto. It's pulled up over the film's last 70lvh, see-through there and
         // fading in as the film settles, so it arrives with the colour instead of after an empty screen of it
-        className={`tone-light tone-screen z-10 ${reduceMotion ? '' : '-mt-[70lvh]'}`}
+        className={`z-10 ${reduceMotion ? '' : '-mt-[70lvh]'}`}
         background={
           <div
             aria-hidden
@@ -241,7 +216,7 @@ const Contact = () => {
               <ContactRow icon={LuPhone} label="Phone" href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}>
                 {profile.phone}
               </ContactRow>
-              {/* Profiles with a link text; JobStreet has none, so it stays out of this list */}
+              {/* Profiles with a link text (Email has its own row above) */}
               {socials
                 .filter(({ handle }) => handle)
                 .map(({ label, handle, href, icon }) => (
@@ -285,7 +260,7 @@ const Contact = () => {
             <div className="flex flex-col-reverse gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
               <p role="status" className={`flex min-h-5 items-center gap-2 text-sm ${message?.className ?? ''}`}>
                 {message && <message.icon aria-hidden className="size-4 shrink-0" />}
-                {message?.text}
+                {message?.text ?? <span className="text-stone-400">I&apos;ll reply to the email you give here.</span>}
               </p>
               <Button
                 type="submit"

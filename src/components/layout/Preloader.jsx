@@ -461,7 +461,7 @@ const Preloader = ({ onDone }) => {
       aria-label="Loading"
       exit={{ opacity: 0 }}
       transition={{ duration: 0.45, ease: 'easeOut' }}
-      className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 overflow-hidden bg-ink"
+      className="tone-dark fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 overflow-hidden bg-ink"
     >
       {/* Same warm glow as the hero, so the fade-out blends straight into it */}
       <div aria-hidden className="absolute size-[28rem] rounded-full bg-accent/15 blur-[110px]" />

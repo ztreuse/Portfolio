@@ -22,7 +22,8 @@ uniform vec2 uTexel;
 uniform vec2 uPixel; // one CSS pixel in uv units, so ripples bend the same distance on any screen
 uniform vec2 uCover;
 uniform float uTime;
-uniform float uDim; // how far the photo is darkened toward the page ink (the coffee is drawn on top, undimmed)
+uniform float uDim; // how far the photo is faded toward the page colour (the coffee is drawn on top, undimmed)
+uniform vec3 uBase; // the page colour, which follows the theme
 uniform float uEnergy; // 1 while rippling, easing to 0 as it calms
 
 void main() {
@@ -38,7 +39,7 @@ void main() {
   offset += vec2(sin(vUv.y * 4.0 + uTime * 0.3), cos(vUv.x * 3.0 + uTime * 0.25)) * 4.0 * uPixel;
 
   vec2 uv = (vUv - offset - 0.5) * uCover + 0.5;
-  vec3 color = mix(texture2D(uImage, uv).rgb, vec3(0.086, 0.082, 0.075), uDim);
+  vec3 color = mix(texture2D(uImage, uv).rgb, uBase, uDim);
 
   // Coffee surface: a slight brown body where it's disturbed, crests glint crema, troughs sink toward espresso.
   float light = dot(slope, vec2(-1.0, 1.0)) * 3.0;
@@ -86,15 +87,24 @@ const createTexture = (gl) => {
 /**
  * Background image under a sheet of coffee: moving the cursor (or a finger) leaves a wake of ripples
  * that spread, bend the photo with a slight coffee-brown tint and fade smoothly away. It sways gently
- * when idle. Falls back to a plain <img> without WebGL or with reduced motion. `dim` (0–1) darkens the photo toward
- * the page ink inside the shader, so the coffee effects are drawn on top at full strength instead of under an overlay. Accepts the same motion props as motion.img.
+ * when idle. Falls back to a plain <img> without WebGL or with reduced motion. `dim` (0–1) fades the photo toward
+ * `base` (the page colour as [r, g, b] 0–1) inside the shader, so the coffee effects are drawn on top at full strength instead of under an overlay. Accepts the same motion props as motion.img.
  */
-const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
+const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
   const canvasRef = useRef(null);
   const [enabled] = useState(canUseFluid);
   // `paused` stops the loop while the image is hidden (e.g. the pinned hero once About covers it).
   const activeRef = useRef(!paused);
   const wakeRef = useRef(null);
+  // Read every frame, so a theme switch recolours it without rebuilding anything
+  const baseRef = useRef(base);
+  const dimRef = useRef(dim);
+
+  useEffect(() => {
+    baseRef.current = base;
+    dimRef.current = dim;
+    wakeRef.current?.();
+  }, [base, dim]);
 
   useEffect(() => {
     activeRef.current = !paused;
@@ -127,7 +137,8 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
     const uTexel = gl.getUniformLocation(program, 'uTexel');
     const uPixel = gl.getUniformLocation(program, 'uPixel');
     const uTime = gl.getUniformLocation(program, 'uTime');
-    gl.uniform1f(gl.getUniformLocation(program, 'uDim'), dim);
+    const uBase = gl.getUniformLocation(program, 'uBase');
+    const uDim = gl.getUniformLocation(program, 'uDim');
     const uEnergy = gl.getUniformLocation(program, 'uEnergy');
     gl.uniform1i(gl.getUniformLocation(program, 'uImage'), 0);
     gl.uniform1i(gl.getUniformLocation(program, 'uWater'), 1);
@@ -228,6 +239,8 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, cols, rows, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, pixels);
       }
       gl.uniform1f(uTime, (performance.now() - start) / 1000);
+      gl.uniform3fv(uBase, baseRef.current);
+      gl.uniform1f(uDim, dimRef.current);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
 
@@ -311,7 +324,7 @@ const FluidImage = ({ src, paused = false, dim = 0, ...props }) => {
       gl.deleteShader(vertex);
       gl.deleteShader(fragment);
     };
-  }, [enabled, src, dim]);
+  }, [enabled, src]);
 
   if (!enabled) {
     return (

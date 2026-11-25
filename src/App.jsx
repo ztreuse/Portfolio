@@ -3,11 +3,12 @@ import { AnimatePresence, MotionConfig } from 'motion/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
-import CremaBand from './components/layout/CremaBand';
+import Band from './components/layout/Band';
 import { introSeen, markIntroSeen } from './components/layout/intro';
 import useCleanAnchorLinks from './hooks/useCleanAnchorLinks';
 import useSmoothScroll, { getLenis, setScrollLocked } from './hooks/useSmoothScroll';
 import Hero from './sections/Hero';
+import Education from './sections/Education';
 import Experience from './sections/Experience';
 import Certifications from './sections/Certifications';
 import Skills from './sections/Skills';
@@ -49,19 +50,26 @@ const App = () => {
     <MotionConfig reducedMotion="user">
       <AnimatePresence>{loading && <Preloader onDone={finishLoading} />}</AnimatePresence>
 
+      <a
+        href="#main"
+        className="sr-only z-60 rounded-full bg-accent px-5 py-2.5 font-display text-sm font-semibold text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to content
+      </a>
       <Navbar ready={!loading} />
       {/* overflow-x-clip stops slide-in reveals from widening the page on phones */}
-      <main className="overflow-x-clip">
+      <main id="main" tabIndex={-1} className="overflow-x-clip outline-none">
         <Hero ready={!loading} />
-        {/* Sections simply follow one another, light and dark alternating. The only scroll-driven transition left is
-            the desk film from Skills into Contact. */}
-        <CremaBand wave>
+        {/* Sections simply follow one another, alternating between the page and a shade off it. The only scroll-driven
+            transition is the desk film from Skills into Contact. */}
+        <Band wave>
           <Projects />
-        </CremaBand>
+        </Band>
         <Experience />
-        <CremaBand>
+        <Education />
+        <Band>
           <Certifications />
-        </CremaBand>
+        </Band>
         <Skills />
         <Contact />
       </main>

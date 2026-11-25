@@ -1,10 +1,11 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { TypeAnimation } from 'react-type-animation';
-import { LuArrowDown, LuArrowRight, LuDownload } from 'react-icons/lu';
+import { LuArrowDown, LuArrowRight, LuClock, LuDownload, LuGraduationCap } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Container from '../components/ui/Container';
 import FluidImage from '../components/ui/FluidImage';
+import LocalTime from '../components/ui/LocalTime';
 import SocialIcon from '../components/ui/SocialIcon';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { imageReveal } from '../components/ui/revealVariants';
@@ -13,6 +14,11 @@ import { education } from '../data/experience';
 import heroBg from '../assets/images/hero-bg.jpg';
 import profileImg from '../assets/images/profile.webp';
 import { sectionLink } from '../hooks/useCleanAnchorLinks';
+import useTheme from '../hooks/useTheme';
+
+// The page colour (--color-ink) per theme for the hero's shader, which can't read CSS; module constants, so they keep
+// the same identity between renders
+const PAGE = { dark: [0.086, 0.082, 0.075], light: [0.902, 0.867, 0.824] };
 
 // Fixed positions (left %, top %, delay s) keep renders pure while looking scattered.
 const particles = [
@@ -36,13 +42,14 @@ const focusPull = (ready, reduceMotion) => {
   };
 };
 
-const HeroBackground = ({ paused, ready, reduceMotion }) => (
+const HeroBackground = ({ paused, ready, reduceMotion, theme }) => (
   <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
     <FluidImage
       src={heroBg}
       paused={paused}
-      // Darkened inside the shader (not by an overlay) so the coffee ripples and crema show at full strength
-      dim={0.88}
+      // Faded into the page inside the shader (not by an overlay) so the coffee ripples show at full strength
+      dim={theme === 'light' ? 0.93 : 0.88}
+      base={PAGE[theme]}
       {...focusPull(ready, reduceMotion)}
       className="absolute inset-0 size-full object-cover"
     />
@@ -116,6 +123,13 @@ const ScrollCue = () => (
   </a>
 );
 
+const Fact = ({ icon: Icon, children }) => (
+  <li className="flex items-center gap-2 rounded-full border border-white/15 bg-ink/40 px-3 py-1.5">
+    <Icon aria-hidden className="size-3.5 text-accent" />
+    {children}
+  </li>
+);
+
 /** The grad photo in its card; hovering twists it one way and swings the offset frame behind it the other way. */
 const Portrait = () => (
   <RevealItem variants={imageReveal} className="group relative w-28 sm:w-36 lg:w-full">
@@ -136,7 +150,7 @@ const Portrait = () => (
 const [firstName, ...otherNames] = profile.name.split(' ');
 
 /**
- * The first screen answers who, what and how to reach me at once: name, cycling role, degree, a short introduction,
+ * The first screen answers who, what and how to reach me at once: name, cycling role, quick facts, a short introduction,
  * the resume and contact buttons, profiles and photo, over the rippling coffee photo. It took over the About section
  * (its text and photo), whose own screen was mostly empty; Education is a row in Experience.
  */
@@ -144,10 +158,11 @@ const Hero = ({ ready }) => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
   const onScreen = useInView(ref);
+  const { theme } = useTheme();
 
   return (
     <section ref={ref} id="hero" className="relative isolate flex min-h-svh items-center overflow-hidden pt-16">
-      <HeroBackground paused={!onScreen} ready={ready} reduceMotion={reduceMotion} />
+      <HeroBackground paused={!onScreen} ready={ready} reduceMotion={reduceMotion} theme={theme} />
 
       <Container className="py-12 pb-20 sm:pb-24">
         <RevealGroup
@@ -180,11 +195,21 @@ const Hero = ({ ready }) => {
             </RevealItem>
 
             <RoleLine ready={ready} />
+            {/* The facts at a glance: degree, my time (no city) and that I'm available */}
             <RevealItem
-              as="p"
-              className="mt-2 font-display text-label font-bold tracking-[0.04em] text-balance text-stone-400 uppercase sm:tracking-[0.14em]"
+              as="ul"
+              className="mt-4 flex flex-wrap gap-2 font-display text-label font-medium text-stone-300"
             >
-              {education[0].short}
+              <Fact icon={LuGraduationCap}>{education[0].short}</Fact>
+              <Fact icon={LuClock}>
+                <LocalTime />
+              </Fact>
+              {profile.availability && (
+                <li className="flex items-center gap-2 rounded-full border border-accent/50 bg-accent/15 px-3 py-1.5 text-accent-strong">
+                  <span aria-hidden className="size-1.5 rounded-full bg-accent-strong" />
+                  {profile.availability}
+                </li>
+              )}
             </RevealItem>
 
             <RevealItem as="p" className="mt-6 max-w-2xl text-copy leading-relaxed text-pretty text-stone-300">

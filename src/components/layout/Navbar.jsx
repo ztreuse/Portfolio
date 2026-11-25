@@ -11,7 +11,9 @@ import {
 import { LuDownload } from 'react-icons/lu';
 import Container from '../ui/Container';
 import SocialIcon from '../ui/SocialIcon';
+import ThemeToggle from '../ui/ThemeToggle';
 import useActiveSection from '../../hooks/useActiveSection';
+import useTheme from '../../hooks/useTheme';
 import { navLinks, profile, socials } from '../../data/site';
 import logoHelmet from '../../assets/images/logo-helmet.svg';
 import { sectionLink } from '../../hooks/useCleanAnchorLinks';
@@ -51,23 +53,23 @@ const menuItemVariants = {
 };
 
 /**
- * Whether the page right under the navbar is light: a visible light surface there (the crema bands and the desk film
- * once it has settled on Contact's colour, marked `data-nav-light`; Contact and the footer, `.tone-screen`).
- * Hit-testing couldn't tell: most background layers here are click-through, so it saw through them.
+ * Whether the night video (or its first frame, behind the end of Skills) is right under the navbar: those mark
+ * themselves `data-nav-dark` while they show; `data-nav-clear` is the video once it has settled on Contact's colour, on
+ * top of them. The bar is dark glass over the night in both themes.
  */
-const lightUnderBar = (header) => {
+const nightUnderBar = (header) => {
   const y = (header?.offsetHeight ?? 64) + 2;
-  return [...document.querySelectorAll('[data-nav-light], .tone-screen')].some((el) => {
-    if (header?.contains(el)) return false;
-    const r = el.getBoundingClientRect();
-    return r.top <= y && r.bottom >= y && Number(getComputedStyle(el).opacity) >= 0.5;
-  });
+  const under = (selector) =>
+    [...document.querySelectorAll(selector)].some((el) => {
+      const r = el.getBoundingClientRect();
+      return r.top <= y && r.bottom >= y;
+    });
+  return under('[data-nav-dark]') && !under('[data-nav-clear]');
 };
 
 /**
  * The helmeted horse head (a redraw of the owner's reference: a solid taupe silhouette with its engraved lines cut out
- * as transparent gaps) beside the name. Over light sections the mark is darkened and the name turns dark with the
- * header's `tone-light`. The tab icon is the same mark.
+ * as transparent gaps) beside the name. In the light theme the mark is darkened. The tab icon is the same mark.
  */
 const NavLogo = ({ onClick, light }) => (
   <a
@@ -230,14 +232,15 @@ const ElasticDash = ({ items, activeId }) => {
 const Navbar = ({ ready = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 24);
-  const [light, setLight] = useState(false);
+  const [night, setNight] = useState(false);
+  const { theme } = useTheme();
   const header = useRef(null);
   const linkItems = useRef({});
   const activeId = useActiveSection(sectionIds);
   const { scrollY } = useScroll();
 
-  // Switch from transparent to frosted glass once the page leaves the top, and to light glass over light sections
-  // (checked once per frame at most)
+  // Switch from transparent to frosted glass once the page leaves the top, and to dark glass over the night video in
+  // the light theme (checked once per frame at most)
   const checking = useRef(false);
   useMotionValueEvent(scrollY, 'change', (y) => {
     setScrolled(y > 24);
@@ -245,7 +248,7 @@ const Navbar = ({ ready = true }) => {
     checking.current = true;
     requestAnimationFrame(() => {
       checking.current = false;
-      setLight(lightUnderBar(header.current));
+      setNight(nightUnderBar(header.current));
     });
   });
 
@@ -272,8 +275,7 @@ const Navbar = ({ ready = true }) => {
 
   return (
     <>
-      {/* Fine see-through glass with a hairline once scrolled; over light sections (`tone-light` re-points the palette)
-          it turns to warm light glass with dark text and a dark logo, crossfading as you scroll */}
+      {/* Fine see-through glass with a hairline once scrolled */}
       <motion.header
         ref={header}
         initial={{ y: -64, opacity: 0 }}
@@ -281,7 +283,7 @@ const Navbar = ({ ready = true }) => {
         transition={{ duration: 0.7, ease: easeOut, delay: ready ? 0.15 : 0 }}
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,color] duration-500 ${
           solid ? 'bg-ink/60 backdrop-blur-xl backdrop-saturate-150' : 'bg-transparent'
-        } ${light && solid ? 'tone-light' : ''}`}
+        } ${night ? 'tone-dark' : ''}`}
       >
         <span
           aria-hidden
@@ -290,9 +292,9 @@ const Navbar = ({ ready = true }) => {
           }`}
         />
         <Container className="relative flex h-16 items-center justify-between">
-          <NavLogo onClick={closeMenu} light={light && solid} />
+          <NavLogo onClick={closeMenu} light={theme === 'light' && !night} />
 
-          <nav aria-label="Main" className="relative hidden lg:block">
+          <nav aria-label="Main" className="relative ml-auto hidden lg:mr-4 lg:block">
             <motion.ul
               variants={linkListVariants}
               initial="hidden"
@@ -315,7 +317,7 @@ const Navbar = ({ ready = true }) => {
                     <a
                       {...sectionLink(id)}
                       aria-current={active ? 'true' : undefined}
-                      className={`group/link grid justify-items-center px-3 py-2 font-display text-label font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
+                      className={`group/link grid justify-items-center px-2 py-2 font-display text-label font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
                         active ? 'text-white' : 'text-stone-400'
                       }`}
                     >
@@ -333,7 +335,10 @@ const Navbar = ({ ready = true }) => {
             <ElasticDash items={linkItems} activeId={activeId} />
           </nav>
 
-          <MenuToggle open={menuOpen} onClick={() => setMenuOpen((open) => !open)} />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <MenuToggle open={menuOpen} onClick={() => setMenuOpen((open) => !open)} />
+          </div>
 
           <AnimatePresence>{menuOpen && <MobileMenu activeId={activeId} onNavigate={closeMenu} />}</AnimatePresence>
         </Container>

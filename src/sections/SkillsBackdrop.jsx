@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { FILM_GRADE } from './filmGrade';
 
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
@@ -31,6 +31,8 @@ const SkillsBackdrop = () => {
   const { scrollYProgress: end } = useScroll({ target: ref, offset: ['end 1.35', 'end 1.02'] });
   // A function transform, so motion keeps it on the JS side (a plain opacity map can stick)
   const soft = useTransform(end, (e) => (still ? 1 : 1 - smooth(clamp01(e))));
+  // Once the night photo shows, the navbar over it stays dark in the light theme too
+  useMotionValueEvent(soft, 'change', (v) => ref.current?.toggleAttribute('data-nav-dark', v < 0.6));
 
   return (
     <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-ink [clip-path:inset(0)]">
@@ -40,7 +42,7 @@ const SkillsBackdrop = () => {
         </div>
         <motion.div style={{ opacity: soft }} className="absolute inset-0">
           {near && <Photo file="soft" />}
-          <div className="absolute inset-0 bg-ink/60" />
+          <div className="absolute inset-0 bg-ink/60 light:bg-ink/92" />
         </motion.div>
       </div>
     </div>

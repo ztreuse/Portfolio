@@ -10,6 +10,7 @@ export const experience = [
     logo: logoFor('simplevia'),
     initials: 'SV',
     period: 'Jan 2026 – Jul 2026',
+    tools: ['Tailwind CSS', 'Mantine UI', 'Figma', 'GitHub'],
     points: [
       'Developed and optimized responsive, production-ready user interfaces for internal software using Tailwind CSS and Mantine UI.',
       'Built reusable components from Figma designs within a cross-functional team to maintain front-end consistency.',

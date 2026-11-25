@@ -18,16 +18,15 @@
   --text-copy: 0.9375rem;
   --text-label: 0.75rem;
 
-  --color-ink: #161513;
-  --color-ink-deep: #0f0e0d;
-  --color-surface: #1f1d1a;
-  --color-line: #2d2925;
-  --color-accent: #9f8f81;
+  /* Dark theme values; the light ones are below (:root[data-theme='light']). */
+  --color-ink: #161513; /* page */
+  --color-band: #1d1b18; /* every other section, a shade off the page */
+  --color-surface: #24211d; /* cards */
+  --color-line: #37322d;
+  --color-accent: #a89888;
   --color-accent-strong: #c9bcaf;
   --color-dimension: #403b37; /* the veil over Experience's desk photo */
-  --color-crema: #e6ddd2; /* the light "crema" sections (see .tone-light) */
-  --color-screen: #e6ddd2; /* Contact and the footer: the crema of the Projects band, which the desk film settles onto */
-  --color-espresso: #161513; /* same as ink, but never re-pointed by .tone-light: dark on purpose inside a crema band */
+  --color-danger: #f87171;
 
   /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
      clash with motion's `transform`. Set the height with --float and vary duration/delay per element. */
@@ -70,7 +69,7 @@
     }
   }
 
-  /* The crema wave on the Projects band's top edge: a strip twice the screen wide sliding by exactly one half. */
+  /* The wave on the Projects band's top edge: a strip twice the screen wide sliding by exactly one half. */
   --animate-roll: roll 16s linear infinite;
 
   @keyframes roll {
@@ -92,38 +91,55 @@
 
 
 /*
- * Light "crema" sections: Certifications and Projects sit on crema between dark sections. Instead of restyling every
- * component, this class re-points the palette inside it (Tailwind v4 utilities read these variables): white text
- * becomes ink, ink backgrounds become crema, cards, lines and muted text step to light-theme values, and the accents
- * darken to keep their contrast. `bg-ink` on the section itself therefore paints crema.
+ * Themes. Dark (espresso) is the palette above; light (crema) re-points the same variables for the whole page. Tailwind's
+ * utilities read these variables, so `text-white` means "strongest text", `bg-ink` "page" and `white/15` "faint line" in
+ * either theme, and components need no light variants. Use palette utilities only: a hard-coded hex won't flip. For the
+ * rare exception there's the `light:` variant. `.tone-dark` keeps a part dark in both themes (the intro, and the navbar
+ * over the night video).
  */
-.tone-light {
+@custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+
+:root[data-theme='light'] {
+  color-scheme: light;
   --color-white: #1a1714;
   --color-stone-200: #2b2622;
   --color-stone-300: #3b3530;
-  --color-stone-400: #5a5048;
-  --color-stone-500: #6e645b;
-  --color-ink: var(--color-crema);
-  --color-surface: #efe8df;
+  --color-stone-400: #564c44;
+  --color-stone-500: #665c53;
+  --color-ink: #e6ddd2;
+  --color-band: #efe8df;
+  --color-surface: #f7f2eb;
   --color-line: #cfc3b5;
-  --color-accent: #7a6a5c;
-  --color-accent-strong: #54473d;
-  color: var(--color-stone-300);
+  --color-accent: #6a5b4e;
+  --color-accent-strong: #4b3f36;
+  --color-dimension: #dfd4c7;
+  --color-danger: #a8321f;
 }
 
-/*
- * Contact and the footer sit on `screen` (the crema of the Projects band; the desk film settles onto it, as if
- * you've flown into the monitor). On top of .tone-light: `bg-ink` paints the screen colour, and the muted text and
- * accents stay a step darker than in the crema bands, which only adds contrast.
- */
-.tone-screen {
-  --color-ink: var(--color-screen);
-  --color-surface: #efe8df;
-  --color-line: #cfc3b5;
-  --color-stone-400: #4a4038;
-  --color-stone-500: #574c43;
-  --color-accent: #5f5146;
-  --color-accent-strong: #3f352d;
+:root {
+  color-scheme: dark;
+}
+
+.tone-dark {
+  color-scheme: dark;
+  --color-white: #fff;
+  --color-stone-200: #e7e5e4;
+  --color-stone-300: #d6d3d1;
+  --color-stone-400: #a8a29e;
+  --color-stone-500: #78716c;
+  --color-ink: #161513;
+  --color-band: #1d1b18;
+  --color-surface: #24211d;
+  --color-line: #37322d;
+  --color-accent: #a89888;
+  --color-accent-strong: #c9bcaf;
+}
+
+/* The theme switch draws its own spreading circle (setTheme), so the browser's default cross-fade is off */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @layer base {

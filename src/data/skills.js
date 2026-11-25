@@ -41,12 +41,14 @@ import sqlite from '../assets/brand-logos/sqlite.svg';
 import vite from '../assets/brand-logos/vitejs.svg';
 import cisco from '../assets/brand-logos/cisco.svg';
 import ccst from '../assets/brand-logos/ccst.svg';
+import ccstDark from '../assets/brand-logos/ccst-dark.svg';
 import pmi from '../assets/brand-logos/pmi.svg';
+import pmiDark from '../assets/brand-logos/pmi-dark.svg';
 import neon from '../assets/brand-logos/neon.svg';
 import pest from '../assets/brand-logos/pest.svg';
 
 // Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
-// show on the dark theme). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
+// show on the dark theme; `mono` inverts those in the light theme, and `logoLight` replaces the rest). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
 // Shown in this order as the Skills category cards; upskilling comes last.
 const skillGroups = [
   {
@@ -57,7 +59,7 @@ const skillGroups = [
       { name: 'JavaScript', description: 'Language', logo: javascript, color: '#F7DF1E' },
       { name: 'TypeScript', description: 'Typed JavaScript', logo: typescript, color: '#3178C6' },
       { name: 'React', description: 'UI library', logo: react, color: '#61DAFB' },
-      { name: 'Next.js', description: 'React framework', logo: nextjs, color: '#FFFFFF' },
+      { name: 'Next.js', description: 'React framework', logo: nextjs, mono: true, color: '#FFFFFF' },
       { name: 'Vue.js', description: 'UI framework', logo: vue, color: '#41B883' },
       { name: 'Tailwind CSS', description: 'Utility-first CSS', logo: tailwindcss, color: '#06B6D4' },
       { name: 'Mantine UI', description: 'Component library', logo: mantine, color: '#339AF0' },
@@ -68,9 +70,9 @@ const skillGroups = [
     title: 'Design & Animation',
     items: [
       { name: 'Figma', description: 'UI/UX design', logo: figma, color: '#F24E1E' },
-      { name: 'Motion (Framer Motion)', description: 'Animation library', logo: framer, color: '#E93DE0' },
+      { name: 'Motion (Framer Motion)', description: 'Animation library', logo: framer, mono: true, color: '#E93DE0' },
       { name: 'Photoshop', description: 'Image editing', logo: photoshop, color: '#31A8FF' },
-      { name: 'CapCut', description: 'Video editing', logo: capcut, color: '#FFFFFF' },
+      { name: 'CapCut', description: 'Video editing', logo: capcut, mono: true, color: '#FFFFFF' },
       { name: 'Canva', description: 'Graphic design', logo: canva, color: '#7D2AE7' },
       { name: 'Design Systems', description: 'Tokens & components', icon: LuSwatchBook, color: '#C9BCAF' },
     ],
@@ -96,9 +98,9 @@ const skillGroups = [
     items: [
       { name: 'VS Code', description: 'Code editor', logo: vscode, color: '#007ACC' },
       { name: 'Git', description: 'Version control', logo: git, color: '#F05032' },
-      { name: 'GitHub', description: 'Code hosting', logo: github, color: '#FFFFFF' },
+      { name: 'GitHub', description: 'Code hosting', logo: github, mono: true, color: '#FFFFFF' },
       { name: 'Vite', description: 'Build tool', logo: vite, color: '#646CFF' },
-      { name: 'Vercel', description: 'Deployment & hosting', logo: vercel, color: '#FFFFFF' },
+      { name: 'Vercel', description: 'Deployment & hosting', logo: vercel, mono: true, color: '#FFFFFF' },
       { name: 'Claude', description: 'AI-assisted development', logo: claude, color: '#D97757' },
     ],
   },
@@ -106,7 +108,7 @@ const skillGroups = [
     title: 'Mobile',
     items: [
       { name: 'React Native', description: 'Mobile apps', logo: react, color: '#61DAFB' },
-      { name: 'Expo', description: 'React Native toolchain', logo: expo, color: '#FFFFFF' },
+      { name: 'Expo', description: 'React Native toolchain', logo: expo, mono: true, color: '#FFFFFF' },
       { name: 'Android Studio', description: 'Android IDE', logo: androidStudio, color: '#3DDC84' },
     ],
   },
@@ -115,8 +117,8 @@ const skillGroups = [
     title: 'Certified Foundations',
     items: [
       { name: 'Networking', description: 'Cisco CCNA', logo: cisco, wide: true, color: '#00BCEB' },
-      { name: 'Cybersecurity', description: 'CCST, CyberOps', logo: ccst, wide: true, color: '#1B8AA0' },
-      { name: 'Project Management', description: 'PMI certified', logo: pmi, color: '#FF610F' },
+      { name: 'Cybersecurity', description: 'CCST, CyberOps', logo: ccst, logoLight: ccstDark, wide: true, color: '#1B8AA0' },
+      { name: 'Project Management', description: 'PMI certified', logo: pmi, logoLight: pmiDark, color: '#FF610F' },
     ],
   },
   {
@@ -138,7 +140,7 @@ const skillGroups = [
   },
   {
     title: '3D & WebGL (Upskilling)',
-    items: [{ name: 'Three.js', description: '3D on the web', logo: threejs, color: '#FFFFFF' }],
+    items: [{ name: 'Three.js', description: '3D on the web', logo: threejs, mono: true, color: '#FFFFFF' }],
   },
 ];
 

@@ -74,7 +74,7 @@ const MoreText = ({ text, className = '' }) => {
 
 /**
  * What a project was built with, as small outlined chips like the Skills chips (text only: several brand logos are
- * white versions that vanish on the crema). Shown in the list view, which is the detailed one; the grid stays clean.
+ * white versions that vanish in the light theme). Shown in the list view, which is the detailed one; the grid stays clean.
  */
 const StackList = ({ tools, className = '' }) => (
   <ul aria-label="Built with" className={`flex flex-wrap gap-1.5 ${className}`}>

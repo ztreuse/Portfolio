@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { introSeen } from './intro';
 
-const MIN_DURATION = 2200; // ms: long enough for the cup to fill
-const MAX_DURATION = 6000; // ms: never block the site longer than this on slow connections
+const MIN_DURATION = 600; // ms: a quick pour
+const MAX_DURATION = 2500; // ms: never block the site longer than this on slow connections
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // The finale once the cup is full: it overflows (SPILL), then coffee floods the screen (FLOOD, starting part-way
 // through the spill), then the site is revealed with a ripple splash in the hero's coffee.
-const SPILL = 1.0; // s
-const FLOOD_AT = 550; // ms after full
-const FLOOD = 0.95; // s
-const REVEAL_AT = FLOOD_AT + FLOOD * 1000 + 120; // ms after full
+const SPILL = 0.45; // s
+const FLOOD_AT = 150; // ms after full
+const FLOOD = 0.6; // s
+const REVEAL_AT = FLOOD_AT + FLOOD * 1000 + 60; // ms after full
 // The flood's colour: a dark coffee close to the hero's dimmed photo, so the cross-fade into it is seamless.
 const FLOOD_COLOR = '#2a231d';
-// The 3D scene (Three.js, its own chunk) needs WebGL2 and is skipped for reduced motion.
+// The 3D scene (Three.js, its own chunk) needs WebGL2 and a desktop-class pointer; phones and tablets get the light flat
+// cup, and it's skipped for reduced motion or when the intro has already played this visit.
 const canUse3D = () => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  if (introSeen || window.matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return false;
   try {
     return !!document.createElement('canvas').getContext('webgl2');
   } catch {
@@ -27,10 +29,10 @@ const canUse3D = () => {
 const scene3DModule = canUse3D() ? import('../../three/coffeeScene.js').catch(() => null) : Promise.resolve(null);
 // While the scene loads only the counter shows. If it isn't ready by then (slow network) the flat cup takes over
 // for good, so the cup never swaps mid-load.
-const SCENE_WAIT = 2500; // ms
-// 3D finale: the scene's dive into the coffee ends at 4.4s (FINALE_END in coffeeScene.js); the screen fades to
+const SCENE_WAIT = 1200; // ms
+// 3D finale: the scene's dive into the coffee ends at 1.1s (FINALE_END in coffeeScene.js); the screen fades to
 // coffee over its last moments.
-const DIVE_FADE_AT = 3900; // ms after full
+const DIVE_FADE_AT = 700; // ms after full
 
 const pageLoaded = () =>
   new Promise((resolve) => {
@@ -407,7 +409,7 @@ const Preloader = ({ onDone }) => {
       if (cancelled) return;
       fill.stop();
       animate(progress, 100, {
-        duration: 0.4,
+        duration: 0.2,
         ease: 'easeOut',
         onComplete: () => {
           if (cancelled) return;
@@ -418,8 +420,8 @@ const Preloader = ({ onDone }) => {
           const scene3D = sceneRef.current;
           if (scene3D) {
             // 3D: overflow, swoop and dive into the coffee, fading to coffee, then the splash reveal.
-            animate(counterOpacity, 0, { duration: 0.4 });
-            timers.push(setTimeout(() => animate(diveFade, 1, { duration: 0.5, ease: 'easeIn' }), DIVE_FADE_AT));
+            animate(counterOpacity, 0, { duration: 0.25 });
+            timers.push(setTimeout(() => animate(diveFade, 1, { duration: 0.35, ease: 'easeIn' }), DIVE_FADE_AT));
             scene3D.finale(() => {
               if (cancelled) return;
               window.dispatchEvent(new CustomEvent('coffee-splash'));
@@ -446,12 +448,19 @@ const Preloader = ({ onDone }) => {
     };
   }, [counterOpacity, diveFade, flood, onDone, progress, reduceMotion, spill, started]);
 
+  // Any click, key or scroll attempt skips the intro
+  useEffect(() => {
+    const types = ['pointerdown', 'keydown', 'wheel', 'touchmove'];
+    types.forEach((type) => window.addEventListener(type, onDone, { passive: true }));
+    return () => types.forEach((type) => window.removeEventListener(type, onDone));
+  }, [onDone]);
+
   return (
     <motion.div
       role="status"
       aria-label="Loading"
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.45, ease: 'easeOut' }}
       className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-4 overflow-hidden bg-ink"
     >
       {/* Same warm glow as the hero, so the fade-out blends straight into it */}
@@ -480,7 +489,7 @@ const Preloader = ({ onDone }) => {
       <canvas
         ref={canvasRef}
         aria-hidden
-        className={`absolute inset-0 size-full transition-opacity duration-1000 ease-out ${has3D ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-0 size-full transition-opacity duration-400 ease-out ${has3D ? 'opacity-100' : 'opacity-0'}`}
       />
       {/* 3D loading indicator: the scene sizes this invisible box to the cup and saucer every frame; the percentage
           sits large in front of the saucer's front edge, like a label on a product shot, with a thin line beneath
@@ -494,8 +503,8 @@ const Preloader = ({ onDone }) => {
         {/* The label follows the cup in (after it's visible), so the number never shows on an empty screen. Its
             show/hide class sits here, not beside the inline opacity above, which would override it. */}
         <div
-          className={`absolute top-full left-1/2 flex -translate-x-1/2 -translate-y-[30%] flex-col items-center gap-3 transition-opacity duration-700 ${
-            has3D ? 'opacity-100 delay-500' : 'opacity-0'
+          className={`absolute top-full left-1/2 flex -translate-x-1/2 -translate-y-[30%] flex-col items-center gap-3 transition-opacity duration-300 ${
+            has3D ? 'opacity-100 delay-150' : 'opacity-0'
           }`}
         >
           <p className="flex items-start font-heading leading-none font-black text-white tabular-nums select-none">

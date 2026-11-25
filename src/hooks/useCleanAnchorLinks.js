@@ -9,11 +9,10 @@ import { getLenis } from './useSmoothScroll';
 export const sectionLink = (id) =>
   id === 'hero' ? { href: import.meta.env.BASE_URL, 'data-section': 'hero' } : { href: `#${id}` };
 
-// Link glides take longer the further they travel, so jumps that pass through the hero's dive (e.g. the
-// Scroll cue) play it out instead of flashing past. Roughly 1 s per 1100 px, between 1 s and 2.2 s: past about 2.5
-// screens the time stops growing, so far trips move faster (2.8 s made trips across the page drag).
+// Link glides take longer the further they travel: roughly 1 s per 1100 px, between 0.8 s and 1.6 s, so far trips move
+// faster instead of dragging.
 const glide = (distance) => ({
-  duration: Math.min(2.2, Math.max(1, Math.abs(distance) / 1100)),
+  duration: Math.min(1.6, Math.max(0.8, Math.abs(distance) / 1100)),
   easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2), // easeInOutCubic
 });
 
@@ -101,6 +100,8 @@ const slowGlide = (distance, targetId) => {
   return { duration, easing: monotone(points) };
 };
 
+const still = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // The glide in progress (one at a time)
 let glideFrame = 0;
 const stopGlide = () => {
@@ -120,7 +121,10 @@ const run = (lenis, destination, { duration, easing }) => {
   const start = performance.now();
   const step = (now) => {
     const t = Math.min(1, (now - start) / 1000 / duration);
-    lenis.scrollTo(from + (destination() - from) * easing(t), { immediate: true, force: true });
+    const y = from + (destination() - from) * easing(t);
+    // Touch screens have no Lenis: scroll the page itself
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else window.scrollTo(0, y);
     glideFrame = t < 1 ? requestAnimationFrame(step) : 0;
   };
   glideFrame = requestAnimationFrame(step);
@@ -144,37 +148,26 @@ const useCleanAnchorLinks = () => {
       if (id === 'hero') {
         e.preventDefault();
         window.history.replaceState(null, '', window.location.pathname + window.location.search);
-        if (lenis) {
-          lenis.start(); // see note below
-          run(lenis, () => 0, glide(window.scrollY));
-        } else {
+        if (still()) {
           window.scrollTo({ top: 0 });
+        } else {
+          lenis?.start(); // see note below
+          run(lenis, () => 0, glide(window.scrollY));
         }
         return;
       }
 
-      // Without the smooth scroller (reduced motion), the browser's own anchor jump is fine.
+      // With reduced motion, the browser's own anchor jump is fine.
       const target = document.getElementById(id);
-      if (!lenis || !target) return;
+      if (still() || !target) return;
 
       e.preventDefault();
       window.history.pushState(null, '', `#${id}`);
       // Resume first if the phone menu paused scrolling: resuming later (when the menu closes) would
       // cancel this scroll. Lenis reads `scroll-padding-top`, so the navbar offset comes from CSS.
-      lenis.start();
-      // A section can mark a different landing spot (Skills: past its pinned heading zoom, already settled), inside
-      // it or, from outside, with data-landing-for (Certifications: past the pause where the Experience circle leaves).
-      const landing =
-        target.querySelector('[data-landing]') ?? document.querySelector(`[data-landing-for="${target.id}"]`) ?? target;
+      lenis?.start();
       const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-      // Land high enough that the section's big outlined number (it sits above the heading) clears the navbar
-      // too, with a little room; landing the section's top under the navbar cut most of them off
-      // (not for a spot marked `data-landing-exact`, where the heading is pinned)
-      const chapter = 'landingExact' in landing.dataset ? null : target.querySelector('[data-chapter]');
-      const spot = () => {
-        const top = landing.getBoundingClientRect().top;
-        return chapter ? Math.min(top, chapter.getBoundingClientRect().top - 16) : top;
-      };
+      const spot = () => target.getBoundingClientRect().top;
       const distance = spot() - offset;
       run(lenis, () => window.scrollY + spot() - offset, slowGlide(distance, target.id) ?? glide(distance));
     };

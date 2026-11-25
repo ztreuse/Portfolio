@@ -10,13 +10,21 @@
      card and job titles, the footer sign-off and wordmark, chapter numbers, the loader percentage). */
   --font-heading: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
 
+  /* One type scale for the whole page (nothing else sets a font size, apart from the loader):
+     name (hero) > title (section titles) > item (project, job, credential and skill-group titles) > copy > label. */
+  --text-name: clamp(3.5rem, 2.4rem + 4.6vw, 6.25rem);
+  --text-title: clamp(2rem, 1.7rem + 1.4vw, 2.75rem);
+  --text-item: 1.1875rem;
+  --text-copy: 0.9375rem;
+  --text-label: 0.75rem;
+
   --color-ink: #161513;
   --color-ink-deep: #0f0e0d;
   --color-surface: #1f1d1a;
   --color-line: #2d2925;
   --color-accent: #9f8f81;
   --color-accent-strong: #c9bcaf;
-  --color-dimension: #403b37; /* Experience's "dimension" circle */
+  --color-dimension: #403b37; /* the veil over Experience's desk photo */
   --color-crema: #e6ddd2; /* the light "crema" sections (see .tone-light) */
   --color-screen: #e6ddd2; /* Contact and the footer: the crema of the Projects band, which the desk film settles onto */
   --color-espresso: #161513; /* same as ink, but never re-pointed by .tone-light: dark on purpose inside a crema band */
@@ -62,19 +70,12 @@
     }
   }
 
-  /* Slow drift (Skills' strata): sideways by --sway-x with a gentle rise and fall by --sway-y, then back (run it
-     `alternate`). Animates `translate`, so it stacks with motion's scroll transforms. Vary duration/delay per layer. */
-  --animate-sway: sway 14s ease-in-out infinite alternate;
+  /* The crema wave on the Projects band's top edge: a strip twice the screen wide sliding by exactly one half. */
+  --animate-roll: roll 16s linear infinite;
 
-  @keyframes sway {
-    0% {
-      translate: calc(var(--sway-x, 60px) * -1) 0;
-    }
-    50% {
-      translate: 0 var(--sway-y, 10px);
-    }
-    100% {
-      translate: var(--sway-x, 60px) 0;
+  @keyframes roll {
+    to {
+      translate: -50% 0;
     }
   }
 

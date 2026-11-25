@@ -11,7 +11,9 @@ export const experience = [
     initials: 'SV',
     period: 'Jan 2026 – Jul 2026',
     points: [
-      'Developed and optimized responsive, production-ready user interfaces for internal software using Tailwind CSS and Mantine UI. Built reusable components from Figma designs within a cross-functional team to maintain front-end consistency. Ensured application quality and reliable code delivery through cross-browser testing and GitHub team workflows.',
+      'Developed and optimized responsive, production-ready user interfaces for internal software using Tailwind CSS and Mantine UI.',
+      'Built reusable components from Figma designs within a cross-functional team to maintain front-end consistency.',
+      'Ensured application quality and reliable code delivery through cross-browser testing and GitHub team workflows.',
     ],
   },
 ];
@@ -19,6 +21,7 @@ export const experience = [
 export const education = [
   {
     role: 'BS Information Technology, Specialization in Web and Mobile Applications',
+    short: 'BS Information Technology · FEU Tech · 2026', // the hero's degree line
     organization: 'FEU Institute of Technology',
     logo: logoFor('feu-tech'),
     initials: 'FEU',

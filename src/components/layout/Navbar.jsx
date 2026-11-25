@@ -51,14 +51,12 @@ const menuItemVariants = {
 };
 
 /**
- * Whether the page right under the navbar is light: a visible light surface there (the crema bands' background and
- * the WORK flood's crema layer, marked `data-nav-light`; Contact and the footer, `.tone-screen`) that the Experience
- * drop isn't covering (it marks itself `data-covers-nav`). Hit-testing couldn't tell: most background layers here are
- * click-through, so it saw through them.
+ * Whether the page right under the navbar is light: a visible light surface there (the crema bands and the desk film
+ * once it has settled on Contact's colour, marked `data-nav-light`; Contact and the footer, `.tone-screen`).
+ * Hit-testing couldn't tell: most background layers here are click-through, so it saw through them.
  */
 const lightUnderBar = (header) => {
   const y = (header?.offsetHeight ?? 64) + 2;
-  if (document.querySelector('[data-covers-nav="1"]')) return false;
   return [...document.querySelectorAll('[data-nav-light], .tone-screen')].some((el) => {
     if (header?.contains(el)) return false;
     const r = el.getBoundingClientRect();
@@ -133,7 +131,7 @@ const MobileMenu = ({ activeId, onNavigate }) => (
                 {...sectionLink(id)}
                 onClick={onNavigate}
                 aria-current={active ? 'true' : undefined}
-                className={`flex items-center rounded-xl px-3.5 py-3 font-display text-[0.8125rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200 ${
+                className={`flex items-center rounded-xl px-3.5 py-3 font-display text-label font-bold tracking-[0.12em] uppercase transition-colors duration-200 ${
                   active
                     ? 'bg-accent/15 text-accent-strong'
                     : 'text-stone-300 hover:bg-white/5 hover:text-white active:bg-white/8'
@@ -317,7 +315,7 @@ const Navbar = ({ ready = true }) => {
                     <a
                       {...sectionLink(id)}
                       aria-current={active ? 'true' : undefined}
-                      className={`group/link grid justify-items-center px-3 py-2 font-display text-[0.8125rem] font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
+                      className={`group/link grid justify-items-center px-3 py-2 font-display text-label font-bold uppercase transition-colors duration-300 ease-out hover:text-white focus-visible:text-white focus-visible:outline-none xl:px-3.5 ${
                         active ? 'text-white' : 'text-stone-400'
                       }`}
                     >

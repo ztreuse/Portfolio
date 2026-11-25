@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { LuArrowUpRight, LuChevronDown, LuChevronLeft, LuChevronRight, LuLayoutGrid, LuList } from 'react-icons/lu';
 import IconButton from '../components/ui/IconButton';
 import Section from '../components/ui/Section';
@@ -59,7 +59,7 @@ const MoreText = ({ text, className = '' }) => {
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="relative z-10 mt-4 inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 py-1.5 pr-2.5 pl-3.5 font-display text-[0.8125rem] font-bold tracking-[0.12em] text-stone-300 uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink"
+          className="relative z-10 mt-4 inline-flex items-center gap-1.5 self-start rounded-full border border-white/20 py-1.5 pr-2.5 pl-3.5 font-display text-label font-bold tracking-[0.12em] text-stone-300 uppercase transition-colors duration-200 hover:border-transparent hover:bg-accent hover:text-ink"
         >
           {expanded ? 'Show less' : 'Show more'}
           <LuChevronDown
@@ -92,11 +92,11 @@ const StackList = ({ tools, className = '' }) => (
  */
 const ProjectInfo = ({ project, number }) => (
   <div className="flex flex-col">
-    <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">
+    <p className="font-display text-label font-bold tracking-[0.14em] text-accent uppercase">
       <span className="tabular-nums">{number}</span> — {project.role}
     </p>
-    <div className="mt-3 flex items-end justify-between gap-5">
-      <h3 className="font-heading text-4xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-hover:translate-x-2 group-hover:text-accent-strong motion-reduce:translate-x-0 sm:text-5xl">
+    <div className="mt-1.5 flex items-center justify-between gap-5">
+      <h3 className="font-display text-item leading-snug font-bold text-white transition-colors duration-300 group-hover:text-accent-strong">
         {project.name}
       </h3>
       <ViewLink
@@ -104,49 +104,38 @@ const ProjectInfo = ({ project, number }) => (
         className="shrink-0 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
       />
     </div>
-    <MoreText text={project.description} className="mt-4 text-base leading-relaxed text-pretty text-stone-300" />
-    <StackList tools={project.tools} className="mt-5" />
+    <MoreText text={project.description} className="mt-2 text-copy leading-relaxed text-pretty text-stone-300" />
+    <StackList tools={project.tools} className="mt-4" />
   </div>
 );
 
 /**
  * The screenshot, linking to the project (hidden from keyboard and screen readers, since the arrow duplicates it),
- * framed like a window. Its top edge always sits exactly on the frame's top, so each site's navbar shows whole: the
- * zoom is anchored to the top, and instead of sliding with the scroll (which cropped the navbars) it zooms in
- * slightly (1 to 1.08) as the card crosses the screen, so it still has depth. Still for reduced motion.
+ * in a frame. Its top edge always sits exactly on the frame's top, so each site's navbar shows whole; hovering zooms it
+ * a little from there.
  */
-const ProjectImage = ({ project, className = '' }) => {
-  const ref = useRef(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const scale = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : 1 + 0.08 * p));
-
-  return (
-    <a
-      ref={ref}
-      href={project.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      tabIndex={-1}
-      aria-hidden
-      className={`block overflow-hidden ${className}`}
-    >
-      {/* Image reveal follows the surrounding reveal group's timing */}
-      <motion.div variants={imageReveal}>
-        <motion.div style={{ scale }} className="origin-top">
-          <img
-            src={project.image}
-            alt=""
-            loading="lazy"
-            width={1600}
-            height={900}
-            className="aspect-video size-full origin-top object-cover object-top transition-[scale] duration-500 group-hover:scale-[1.05] motion-reduce:group-hover:scale-100"
-          />
-        </motion.div>
-      </motion.div>
-    </a>
-  );
-};
+const ProjectImage = ({ project, className = '' }) => (
+  <a
+    href={project.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    tabIndex={-1}
+    aria-hidden
+    className={`block overflow-hidden ${className}`}
+  >
+    {/* Image reveal follows the surrounding reveal group's timing */}
+    <motion.div variants={imageReveal}>
+      <img
+        src={project.image}
+        alt=""
+        loading="lazy"
+        width={1600}
+        height={900}
+        className="aspect-video size-full origin-top object-cover object-top transition-[scale] duration-500 group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
+      />
+    </motion.div>
+  </a>
+);
 
 const tiltSpring = { stiffness: 220, damping: 22 };
 const MAX_TILT = 3; // degrees
@@ -154,8 +143,8 @@ const MAX_TILT = 3; // degrees
 /**
  * Grid card, laid out like a magazine caption under a photo: the screenshot in a thin frame (it tilts gently toward
  * the pointer, zooms a little and catches a sweep of light on hover), then a caption line with the number, a rule
- * and the role, and the project name large beside the arrow link. Hovering fills the rule in taupe from the left,
- * nudges the name and fills the arrow. No tilt or sweep for reduced motion.
+ * and the role, and the project's name with the start of its description beside the arrow link. Hovering fills the
+ * rule in taupe from the left, warms the name and fills the arrow. No tilt or sweep for reduced motion.
  */
 const ProjectCard = ({ project, number }) => {
   const frame = useRef(null);
@@ -191,21 +180,26 @@ const ProjectCard = ({ project, number }) => {
         />
       </motion.div>
 
-      {/* Caption line: number, a rule that fills on hover, role */}
-      <div className="mt-6 flex items-center gap-4">
-        <span className="font-heading text-lg leading-none font-extrabold text-accent tabular-nums">{number}</span>
-        <span aria-hidden className="relative h-px min-w-8 flex-1 bg-line">
+      {/* Caption: number, a rule that fills on hover, role; then the name and what it is in two lines */}
+      <div className="mt-4 flex items-center gap-3">
+        <span className="font-display text-label font-bold tracking-[0.14em] text-accent tabular-nums">{number}</span>
+        <span aria-hidden className="relative h-px min-w-6 flex-1 bg-line">
           <span className="absolute inset-0 origin-left scale-x-0 bg-accent transition-transform duration-700 ease-out group-hover:scale-x-100 motion-reduce:transition-none" />
         </span>
-        <p className="max-w-[65%] text-right font-display text-[0.8125rem] leading-snug font-bold tracking-[0.14em] text-accent uppercase">
+        <p className="max-w-[80%] text-right font-display text-label leading-snug font-bold tracking-[0.14em] text-accent uppercase">
           {project.role}
         </p>
       </div>
 
-      <div className="mt-3 flex items-end justify-between gap-5">
-        <h3 className="font-heading text-4xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-hover:translate-x-2 group-hover:text-accent-strong motion-reduce:translate-x-0 sm:text-5xl">
-          {project.name}
-        </h3>
+      <div className="mt-2 flex items-start justify-between gap-5">
+        <div className="min-w-0">
+          <h3 className="font-display text-item leading-snug font-bold text-white transition-colors duration-300 group-hover:text-accent-strong">
+            {project.name}
+          </h3>
+          <p className="mt-1 line-clamp-2 text-copy leading-relaxed text-pretty text-stone-300">
+            {project.description}
+          </p>
+        </div>
         <ViewLink
           project={project}
           className="shrink-0 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
@@ -217,7 +211,7 @@ const ProjectCard = ({ project, number }) => {
 
 /** List view on touch screens: large screenshot beside the details, the image switching sides every row. */
 const ProjectRow = ({ project, number, flipped }) => (
-  <article className="group grid items-center gap-8 md:grid-cols-12 md:gap-12">
+  <article className="group grid items-center gap-5 md:grid-cols-12 md:gap-10">
     <RevealGroup className={`md:col-span-7 ${flipped ? 'md:order-last' : ''}`}>
       <ProjectImage
         project={project}
@@ -273,13 +267,13 @@ const ProjectIndex = ({ items, offset }) => {
 
   return (
     <div ref={ref} onPointerMove={follow} onPointerLeave={() => setActive(null)} className="relative">
-      <RevealGroup as="ol" stagger={0.08} className="border-t border-line">
+      <RevealGroup as="ol" stagger={0.08} className="-mt-6">
         {items.map((project, i) => (
           <RevealItem
             as="li"
             key={project.name}
             onPointerEnter={() => setActive(i)}
-            className="group relative grid grid-cols-12 items-start gap-6 border-b border-line py-8"
+            className="group relative grid grid-cols-12 items-start gap-6 border-b border-line py-6"
           >
             {/* The whole row opens the project: a link stretched over it, under the "Show more" toggle */}
             <a
@@ -295,31 +289,33 @@ const ProjectIndex = ({ items, offset }) => {
               onBlur={() => setActive(null)}
               className="absolute inset-0 outline-offset-4"
             />
-            <span className="pointer-events-none col-span-1 pt-1 font-heading text-2xl font-extrabold text-accent tabular-nums">
+            <span className="pointer-events-none col-span-1 pt-1.5 font-display text-label font-bold tracking-[0.14em] text-accent tabular-nums">
               {pad(offset + i + 1)}
             </span>
             {/* The name with the stack under it, which fills the space that used to sit empty below the name */}
             <div className="pointer-events-none col-span-6">
-              <span className="block font-heading text-5xl leading-[0.9] font-black tracking-[0.005em] text-white uppercase transition-[translate,color] duration-500 ease-out group-focus-within:translate-x-4 group-hover:translate-x-4 group-hover:text-accent-strong motion-reduce:transition-none lg:text-7xl">
+              <span className="block font-display text-item leading-snug font-bold text-white transition-[translate,color] duration-500 ease-out group-focus-within:translate-x-2 group-hover:translate-x-2 group-hover:text-accent-strong motion-reduce:transition-none">
                 {project.name}
               </span>
-              <StackList tools={project.tools} className="mt-5" />
+              <StackList tools={project.tools} className="mt-3" />
             </div>
             <div
               onPointerEnter={() => setOverText(true)}
               onPointerLeave={() => setOverText(false)}
               className="relative z-10 col-span-4 min-w-0"
             >
-              <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">{project.role}</p>
+              <p className="font-display text-label font-bold tracking-[0.14em] text-accent uppercase">
+                {project.role}
+              </p>
               {/* Body size, like every other section's text (it was a smaller, lighter 14px) */}
               <MoreText
                 text={project.description}
-                className="mt-2 text-base leading-relaxed text-pretty text-stone-300"
+                className="mt-2 text-copy leading-relaxed text-pretty text-stone-300"
               />
             </div>
             <span
               aria-hidden
-              className="pointer-events-none col-span-1 flex size-12 items-center justify-center justify-self-end rounded-full border border-white/20 text-white transition-colors duration-300 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
+              className="pointer-events-none col-span-1 flex size-10 items-center justify-center justify-self-end rounded-full border border-white/20 text-white transition-colors duration-300 group-hover:border-transparent group-hover:bg-accent group-hover:text-ink"
             >
               <LuArrowUpRight className="size-5 transition-transform duration-300 group-hover:rotate-45 motion-reduce:transition-none" />
             </span>
@@ -406,7 +402,7 @@ const Projects = () => {
   };
 
   const viewToggle = (
-    <div className="hidden gap-1 rounded-full border border-white/20 bg-ink/40 p-1 backdrop-blur-sm md:flex">
+    <div className="hidden gap-1 rounded-full border border-white/20 bg-ink/40 p-1 md:flex">
       {viewOptions.map(({ value, label, icon: Icon }) => {
         const active = view === value;
         return (
@@ -416,7 +412,7 @@ const Projects = () => {
             onClick={() => setView(value)}
             aria-pressed={active}
             aria-label={label}
-            className={`relative rounded-full p-2.5 transition-colors duration-200 ${active ? 'text-ink' : 'text-stone-400 hover:text-white'}`}
+            className={`relative rounded-full p-2 transition-colors duration-200 ${active ? 'text-ink' : 'text-stone-400 hover:text-white'}`}
           >
             {/* Thumb slides between the two options */}
             {active && (
@@ -426,7 +422,7 @@ const Projects = () => {
                 className="absolute inset-0 rounded-full bg-linear-to-br from-accent-strong to-accent shadow-[0_6px_16px_-6px_rgb(159_143_129/0.7)]"
               />
             )}
-            <Icon aria-hidden className="relative size-5" />
+            <Icon aria-hidden className="relative size-4" />
           </button>
         );
       })}
@@ -443,7 +439,7 @@ const Projects = () => {
             <ProjectIndex items={visibleProjects} offset={page * PAGE_SIZE} />
           </div>
           {/* Touch screens: large alternating rows */}
-          <div key={`list-${page}`} className="flex flex-col gap-14 md:gap-16 md:[@media(hover:hover)]:hidden">
+          <div key={`list-${page}`} className="flex flex-col gap-10 md:gap-12 md:[@media(hover:hover)]:hidden">
             {visibleProjects.map((project, i) => (
               <ProjectRow
                 key={project.name}
@@ -458,16 +454,16 @@ const Projects = () => {
         <>
           {/* Phones have no view toggle, so they always get the list rows: in one column the grid would show the
               same image and title but hide the description and stack (the owner noticed the missing details) */}
-          <div key={`phone-${page}`} className="flex flex-col gap-14 md:hidden">
+          <div key={`phone-${page}`} className="flex flex-col gap-10 md:hidden">
             {visibleProjects.map((project, i) => (
               <ProjectRow key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
             ))}
           </div>
-          <RevealGroup key={`grid-${page}`} className="grid grid-cols-2 gap-8 max-md:hidden">
-          {visibleProjects.map((project, i) => (
-            <ProjectCard key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
-          ))}
-        </RevealGroup>
+          <RevealGroup key={`grid-${page}`} className="grid grid-cols-2 gap-x-8 gap-y-10 max-md:hidden">
+            {visibleProjects.map((project, i) => (
+              <ProjectCard key={project.name} project={project} number={pad(page * PAGE_SIZE + i + 1)} />
+            ))}
+          </RevealGroup>
         </>
       )}
 

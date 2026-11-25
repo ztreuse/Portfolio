@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import Section from '../components/ui/Section';
+import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import SkillsBackdrop from './SkillsBackdrop';
-import SkillsIntro from './SkillsIntro';
 import skillGroups from '../data/skills';
 
 const clamp01 = (v) => Math.min(Math.max(v, 0), 1);
@@ -11,13 +11,13 @@ const smooth = (x) => x * x * (3 - 2 * x);
 /**
  * One tool: its brand logo (or generic icon) and name; hovering tints it in the brand colour and shows what it is.
  * `wide` logos (Cisco's bridge, the CCST badge) use the box's full width, or they'd shrink to a sliver.
- * `flashDelay` (ms) plays the "lights on" flicker in its brand colour when its card lands.
+ * `flashDelay` (ms) plays the "lights on" flicker in its brand colour when its card appears.
  */
 const SkillChip = ({ name, description, logo, wide = false, icon: Icon, color, flashDelay }) => (
   <li
     title={description}
     style={{ '--brand': color, animationDelay: flashDelay === undefined ? undefined : `${flashDelay}ms` }}
-    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-white/10 py-1.5 pr-3 pl-1.5 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
+    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-white/10 py-1 pr-2.5 pl-1 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
   >
     <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]">
       {logo ? (
@@ -38,64 +38,40 @@ const trackSpotlight = (e) => {
 };
 
 /**
- * One category card: its title and its tools as chips. It deals in as it scrolls into view: rising from below,
- * tilted back and turned a little (outward from the middle column), then settling flat into the grid like a card
- * landing on a table; cards in a row land in a quick left-to-right wave. Tied to the scroll, so it reverses going
- * back up. The first time it lands, its chips flick on one after another in their brand colours (once only; it
- * doesn't replay when you scroll back past). Still for reduced motion.
+ * One category card: its title and its tools as chips. The first time it appears its chips flick on one after another
+ * in their brand colours (once only).
  */
-const CategoryCard = ({ group, index }) => {
-  const ref = useRef(null);
-  const reduceMotion = useReducedMotion();
-  const column = index % 3;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.55'] });
-  const landed = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : smooth(clamp01(p * 1.3 - column * 0.12))));
-  const y = useTransform(landed, (v) => (1 - v) * 140);
-  const rotateX = useTransform(landed, (v) => (1 - v) * 32);
-  const rotateZ = useTransform(landed, (v) => (1 - v) * (column - 1) * 4);
-  const scale = useTransform(landed, (v) => 0.9 + 0.1 * v);
-  const opacity = useTransform(landed, (v) => Math.min(1, v * 1.6));
-
-  // Lights on: the chips flicker once, the first time the card lands, and never again on later passes
+const CategoryCard = ({ group }) => {
   const [lit, setLit] = useState(false);
-  useMotionValueEvent(landed, 'change', (v) => {
-    if (v > 0.97 && !lit) setLit(true);
-  });
 
   return (
-    <motion.li
-      ref={ref}
+    <RevealItem
+      as="li"
+      onAnimationComplete={(state) => state === 'visible' && setLit(true)}
       onPointerMove={trackSpotlight}
-      style={{ y, rotateX, rotateZ, scale, opacity, transformPerspective: 1200 }}
-      className="group relative isolate origin-bottom overflow-hidden rounded-2xl border border-line bg-surface/70 p-6 backdrop-blur-sm transition-[border-color,translate] duration-300 hover:-translate-y-1 hover:border-accent/35 sm:p-7"
+      className="group relative isolate overflow-hidden rounded-2xl border border-line bg-surface/85 p-5 transition-[border-color] duration-300 hover:border-accent/35"
     >
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(320px_circle_at_var(--mx,50%)_var(--my,0%),rgb(159_143_129/0.14),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
-      <h3 className="font-heading text-2xl leading-none font-extrabold tracking-[0.01em] text-white uppercase">
-        {group.title}
-      </h3>
-      <ul className="mt-5 flex flex-wrap gap-2">
+      <h3 className="font-display text-item leading-snug font-bold text-white">{group.title}</h3>
+      <ul className="mt-4 flex flex-wrap gap-2">
         {group.items.map((skill, i) => (
-          <SkillChip key={skill.name} {...skill} flashDelay={lit ? 120 + i * 70 : undefined} />
+          <SkillChip key={skill.name} {...skill} flashDelay={lit ? i * 50 : undefined} />
         ))}
       </ul>
-    </motion.li>
+    </RevealItem>
   );
 };
 
-/**
- * Skills as category cards (like a "software expertise" board): each card has its title and its tools as
- * brand-tinted chips. Cards deal in as they scroll into view and their chips light up as they land (see
- * CategoryCard). A taupe spotlight follows the pointer over a card. Adding skills or
- * categories in data/skills.js just adds chips or cards.
- */
-// As Skills ends, the cards fade out while their bottom rises from 75% to 30% of the screen, leaving the backdrop
+// As Skills ends, the cards fade out while their bottom rises from 85% to 60% of the screen, leaving the backdrop to
+// come into focus as the first frame of the desk film
 const SkillsFade = ({ children }) => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['end 0.75', 'end 0.3'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['end 0.85', 'end 0.6'] });
+  // A function transform, so motion keeps it on the JS side (a plain opacity map can stick)
   const opacity = useTransform(scrollYProgress, (p) => (reduceMotion ? 1 : 1 - smooth(clamp01(p))));
   return (
     <motion.div ref={ref} style={{ opacity }}>
@@ -104,26 +80,34 @@ const SkillsFade = ({ children }) => {
   );
 };
 
+/**
+ * Skills as category cards: each card has its title and its tools as brand-tinted chips. Adding skills or categories
+ * in data/skills.js just adds chips or cards. The backdrop runs on past the section for half a screen, where it comes
+ * into focus as the first frame of the Contact film (see SkillsBackdrop, ContactFilm).
+ */
 const Skills = () => {
   const reduceMotion = useReducedMotion();
   return (
-    <>
-      {/* Skills' intro: the flight from Certifications toward a far-off SKILLS, which you pass through */}
-      {!reduceMotion && <SkillsIntro />}
-      <Section id="skills" eyebrow="05 — Skills" title="Tools I build with" background={<SkillsBackdrop />}>
+    <div className="relative isolate">
+      <SkillsBackdrop />
+      <Section id="skills" eyebrow="04 — Skills" title="Tools I build with">
         {/* Desktop: 3 cards per row on a 6-track grid, so an incomplete last row (one or two cards) sits centred.
           Tablet: 2 per row, and a lone last card spans both. */}
         <SkillsFade>
-          <ul className="grid gap-4 sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2 lg:grid-cols-6 lg:gap-5 lg:[&>li]:[grid-column:span_2] lg:[&>li:nth-last-child(2):nth-child(3n+1)]:[grid-column:2/span_2] lg:[&>li:last-child:nth-child(3n+1):not(:first-child)]:[grid-column:3/span_2]">
-            {skillGroups.map((group, i) => (
-              <CategoryCard key={group.title} group={group} index={i} />
+          <RevealGroup
+            as="ul"
+            stagger={0.05}
+            className="grid gap-4 sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2 lg:grid-cols-6 lg:[&>li]:[grid-column:span_2] lg:[&>li:last-child:nth-child(3n+1):not(:first-child)]:[grid-column:3/span_2] lg:[&>li:nth-last-child(2):nth-child(3n+1)]:[grid-column:2/span_2]"
+          >
+            {skillGroups.map((group) => (
+              <CategoryCard key={group.title} group={group} />
             ))}
-          </ul>
+          </RevealGroup>
         </SkillsFade>
       </Section>
-      {/* A stretch after the cards where the backdrop comes into focus before the Contact film rises over it */}
-      {!reduceMotion && <div aria-hidden data-section-of="skills" className="h-[80svh]" />}
-    </>
+      {/* Where the backdrop comes into focus before the Contact film takes over */}
+      {!reduceMotion && <div aria-hidden data-section-of="skills" className="h-[50svh]" />}
+    </div>
   );
 };
 

@@ -2,27 +2,15 @@ import Container from './Container';
 import SectionHeading from './SectionHeading';
 
 /**
- * Standard page section: at least one screen tall with content centered vertically,
- * plus consistent vertical rhythm, container width and heading.
+ * Standard page section: as tall as its content, with one vertical rhythm, container width and heading style.
  * `background` renders behind the content (the section is `isolate`, so `-z-10` layers stay inside it).
  */
-const Section = ({ id, eyebrow, title, description, action, align, zoom, focus, bleed, background, className = '', children }) => (
-  <section id={id} className={`relative isolate flex min-h-svh flex-col justify-center py-20 sm:py-28 ${className}`}>
+const Section = ({ id, eyebrow, title, action, background, className = '', children }) => (
+  <section id={id} className={`relative isolate py-16 sm:py-24 ${className}`}>
     {background}
     <Container>
-      {title && (
-        <SectionHeading
-          eyebrow={eyebrow}
-          title={title}
-          description={description}
-          action={action}
-          align={align}
-          zoom={zoom}
-          focus={focus}
-          bleed={bleed}
-        />
-      )}
-      <div className={title ? 'mt-12 sm:mt-16' : ''}>{children}</div>
+      <SectionHeading eyebrow={eyebrow} title={title} action={action} />
+      <div className="mt-8 sm:mt-10">{children}</div>
     </Container>
   </section>
 );

@@ -7,23 +7,19 @@ const ease = [0.22, 1, 0.36, 1];
 const viewport = { once: true, margin: '0px 0px -80px 0px' };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 };
 
 /** Fades and slides a single element in when it scrolls into view (or when `play` turns true, if given). */
-const Reveal = ({ as = 'div', x = 0, y = 28, delay = 0, play, children, ...props }) => {
+const Reveal = ({ as = 'div', x = 0, y = 16, delay = 0, play, children, ...props }) => {
   const Component = motion[as];
   const shown = { opacity: 1, x: 0, y: 0 };
-  const trigger = play === undefined ? { whileInView: shown, viewport } : { animate: play ? shown : { opacity: 0, x, y } };
+  const trigger =
+    play === undefined ? { whileInView: shown, viewport } : { animate: play ? shown : { opacity: 0, x, y } };
 
   return (
-    <Component
-      initial={{ opacity: 0, x, y }}
-      {...trigger}
-      transition={{ duration: 0.7, ease, delay }}
-      {...props}
-    >
+    <Component initial={{ opacity: 0, x, y }} {...trigger} transition={{ duration: 0.5, ease, delay }} {...props}>
       {children}
     </Component>
   );

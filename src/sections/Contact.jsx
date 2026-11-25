@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import emailjs from '@emailjs/browser';
 import {
@@ -7,6 +7,7 @@ import {
   LuCheck,
   LuCircleAlert,
   LuCircleCheck,
+  LuClock,
   LuCopy,
   LuLoaderCircle,
   LuMail,
@@ -39,7 +40,7 @@ const statusMessages = {
 // looked like a generic form). Autofill: browsers paint their own white or blue fill on autofilled fields, so an inset
 // shadow in the page colour covers it and the text keeps its colour.
 const inputClass =
-  'mt-2.5 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-accent/70 focus:border-accent-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
+  'mt-2 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-accent/70 focus:border-accent-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
 
 /**
  * One conversational form field ("What's your name?").
@@ -47,7 +48,7 @@ const inputClass =
  */
 const Field = ({ label, name, as: Control = 'input', className = '', ...props }) => (
   <label className={`group block ${className}`}>
-    <span className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
+    <span className="font-display text-label font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
       {label}
     </span>
     <Control name={name} className={inputClass} required {...props} />
@@ -110,48 +111,79 @@ const CopyEmail = () => {
   );
 };
 
+const timeFormat = new Intl.DateTimeFormat('en-US', {
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZone: profile.timeZone,
+  timeZoneName: 'shortOffset',
+});
+
+/** The current time where I am ("5:31 PM · GMT+8"), ticking over on the minute. */
+const LocalTime = () => {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setTimeout(() => setNow(new Date()), 60000 - (Date.now() % 60000));
+    return () => clearTimeout(timer);
+  }, [now]);
+
+  const parts = timeFormat.formatToParts(now);
+  const part = (type) => parts.find((p) => p.type === type)?.value;
+
+  return (
+    <time dateTime={now.toISOString()} className="tabular-nums">
+      {part('hour')}:{part('minute')} {part('dayPeriod')} · {part('timeZoneName')}
+    </time>
+  );
+};
+
 /**
  * One way to reach me: a round taupe icon badge, a small label over the value, and on the right either an action (the
  * copy button) or an arrow for links that leave the site. The row's divider fills taupe from the left on hover, like
- * the footer's old "Find me on" rows, which moved here (the owner found them redundant beside these).
+ * the footer's old "Find me on" rows, which moved here (the owner found them redundant beside these). Without an
+ * `href` (the local time) it's plain information, so it has no hover effects.
  */
-const ContactRow = ({ icon: Icon, label, href, external = false, action, children }) => (
-  <li className="group relative flex items-center gap-3 border-b border-line">
-    <a
-      href={href}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="flex min-w-0 flex-1 items-center gap-4 py-3.5"
-    >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent-strong transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
-        <Icon aria-hidden className="size-4" />
-      </span>
-      <span className="min-w-0">
-        {label && (
-          <span className="block font-display text-[0.8125rem] font-bold tracking-[0.14em] text-stone-400 uppercase">
-            {label}
-          </span>
-        )}
-        <span className="block font-display text-base font-semibold break-words text-white">{children}</span>
-      </span>
-    </a>
-    {action ??
-      (external && (
-        <LuArrowUpRight
-          aria-hidden
-          className="size-5 shrink-0 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
-        />
-      ))}
-    <span
-      aria-hidden
-      className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
-    />
-  </li>
-);
+const ContactRow = ({ icon: Icon, label, href, external = false, action, children }) => {
+  const Wrapper = href ? 'a' : 'div';
+
+  return (
+    <li className={`relative flex items-center gap-3 border-b border-line ${href ? 'group' : ''}`}>
+      <Wrapper
+        href={href}
+        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        className="flex min-w-0 flex-1 items-center gap-4 py-3"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent-strong transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+          <Icon aria-hidden className="size-4" />
+        </span>
+        <span className="min-w-0">
+          {label && (
+            <span className="block font-display text-label font-bold tracking-[0.14em] text-stone-400 uppercase">
+              {label}
+            </span>
+          )}
+          <span className="block font-display text-copy font-semibold break-words text-white">{children}</span>
+        </span>
+      </Wrapper>
+      {action ??
+        (external && (
+          <LuArrowUpRight
+            aria-hidden
+            className="size-5 shrink-0 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
+          />
+        ))}
+      <span
+        aria-hidden
+        className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
+      />
+    </li>
+  );
+};
 
 /**
- * Contact: on the left, every way to reach me as one list (email with a copy button, phone, LinkedIn, GitHub,
- * JobStreet); on the right, a minimal form with outlined inputs and a pill send button. Both columns start at the
- * same line.
+ * Contact: on the left, every way to reach me as one list (email with a copy button, phone, LinkedIn, GitHub)
+ * and my local time; on the right, a minimal form with outlined inputs and a pill send button. Both columns start at
+ * the same line.
  */
 const Contact = () => {
   const formRef = useRef(null);
@@ -182,15 +214,22 @@ const Contact = () => {
       {!reduceMotion && <ContactFilm />}
       <Section
         id="contact"
-        eyebrow="06 — Contact"
-        // On the colour of the desk film's glowing screen, which the film ends on
-        className="tone-light tone-screen bg-ink"
+        eyebrow="05 — Contact"
+        // On the colour the desk film settles onto. It's pulled up over the film's last 70svh, see-through there and
+        // fading in as the film settles, so it arrives with the colour instead of after an empty screen of it
+        className={`tone-light tone-screen z-10 ${reduceMotion ? '' : '-mt-[70svh]'}`}
+        background={
+          <div
+            aria-hidden
+            className={`absolute inset-x-0 bottom-0 -z-10 bg-ink ${reduceMotion ? 'top-0' : 'top-[70svh]'}`}
+          />
+        }
         title="Let's work together"
       >
-        <div className="grid gap-14 lg:grid-cols-12 lg:items-start lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
           {/* Every way to reach me, as one list: email (with a copy button), phone and the profiles */}
           <Reveal x={-32} y={0} className="lg:col-span-5">
-            <p className="font-display text-[0.8125rem] font-bold tracking-[0.14em] text-accent uppercase">
+            <p className="font-display text-label font-bold tracking-[0.14em] text-accent uppercase">
               Reach me directly
             </p>
             <ul className="mt-3">
@@ -202,12 +241,17 @@ const Contact = () => {
               <ContactRow icon={LuPhone} label="Phone" href={`tel:${profile.phone.replace(/[^+\d]/g, '')}`}>
                 {profile.phone}
               </ContactRow>
-              {/* Profiles show just the platform's name (the owner removed the handles: "Troy Bay", "ztreuse") */}
-              {socials.map(({ label, href, icon }) => (
-                <ContactRow key={label} icon={icon} href={href} external>
-                  {label}
-                </ContactRow>
-              ))}
+              {/* Profiles with a link text; JobStreet has none, so it stays out of this list */}
+              {socials
+                .filter(({ handle }) => handle)
+                .map(({ label, handle, href, icon }) => (
+                  <ContactRow key={label} icon={icon} label={label} href={href} external>
+                    {handle}
+                  </ContactRow>
+                ))}
+              <ContactRow icon={LuClock} label="Local time">
+                <LocalTime />
+              </ContactRow>
             </ul>
           </Reveal>
 
@@ -219,16 +263,10 @@ const Contact = () => {
             delay={0.1}
             ref={formRef}
             onSubmit={handleSubmit}
-            className="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:col-span-7"
+            className="grid gap-x-6 gap-y-6 sm:grid-cols-2 lg:col-span-7"
           >
             <Field label="Name" name="user_name" placeholder="Your full name" autoComplete="name" />
-            <Field
-              label="Email"
-              name="user_email"
-              type="email"
-              placeholder="Where can I reply?"
-              autoComplete="email"
-            />
+            <Field label="Email" name="user_email" type="email" placeholder="Where can I reply?" autoComplete="email" />
             <Field
               label="Subject"
               name="subject"

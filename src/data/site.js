@@ -14,6 +14,8 @@ export const profile = {
   tagline: 'From the first sketch to the final commit. I care about every step in between.',
   email: 'tjansenzb2021@gmail.com',
   phone: '+63 976-056-3152',
+  // Drives the local time in Contact, which shows the UTC offset only (no city: locations stay off the site).
+  timeZone: 'Asia/Manila',
   // BASE_URL keeps the link working under the /Portfolio/ GitHub Pages path.
   resume: `${import.meta.env.BASE_URL}resume.pdf`,
 };
@@ -21,19 +23,19 @@ export const profile = {
 export const navLinks = [
   { id: 'hero', label: 'Home' },
   { id: 'projects', label: 'Projects' },
-  { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
   { id: 'certifications', label: 'Certifications' },
   { id: 'skills', label: 'Skills' },
   { id: 'contact', label: 'Contact' },
 ];
 
-// Professional profiles only (no personal social media). `handle` is the text shown in the Contact list.
+// Professional profiles only (no personal social media). `handle` is the link text shown in the Contact list; a
+// profile without one (JobStreet) is left out of that list and only appears as a round icon.
 // `icon` is the one-color mark for round icon buttons; `logo` is the original brand logo for the Contact list.
 export const socials = [
-  { label: 'LinkedIn', handle: 'Troy Bay', href: 'https://www.linkedin.com/in/troy-bay-57aa90391/', icon: FaLinkedinIn, logo: linkedinLogo },
-  { label: 'GitHub', handle: 'ztreuse', href: 'https://github.com/ztreuse', icon: FaGithub, logo: githubLogo },
-  { label: 'JobStreet', handle: 'Troy Bay', href: 'https://ph.jobstreet.com/profiles/troy-bay-q77cg9r0z8', icon: FaBriefcase, logo: jobstreetLogo },
+  { label: 'LinkedIn', handle: 'in/troy-bay-57aa90391', href: 'https://www.linkedin.com/in/troy-bay-57aa90391/', icon: FaLinkedinIn, logo: linkedinLogo },
+  { label: 'GitHub', handle: 'github.com/ztreuse', href: 'https://github.com/ztreuse', icon: FaGithub, logo: githubLogo },
+  { label: 'JobStreet', href: 'https://ph.jobstreet.com/profiles/troy-bay-q77cg9r0z8', icon: FaBriefcase, logo: jobstreetLogo },
 ];
 
 // EmailJS public identifiers (safe to ship to the browser).

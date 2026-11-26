@@ -3,19 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Troy Bay — Front-End Developer and UI/UX Designer who bridges design and code." />
+    <meta
+      name="description"
+      content="I shape user-centered interfaces in Figma, then build them into responsive web and mobile applications."
+    />
+    <!-- Link previews (LinkedIn, Messenger, Slack...). They need full addresses: vite.config.js fills in https://ztreuse.github.io/Portfolio/. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Troy Bay" />
+    <meta property="og:title" content="Troy Bay | Front-End Developer & UI/UX Designer" />
+    <meta
+      property="og:description"
+      content="I shape user-centered interfaces in Figma, then build them into responsive web and mobile applications."
+    />
+    <meta property="og:url" content="https://ztreuse.github.io/Portfolio/" />
+    <meta property="og:image" content="https://ztreuse.github.io/Portfolio/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Troy Bay, Front-End Developer and UI/UX Designer" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#161513" />
+    <script>
+      // Sets the theme before the first paint (see src/hooks/useTheme.js)
+      (function () {
+        var saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch (e) {}
+        var light = saved ? saved === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
+        document.documentElement.dataset.theme = light ? 'light' : 'dark';
+        // The desktop side index, collapsed or open (src/components/layout/PageIndex.jsx)
+        try {
+          if (localStorage.getItem('index') === 'min') document.documentElement.dataset.index = 'min';
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/Portfolio/favicon.svg" />
     <title>Troy Bay | Front-End Developer & UI/UX Designer</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600..900&family=Manrope:wght@300..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600..900&family=JetBrains+Mono:wght@400..600&family=Manrope:wght@300..800&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/Portfolio/assets/index-Io8fJe8p.js"></script>
-    <link rel="stylesheet" crossorigin href="/Portfolio/assets/index-B6-v0bqC.css">
+    <script type="module" crossorigin src="/Portfolio/assets/index-5gnV9C12.js"></script>
+    <link rel="stylesheet" crossorigin href="/Portfolio/assets/index-D54eC1aE.css">
   </head>
   <body>
     <div id="root"></div>

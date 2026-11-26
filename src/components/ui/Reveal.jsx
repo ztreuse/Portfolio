@@ -25,7 +25,7 @@ const Reveal = ({ as = 'div', x = 0, y = 16, delay = 0, play, children, ...props
 };
 
 /** Container that reveals its `RevealItem` children one after another. */
-// `play` (boolean) hands control to the caller instead of scroll, e.g. the hero waits for the preloader.
+// `play` (boolean) hands control to the caller instead of scroll, e.g. the hero's entrance.
 export const RevealGroup = ({ as = 'div', stagger = 0.1, delay = 0, play, children, ...props }) => {
   const Component = motion[as];
   const trigger = play === undefined ? { whileInView: 'visible', viewport } : { animate: play ? 'visible' : 'hidden' };

@@ -1,7 +1,7 @@
 # Troy Bay — Portfolio
 
 My personal portfolio: a single-page site built with React 19, Vite 7 and Tailwind CSS v4, with Motion for animation,
-Lenis for smooth scrolling and Three.js for a couple of hidden touches.
+Lenis for smooth scrolling and Three.js for a hidden touch on the photo.
 
 - Vercel: https://portfolio-ztreuse.vercel.app (deploys on every push to `main`; other branches get a preview)
 - GitHub Pages: https://ztreuse.github.io/Portfolio/ (published with `npm run deploy`)
@@ -17,7 +17,6 @@ An introduction, then Experience, Projects, Certifications, Tech Stack and Conta
   particles that form the FEU Tech tamaraw.
 - **Projects:** a grid or a list, with each project's details opening in place.
 - **Contact:** reached through a scroll-driven film of my desk at night.
-- A short coffee intro plays once per visit.
 
 ## Scripts
 
@@ -40,11 +39,11 @@ src/
 ├── index.css            # Tailwind import, design tokens, both themes
 ├── sections/            # Hero, Experience, Projects, Certifications, Skills, Contact (+ the desk film)
 ├── components/
-│   ├── layout/          # Navbar and phone menu, PageIndex (side index), Footer, Preloader, Band, Desk
+│   ├── layout/          # Navbar and phone menu, PageIndex (side index), Footer, Band, Desk
 │   └── ui/              # Section, SectionHeading, Button, ThemeToggle, Timeline, Portrait, FluidImage, Reveal…
 ├── hooks/               # useTheme, useSmoothScroll, useCleanAnchorLinks, useActiveSection
 ├── data/                # all content: site, experience, projects, certifications, skills
-├── three/               # the loader's 3D cup and the photo's particle logo
+├── three/               # the photo's particle logo
 └── assets/              # images, projects, certifications, logos, brand-logos
 ```
 

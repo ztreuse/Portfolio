@@ -26,10 +26,6 @@ export default defineConfig({
       'three',
       'three/webgpu',
       'three/tsl',
-      'three/examples/jsm/postprocessing/EffectComposer.js',
-      'three/examples/jsm/postprocessing/RenderPass.js',
-      'three/examples/jsm/postprocessing/BokehPass.js',
-      'three/examples/jsm/postprocessing/OutputPass.js',
     ],
   },
   // GitHub Pages serves the site under /Portfolio/; Vercel serves it from the domain root (it sets VERCEL=1 when building).

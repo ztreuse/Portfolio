@@ -26,8 +26,8 @@ the public overview.
 - Tailwind CSS v4 via `@tailwindcss/vite`: no `tailwind.config.js`; tokens live in `src/index.css` under `@theme`.
 - `motion` (import from `motion/react`) for animation; `MotionConfig reducedMotion="user"` in `App`.
 - `lenis` for smooth scrolling on desktops (`hooks/useSmoothScroll.js`; off on touch screens and for reduced motion).
-- `three` for the preloader's 3D cup (`three/coffeeScene.js`) and the photo's particle tamaraw (`three/tamaraw.js`,
-  `three/webgpu` + `three/tsl`), each a lazy chunk.
+- `three` for the photo's particle tamaraw (`three/tamaraw.js`, `three/webgpu` + `three/tsl`), a lazy chunk loaded only
+  when someone reaches for the photo.
 - `react-icons` (`lu` Lucide UI icons, `fa6` profile icons), `react-type-animation` (the hero's role line),
   `@emailjs/browser` (the contact form). `swiper` is still in `package.json` but nothing imports it.
 
@@ -44,17 +44,16 @@ npm run deploy   # builds and publishes dist/ to GitHub Pages; only when asked
 index.html                 # fonts, link-preview tags, and an inline script that sets the theme and the side index
                            # state before the first paint
 src/
-├── App.jsx                # Preloader, skip link, Navbar, <main> sections, Footer
+├── App.jsx                # skip link, Navbar, <main> sections, Footer
 ├── index.css              # @theme tokens (both themes), variants, base styles, keyframes
 ├── sections/              # Hero, Experience, Projects (+ ProjectDetails), Certifications, Skills (+ SkillsBackdrop),
 │                          # Contact (+ ContactFilm, filmGrade.js)
-├── components/layout/     # Navbar (top bar + phone menu), PageIndex (desktop side index), Footer, Preloader, intro.js,
-│                          # Band, Desk
+├── components/layout/     # Navbar (top bar + phone menu), PageIndex (desktop side index), Footer, Band, Desk
 ├── components/ui/         # Section, SectionHeading, Button, IconButton, SocialIcon, ThemeToggle, CopyEmail,
 │                          # LocalTime, DegreeTag, Timeline, Portrait, FluidImage, Reveal, revealVariants.js
 ├── hooks/                 # useTheme, useSmoothScroll, useCleanAnchorLinks, useActiveSection
 ├── data/                  # ALL content: site, experience, projects, certifications, skills
-├── three/                 # coffeeScene (loader), tamaraw (photo)
+├── three/                 # tamaraw (the photo's particle logo)
 └── assets/                # images, projects, certifications, logos, brand-logos (kebab-case names)
 public/                    # resume.pdf, favicon.svg, og.jpg, contact-film/ (wide/ and tall/ WebP frames)
 ```
@@ -194,8 +193,9 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   `message`; the message box resizes vertically, never below four lines).
 - **Footer:** the tagline (first sentence muted), the copyright, "Built with React, Vite and Tailwind CSS." and Back to
   top.
-- **Preloader:** once per tab session (`layout/intro.js`); any click, key or scroll skips it. Desktops get the 3D cup
-  (`three/coffeeScene.js`, falls back to the flat SVG cup if it isn't ready in time), phones the flat cup.
+- **No loader** (the owner removed the coffee intro and its 3D cup: a 2 s wait on every first visit, the heaviest file,
+  and the coffee theme had faded). The page opens straight onto the hero, whose photo comes into focus and whose text
+  rises in. Don't add a loader back.
 
 ## Content rules
 
@@ -210,7 +210,7 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 ## Don't bring back
 
 - Per-section scroll transitions (the hero dive, WORK flood, coffee drop, Skills flight, smoke, chapter numerals' sweep,
-  footer curtain), crema/dark alternating bands, the 3D certificate ring.
+  footer curtain), crema/dark alternating bands, the 3D certificate ring, a loading screen.
 - Section numbers or eyebrow labels on headings; generic subtitles.
 - A custom cursor, magnetic hovers, cursor spotlights, grid patterns, word marquees.
 - Green backgrounds or cards (green is only for interaction and status).
@@ -243,7 +243,7 @@ ignores `ctx.filter`). Size the film, Skills backdrop and Contact overlap in `lv
 - ESLint ignores unused names starting with a capital letter (`icon: Icon`) and `motion`. Component files may only export
   components (put shared variants in `.js` files).
 - Windows is case-insensitive but the build server isn't: keep folders lowercase and imports exact.
-- After changing `vite.config.js` or installing packages, restart the dev server. New `three/examples/jsm` imports go in
+- After changing `vite.config.js` or installing packages, restart the dev server. New `three` entry points go in
   `optimizeDeps.include`.
 - Images are WebP with `width`/`height` set; `loading="lazy"` below the fold.
 - The link preview is `public/og.jpg` (1200×630: name, role, portrait); re-make it if those change. `%SITE_URL%` in

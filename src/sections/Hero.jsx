@@ -32,7 +32,7 @@ const particles = [
   [14, 15, 6.8],
 ];
 
-// Entrance: the photo comes into focus as the preloader lifts, like a camera pulling focus.
+// Entrance: the photo comes into focus as the page opens, like a camera pulling focus.
 const focusPull = (ready, reduceMotion) => {
   const soft = { scale: 1.08, opacity: 0, filter: reduceMotion ? 'blur(0px)' : 'blur(5px)' };
   return {
@@ -71,7 +71,7 @@ const HeroBackground = ({ paused, ready, reduceMotion, theme }) => (
 
 /**
  * The cycling role ("Front-End Developer", "UI/UX Designer", ...), typed out with a slim taupe caret. It starts
- * typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts. `min-h` reserves the line
+ * typing only once the hero is shown, so it always starts from the first role. `min-h` reserves the line
  * so the layout doesn't jump between roles.
  */
 // Exactly one line tall even while empty, between roles (`1lh`): its old 1.4em minimum was 2px short of the line, so
@@ -139,7 +139,7 @@ const [firstName, ...otherNames] = profile.name.split(' ');
  * the resume and contact buttons, profiles and photo, over the rippling coffee photo. It took over the About section
  * (its text and photo), whose own screen was mostly empty, and Education (the degree tag's card).
  */
-const Hero = ({ ready }) => {
+const Hero = ({ ready = true }) => {
   const ref = useRef(null);
   const reduceMotion = useReducedMotion();
   const onScreen = useInView(ref);

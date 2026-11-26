@@ -7,7 +7,7 @@ let lenis = null;
 /** The active smooth-scroll instance, or null (touch screens, reduced motion, or not started yet). */
 export const getLenis = () => lenis;
 
-// Pause or resume page scrolling (preloader, open phone menu).
+// Pause or resume page scrolling (the open phone menu).
 export const setScrollLocked = (locked) => {
   if (lenis) {
     if (locked) lenis.stop();

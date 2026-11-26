@@ -106,7 +106,7 @@
  * Themes. Dark (espresso) is the palette above; light (crema) re-points the same variables for the whole page. Tailwind's
  * utilities read these variables, so `text-white` means "strongest text", `bg-ink` "page" and `white/15` "faint line" in
  * either theme, and components need no light variants. Use palette utilities only: a hard-coded hex won't flip. For the
- * rare exception there's the `light:` variant. `.tone-dark` keeps a part dark in both themes (the intro, and the navbar
+ * rare exception there's the `light:` variant. `.tone-dark` keeps a part dark in both themes (the navbar
  * over the night video).
  */
 @custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));

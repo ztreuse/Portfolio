@@ -242,7 +242,7 @@ const MobileMenu = ({ activeId, onNavigate }) => {
   );
 };
 
-// `ready` holds the entrance until the preloader lifts (otherwise it plays unseen behind it).
+// `ready` can hold the entrance back (it plays as the page opens by default).
 const Navbar = ({ ready = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(() => window.scrollY > 24);

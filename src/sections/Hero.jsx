@@ -170,7 +170,7 @@ const Hero = ({ ready = true }) => {
               as="p"
               className="flex items-center gap-4 font-mono text-label font-medium tracking-[0.08em] text-accent uppercase"
             >
-              <span aria-hidden className="h-px w-10 bg-linear-to-r from-accent/0 to-accent" />
+              <span aria-hidden className="h-px w-10 bg-accent" />
               Hello there, I'm
             </RevealItem>
 
@@ -188,7 +188,7 @@ const Hero = ({ ready = true }) => {
             {/* The facts at a glance: degree (its card has the rest), where I am, my time there, and that I'm available */}
             <RevealItem
               as="ul"
-              className="relative z-10 mt-4 flex flex-wrap gap-2 font-mono text-label font-medium text-stone-300"
+              className="relative z-10 mt-4 flex flex-wrap gap-2 font-mono text-label font-normal text-stone-300/80"
             >
               <DegreeTag />
               <Fact icon={LuMapPin}>{profile.location}</Fact>

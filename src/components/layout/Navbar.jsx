@@ -145,7 +145,7 @@ const MobileMenu = ({ activeId, onNavigate }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="absolute top-full right-3 mt-2 max-h-[calc(100svh-5rem)] w-80 origin-top-right overflow-y-auto overscroll-contain rounded-2xl border border-line bg-ink/95 p-2.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06),0_24px_60px_-20px_rgb(0_0_0/0.9),0_0_40px_-14px_rgb(159_143_129/0.4)] backdrop-blur-xl sm:right-6 xl:hidden"
+      className="absolute top-full right-3 mt-2 max-h-[calc(100svh-5rem)] w-80 origin-top-right overflow-y-auto overscroll-contain rounded-xl border border-line bg-ink/95 p-2.5 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06),0_24px_60px_-20px_rgb(0_0_0/0.9),0_0_40px_-14px_rgb(159_143_129/0.4)] backdrop-blur-xl sm:right-6 xl:hidden"
     >
       <motion.div variants={menuItemVariants} className="px-3 pt-1.5 pb-3">
         <p className="font-display text-sm font-semibold text-stone-300">{profile.headline}</p>

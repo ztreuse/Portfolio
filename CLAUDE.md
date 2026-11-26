@@ -87,10 +87,12 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 | `surface` | `#24211d` | `#f7f2eb` | cards |
 | `line` | `#37322d` | `#cfc3b5` | borders |
 | `accent` / `accent-strong` | `#a89888` / `#c9bcaf` | `#6a5b4e` / `#4b3f36` | taupe: labels, dates, roles, "BAY" |
-| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#557538` / `#3e5627` | green: interactive and live |
-| `matcha-fill` / `on-matcha` | `#a3b97c` / `#161513` | `#587a3a` / `#f6f1e8` | primary button hover fill / its text |
+| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#3f7417` / `#2e6410` | green: interactive and live |
+| `matcha-fill` / `on-matcha` | `#a3b97c` / `#161513` | `#3f7417` / `#f6f1e8` | primary button hover fill / its text |
 | `dimension` | `#403b37` | `#dfd4c7` | the veil over the desk photo |
 
+- The light greens are saturated on purpose (the owner found the old olive `#557538` hard to see on crema): they keep
+  AA contrast on every light background and read as clearly green, as the pistachio does on espresso.
 - **Brown** (the surfaces, text, `accent`) is the structure: backgrounds, cards, lines, labels, dates, roles, outlines,
   the Experience dashes, the hero's name accent and photo frame. **Every background and card stays brown**: matcha
   bands, green cards and an olive tint were tried and reverted.
@@ -111,10 +113,15 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 - Scale (`@theme`): `text-name` (hero), `text-title` (section titles), `text-item` (19px: project, job, issuer and group
   titles, the role line), `text-copy` (15px body), `text-label` (13px). Use only these plus `text-sm`.
 - Every label is `font-mono text-label font-medium tracking-[0.08em]`, plus `uppercase` where it's a label.
+  One exception: the Issued / Expires labels on the certification cards are 11px (`text-[0.6875rem]`), set tight over
+  their dates (the owner asked for them smaller).
 - No gradient text on the name (a browser clipped the "y"); no per-letter effects; no cursive or extra fonts.
 
 ### Shapes and controls
 
+- **Cards and pop-ups share one radius, `rounded-xl` (12px)**, after the project cards: the certification, Tech stack
+  and project-detail cards, the Certifications filter menus, the degree card and the phone menu. Things nested inside
+  them step down to `rounded-lg` (the badge tile, menu options). Only the hero photo frame keeps `rounded-2xl`.
 - Controls are round: buttons are pills, icon buttons and toggles circles (`border-white/20 bg-ink/40`). The one
   exception is the skill chips (`rounded-lg`), which are labels.
 - **`Button`** (`ui/Button.jsx`), used by Download Resume, Get in Touch, Send message and Back to top: a 40px pill, the
@@ -124,7 +131,8 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   turn green. `nudge="x"|"y"` sets the icon's hover motion.
 - Section headings (`SectionHeading`): the title, an optional one-line subtitle (`intros` in `data/site.js`, in the
   owner's voice), a 4px green bar on the left running from just above the title to just below the subtitle, the
-  Projects view toggle on the right, a hairline under it. **No section numbers or eyebrow labels on headings** (the
+  Projects view toggle on the right, a hairline under it (except Projects, Certifications and Tech stack:
+  `rule={false}`, the owner asked for the line gone there). **No section numbers or eyebrow labels on headings** (the
   owner finds them an AI-template tell).
 - One global `:focus-visible` outline (2px matcha). `Button` presses to 0.97, `IconButton` to 0.94.
 - Icons: decorative ones get `aria-hidden`; icon-only controls an `aria-label`. The theme icons, the menu button and the
@@ -180,11 +188,19 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
     a time. The details sit under each row's grid, not in it (a grid gap made a bump at the end of closing).
   - Real screenshots only (1600×900 WebP, the site's navbar flush with the frame's top). Every project needs `image`,
     `link`, `role` and `year`.
-- **Certifications:** all credentials at once, grouped by issuer, each card a link to its Credly page with the badge
-  (192px WebP), the title, the date and a "Verify credential" pill that turns green while the card is hovered. No
-  carousel or controls.
-- **Tech stack** (`Skills.jsx`): two columns of group cards (name, "N tools", brand-logo chips). On hover a card lifts
-  4px and only its outline turns green. "Currently Learning" has a dashed green outline. Chips flick on in their brand
+- **Certifications:** one grid of outlined cards with no fill (the band shows through), newest first (two columns, three from `2xl`), each a link to its Credly page:
+  the badge (192px WebP) beside the title and issuer, a hairline, Issued and Expires (`expires` in
+  `data/certifications.js`, from Credly's records; "No expiry" when absent), and a full-width "Verify credential" pill
+  that fills green only while it is hovered itself (hovering the card lifts it 4px and outlines it green, no shadow). Six show, the rest fold behind "View all" / "Show fewer" (styled like Projects' View details pill). The issuer
+  groups were dropped: their side column and one-card rows left holes. No carousel.
+  Above the grid, two dropdown filters (`Filter`): Issuer (building icon) and Year (calendar icon). Each is a pill
+  reading "Issuer All" that opens a small menu (check on the chosen option, a count per option, options that would
+  leave nothing disabled, so the grid is never empty); a set filter outlines its pill green and greens its value.
+  Arrows move through the menu, Escape closes it. Options come from the data (`SHORT` gives PMI its short pill label).
+  A row of segmented pills was tried first and replaced.
+- **Tech stack** (`Skills.jsx`): two columns of group cards (name, "N tools", brand-logo chips). In the light theme the cards are a see-through crema (`light:bg-ink/55`, chips `light:bg-surface/40`) so the
+  blurred desk photo tints them, not bright white. On hover a card lifts
+  4px and only its outline turns green (no shadow, like the certification cards). "Currently Learning" has a dashed green outline. Chips flick on in their brand
   colours once, the first time a card appears; tooltips list the projects that used each tool. The background
   (`SkillsBackdrop`) is the desk film's first frame, coming into focus as the section ends.
 - **Contact:** the desk film (`ContactFilm.jsx`): a scroll-scrubbed clip of the owner's desk at night (120 WebP frames per

@@ -71,7 +71,7 @@ The palette is coffee browns with a matcha green: **brown is what you read** (ba
 | `surface` | `#24211d` | `#f7f2eb` | cards |
 | `line` | `#37322d` | `#cfc3b5` | borders, dividers |
 | `accent` / `accent-strong` | `#a89888` / `#c9bcaf` | `#6a5b4e` / `#4b3f36` | taupe labels and accents |
-| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#557538` / `#3e5627` | interactive and live |
+| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#3f7417` / `#2e6410` | interactive and live |
 
 Type: **Big Shoulders Display** for the name and section titles, **Manrope** for everything else and **JetBrains Mono**
 for small labels, in five sizes (`text-name`, `text-title`, `text-item`, `text-copy`, `text-label`).

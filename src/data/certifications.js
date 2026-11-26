@@ -12,13 +12,15 @@ import pmiProjectManagementReady from '../assets/certifications/pmi-project-mana
 
 // Dates are ISO (YYYY-MM-DD) so they can be formatted consistently.
 // `badgeId` is the Credly badge ID from the badge's embed code (data-share-badge-id); it builds the
-// public verification link. `image` is the badge artwork downloaded from Credly (192px WebP).
+// public verification link. `expires` is the date Credly lists (left out where it never expires).
+// `image` is the badge artwork downloaded from Credly (192px WebP).
 const certifications = [
   {
     name: 'IT Specialist - HTML and CSS',
     issuer: 'Certiport',
     date: '2024-11-28',
     badgeId: 'fe73abea-d20e-463d-b49d-bab3034a1637',
+    expires: '2029-11-28',
     image: itSpecialistHtmlAndCss,
   },
   {
@@ -26,6 +28,7 @@ const certifications = [
     issuer: 'Certiport',
     date: '2025-11-24',
     badgeId: 'e0329e81-c1da-485b-9033-ec0d43d40b77',
+    expires: '2030-11-24',
     image: itSpecialistJavascript,
   },
   {
@@ -33,6 +36,7 @@ const certifications = [
     issuer: 'Certiport',
     date: '2024-07-13',
     badgeId: 'd22dd3ef-5fa2-4f81-acbd-eefab5360d8e',
+    expires: '2029-07-13',
     image: itSpecialistNetworking,
   },
   {
@@ -40,6 +44,7 @@ const certifications = [
     issuer: 'Certiport',
     date: '2024-03-24',
     badgeId: '07a6a4d7-6b95-48ae-ba0a-b63df9845726',
+    expires: '2029-03-24',
     image: itSpecialistPython,
   },
   {
@@ -82,6 +87,7 @@ const certifications = [
     issuer: 'Cisco',
     date: '2025-11-25',
     badgeId: '044f157a-8e26-47e0-baaa-fb9e66ced734',
+    expires: '2030-11-25',
     image: ciscoCertifiedSupportTechnicianCybersecurity,
   },
   {

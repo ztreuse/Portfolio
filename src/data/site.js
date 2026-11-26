@@ -28,7 +28,7 @@ export const profile = {
 // The short line under a section's title, in my own words (only what's true)
 export const intros = {
   experience: "Roles I've held and the work I did in them.",
-  certifications: 'Verified on Credly, grouped by issuer.',
+  certifications: 'Verified on Credly, newest first.',
   skills: "What I design, build and ship with, plus what I'm learning next.",
 };
 

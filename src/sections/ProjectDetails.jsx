@@ -202,7 +202,7 @@ const ProjectDetails = ({ project, open, picture = false, space = '', className 
         className={`relative z-10 overflow-hidden ${className}`}
       >
         <div className={space}>
-          <div className={`overflow-hidden rounded-2xl bg-surface ${picture ? 'grid grid-cols-12' : ''}`}>
+          <div className={`overflow-hidden rounded-xl bg-surface ${picture ? 'grid grid-cols-12' : ''}`}>
             {picture && (
               <div className="col-span-5 flex items-center bg-accent/15 p-6 lg:p-8">
                 <img

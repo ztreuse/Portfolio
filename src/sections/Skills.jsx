@@ -31,7 +31,7 @@ const SkillChip = ({ name, description, logo, logoLight, mono, wide = false, ico
       '--brand': color === '#FFFFFF' ? 'var(--color-white)' : color,
       animationDelay: flashDelay === undefined ? undefined : `${flashDelay}ms`,
     }}
-    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-line bg-ink/60 py-1.5 pr-2.5 pl-2 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
+    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-line bg-ink/60 light:bg-surface/40 py-1.5 pr-2.5 pl-2 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
   >
     <span className="flex size-4 shrink-0 items-center justify-center">
       {logo ? (
@@ -70,9 +70,9 @@ const GroupCard = ({ group }) => {
     <RevealItem
       as="li"
       onAnimationComplete={(state) => state === 'visible' && setLit(true)}
-      // Hover: it rises a little and only its outline turns plainly matcha green (both themes; no green fill). The
+      // Hover: it rises a little and only its outline turns plainly matcha green (both themes; no green fill, no shadow). The
       // lift is the CSS translate property, so it doesn't fight the reveal's transform
-      className={`rounded-2xl border bg-surface/90 p-5 transition-[translate,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-matcha hover:shadow-[0_18px_40px_-24px_rgb(0_0_0/0.5)] motion-reduce:hover:translate-y-0 ${
+      className={`rounded-xl border bg-surface/90 p-5 light:bg-ink/55 transition-[translate,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-matcha motion-reduce:hover:translate-y-0 ${
         group.learning ? 'border-dashed border-matcha/55' : 'border-line'
       }`}
     >
@@ -120,7 +120,7 @@ const Skills = () => {
   return (
     <div className="relative isolate">
       <SkillsBackdrop />
-      <Section id="skills" title="Tech stack" intro={intros.skills}>
+      <Section id="skills" title="Tech stack" intro={intros.skills} rule={false}>
         <SkillsFade>
           <RevealGroup as="ul" stagger={0.05} className="grid gap-4 md:grid-cols-2">
             {skillGroups.map((group) => (

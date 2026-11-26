@@ -170,7 +170,7 @@ const ProjectRow = ({ project, number, flipped, open, onToggle }) => (
       <RevealGroup className={`md:col-span-7 ${flipped ? 'md:order-last' : ''}`}>
         <ProjectImage
           project={project}
-          className="rounded-2xl border border-line shadow-[0_24px_60px_-24px_rgb(0_0_0/0.45)] transition-colors duration-300 group-hover:border-matcha/50"
+          className="rounded-xl border border-line shadow-[0_24px_60px_-24px_rgb(0_0_0/0.45)] transition-colors duration-300 group-hover:border-matcha/50"
         />
       </RevealGroup>
       <Reveal delay={0.1} className="md:col-span-5">
@@ -321,7 +321,7 @@ const Projects = () => {
   );
 
   return (
-    <Section id="projects" title="Selected work" action={viewToggle}>
+    <Section id="projects" title="Selected work" action={viewToggle} rule={false}>
       {/* Keyed by page (and view) so items replay their reveal when either changes */}
       {isList ? (
         <>

@@ -64,7 +64,7 @@ const DegreeTag = () => {
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="absolute top-full left-0 z-20 w-88 max-w-[calc(100vw-2.5rem)] pt-2"
           >
-            <div className="rounded-2xl border border-line bg-surface p-5 shadow-[0_24px_50px_-24px_rgb(0_0_0/0.55)]">
+            <div className="rounded-xl border border-line bg-surface p-5 shadow-[0_24px_50px_-24px_rgb(0_0_0/0.55)]">
               <div className="flex items-center gap-3">
                 {logo && (
                   <img

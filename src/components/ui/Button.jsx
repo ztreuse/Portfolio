@@ -3,13 +3,17 @@ import { isValidElement } from 'react';
 // Pill buttons: label on the left, icon in its own circle on the right (same design in the hero and Contact).
 const variants = {
   primary: {
-    base: 'border border-transparent bg-linear-to-br from-accent-strong to-accent text-ink shadow-[0_10px_30px_-12px_rgb(159_143_129/0.8)] hover:shadow-[0_14px_36px_-12px_rgb(159_143_129/0.9)]',
-    circle: 'bg-ink text-accent-strong',
+    // At rest a green outline only (the owner's request): the border, the label and the icon's circle and icon all
+    // matcha, nothing filled. On hover it fills green and the label, border, circle and icon turn black in the dark theme
+    // (on the pistachio) and white in the light theme (on a deep green)
+    base: 'border border-matcha bg-ink/40 text-matcha-strong backdrop-blur-sm hover:border-matcha-fill hover:bg-matcha-fill hover:text-on-matcha focus-visible:bg-matcha-fill focus-visible:text-on-matcha hover:shadow-[0_12px_30px_-14px_rgb(88_122_58/0.6)]',
+    circle: 'border border-matcha text-matcha-strong group-hover:border-on-matcha group-hover:text-on-matcha',
   },
   outline: {
-    base: 'border border-white/20 bg-ink/40 text-white backdrop-blur-sm hover:border-accent/70',
+    // Hover: the outline and the label turn matcha green (the owner's request), the icon's circle fills green
+    base: 'border border-white/20 bg-ink/40 text-white backdrop-blur-sm hover:border-matcha/70 hover:text-matcha-strong focus-visible:text-matcha-strong',
     circle:
-      'border border-white/25 text-accent-strong group-hover:border-accent group-hover:bg-accent group-hover:text-ink',
+      'border border-white/25 text-accent-strong group-hover:border-matcha group-hover:bg-matcha group-hover:text-ink',
   },
 };
 
@@ -26,8 +30,10 @@ const nudges = {
  */
 const Button = ({ href, variant = 'primary', icon: Icon, nudge = 'x', className = '', children, ...props }) => {
   const style = variants[variant];
-  const classes = `group inline-flex items-center justify-center gap-3 rounded-full py-2 font-display text-sm font-semibold transition-[translate,scale,box-shadow,border-color] duration-300 hover:-translate-y-0.5 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-70 motion-reduce:hover:translate-y-0 ${
-    Icon ? 'pr-2 pl-6' : 'px-6'
+  // Sized like the photo's "Hold" pill (the owner's reference; these felt too thick at py-2 and 24px beside the text):
+  // a 4px rim round the icon's circle (3px plus the 1px border) and 14px on the text side, 40px tall in all
+  const classes = `group inline-flex items-center justify-center gap-2.5 rounded-full font-display text-sm font-semibold transition-[translate,scale,box-shadow,border-color,color,background-color] duration-300 hover:-translate-y-0.5 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-matcha disabled:pointer-events-none disabled:opacity-70 motion-reduce:hover:translate-y-0 ${
+    Icon ? 'py-[3px] pr-[3px] pl-3.5' : 'px-4 py-[9px]'
   } ${style.base} ${className}`;
 
   const content = (

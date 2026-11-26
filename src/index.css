@@ -8,6 +8,8 @@
   --font-display: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   /* Display headings: a tall condensed poster face, always uppercase and heavy (hero name, section titles,
      card and job titles, the footer sign-off and wordmark, chapter numbers, the loader percentage). */
+  /* Small labels (dates, roles, counts, tags): JetBrains Mono, the owner's pick from their friends' sites (carlcoloma.vercel.app) */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-heading: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
 
   /* One type scale for the whole page (nothing else sets a font size, apart from the loader):
@@ -16,7 +18,7 @@
   --text-title: clamp(2rem, 1.7rem + 1.4vw, 2.75rem);
   --text-item: 1.1875rem;
   --text-copy: 0.9375rem;
-  --text-label: 0.75rem;
+  --text-label: 0.8125rem;
 
   /* Dark theme values; the light ones are below (:root[data-theme='light']). */
   --color-ink: #161513; /* page */
@@ -27,6 +29,15 @@
   --color-accent-strong: #c9bcaf;
   --color-dimension: #403b37; /* the veil over Experience's desk photo */
   --color-danger: #f87171;
+  /* The second half of the palette, like Dubai chocolate: brown is what you read (surfaces, text, labels, lines), the
+     pistachio-matcha green is what you touch (buttons, hovers, the current section, focus) and what's live (available,
+     learning, done). `matcha-strong` is the brighter one for text and gradients, like accent-strong */
+  --color-matcha: #a3b97c;
+  --color-matcha-strong: #c4d4a2;
+  /* The primary button's hover fill and the text on it: in the dark theme the pistachio with black on it, in the
+     light theme a deep green with white on it */
+  --color-matcha-fill: #a3b97c;
+  --color-on-matcha: #161513;
   --color-stone-500: #908780; /* faintest text (placeholders); Tailwind's own is only 3.8:1 on ink */
 
   /* Gentle float (hero text). Animates the `translate` property, so it runs on the GPU and doesn't
@@ -99,6 +110,7 @@
  * over the night video).
  */
 @custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+@custom-variant index-min (&:where([data-index='min'] *));
 
 :root[data-theme='light'] {
   color-scheme: light;
@@ -115,10 +127,20 @@
   --color-accent-strong: #4b3f36;
   --color-dimension: #dfd4c7;
   --color-danger: #a8321f;
+  --color-matcha: #557538;
+  --color-matcha-strong: #3e5627;
+  --color-matcha-fill: #587a3a;
+  --color-on-matcha: #f6f1e8;
 }
 
 :root {
   color-scheme: dark;
+  /* The desktop side index's width, which the page and the fixed photos sit beside; collapsed it's a narrow rail */
+  --index-w: 14rem;
+}
+
+:root[data-index='min'] {
+  --index-w: 4.5rem;
 }
 
 .tone-dark {
@@ -134,6 +156,8 @@
   --color-line: #37322d;
   --color-accent: #a89888;
   --color-accent-strong: #c9bcaf;
+  --color-matcha: #a3b97c;
+  --color-matcha-strong: #c4d4a2;
 }
 
 /* The theme switch draws its own spreading circle (setTheme), so the browser's default cross-fade is off */
@@ -146,7 +170,10 @@
 @layer base {
   html {
     /* No CSS smooth scrolling: Lenis handles easing, and the two fight each other. */
-    scroll-padding-top: 4rem; /* clears the fixed navbar on anchor jumps */
+    scroll-padding-top: 4rem; /* clears the fixed top bar on anchor jumps (desktops have the index at the left instead) */
+    @media (width >= 80rem) {
+      scroll-padding-top: 0;
+    }
   }
 
   body {
@@ -154,12 +181,12 @@
   }
 
   ::selection {
-    @apply bg-accent text-ink;
+    @apply bg-matcha text-ink;
   }
 
   /* One keyboard-focus outline for every link, button and field (mouse clicks don't show it) */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-matcha);
     outline-offset: 3px;
   }
 }

@@ -26,7 +26,7 @@ const statusMessages = {
   success: {
     text: "Thanks! Your message has been sent. I'll get back to you soon.",
     icon: LuCircleCheck,
-    className: 'text-accent-strong',
+    className: 'text-matcha',
   },
   error: {
     text: 'Something went wrong. Please try again or email me directly.',
@@ -37,11 +37,11 @@ const statusMessages = {
 
 // Outlined inputs (16px text like the Experience bullets; 14px like the Skills chips looked too small to the owner,
 // rounded-lg like the chips): a transparent box with a thin taupe
-// border that strengthens on hover and focus (the owner asked for boxes instead of underlines, then for no fill, which
+// Text at the body size (15px; 16px on touch screens, where iPhones zoom into smaller fields). Border that strengthens on hover and focus (the owner asked for boxes instead of underlines, then for no fill, which
 // looked like a generic form). Autofill: browsers paint their own white or blue fill on autofilled fields, so an inset
 // shadow in the page colour covers it and the text keeps its colour.
 const inputClass =
-  'mt-2 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-accent/70 focus:border-accent-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
+  'mt-2 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-copy [@media(pointer:coarse)]:text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-matcha/70 focus:border-matcha-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
 
 /**
  * One conversational form field ("What's your name?").
@@ -49,7 +49,7 @@ const inputClass =
  */
 const Field = ({ label, name, as: Control = 'input', className = '', ...props }) => (
   <label className={`group block ${className}`}>
-    <span className="font-display text-label font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
+    <span className="font-mono text-label font-medium tracking-[0.08em] text-stone-400 uppercase transition-colors group-focus-within:text-white">
       {label}
     </span>
     <Control name={name} className={inputClass} required {...props} />
@@ -101,10 +101,10 @@ const CopyEmail = () => {
       onClick={copy}
       aria-label={copied ? 'Email copied' : 'Copy email address'}
       title={copied ? 'Copied!' : 'Copy email'}
-      className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-ink/40 text-stone-200 transition-colors hover:border-accent hover:bg-accent hover:text-ink"
+      className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-ink/40 text-stone-200 transition-colors hover:border-matcha hover:bg-matcha hover:text-ink"
     >
       {copied ? (
-        <LuCheck aria-hidden className="size-4 text-accent-strong" />
+        <LuCheck aria-hidden className="size-4 text-matcha" />
       ) : (
         <LuCopy aria-hidden className="size-4" />
       )}
@@ -128,28 +128,28 @@ const ContactRow = ({ icon: Icon, label, href, external = false, action, childre
         {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         className="flex min-w-0 flex-1 items-center gap-4 py-3"
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent-strong transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-accent/35 text-accent-strong transition-colors duration-300 group-hover:border-matcha group-hover:bg-matcha group-hover:text-ink">
           <Icon aria-hidden className="size-4" />
         </span>
         <span className="min-w-0">
           {label && (
-            <span className="block font-display text-label font-bold tracking-[0.14em] text-stone-400 uppercase">
+            <span className="block font-mono text-label font-medium tracking-[0.08em] text-stone-400 uppercase">
               {label}
             </span>
           )}
-          <span className="block font-display text-copy font-semibold break-words text-white">{children}</span>
+          <span className="block font-display text-copy font-medium break-words text-white">{children}</span>
         </span>
       </Wrapper>
       {action ??
         (external && (
           <LuArrowUpRight
             aria-hidden
-            className="size-5 shrink-0 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
+            className="size-5 shrink-0 text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-matcha-strong motion-reduce:transition-none"
           />
         ))}
       <span
         aria-hidden
-        className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-500 ease-out group-hover:scale-x-100"
+        className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-matcha transition-transform duration-500 ease-out group-hover:scale-x-100"
       />
     </li>
   );
@@ -189,10 +189,10 @@ const Contact = () => {
       {!reduceMotion && <ContactFilm />}
       <Section
         id="contact"
-        eyebrow="06 — Contact"
         // On the colour the desk film settles onto. It's pulled up over the film's last 70lvh, see-through there and
         // fading in as the film settles, so it arrives with the colour instead of after an empty screen of it
-        className={`z-10 ${reduceMotion ? '' : '-mt-[70lvh]'}`}
+        // In the light theme the text that's near-white in the dark one is near-black (the owner's request), not dark grey
+        className={`z-10 light:[--color-stone-200:var(--color-white)] light:[--color-stone-300:var(--color-white)] ${reduceMotion ? '' : '-mt-[70lvh]'}`}
         background={
           <div
             aria-hidden
@@ -204,7 +204,7 @@ const Contact = () => {
         <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
           {/* Every way to reach me, as one list: email (with a copy button), phone and the profiles */}
           <Reveal x={-32} y={0} className="lg:col-span-5">
-            <p className="font-display text-label font-bold tracking-[0.14em] text-accent uppercase">
+            <p className="font-mono text-label font-medium tracking-[0.08em] text-accent uppercase">
               Reach me directly
             </p>
             <ul className="mt-3">
@@ -254,7 +254,10 @@ const Contact = () => {
               as="textarea"
               rows={4}
               placeholder="Tell me a little about it…"
-              className="sm:col-span-2 [&_textarea]:resize-none"
+              // Drag the bottom-right corner to make it taller (only taller: it never goes below its starting four lines,
+              // measured in lines so it holds on touch screens' larger text too; 112px where the lh unit isn't supported),
+              // up to most of the screen
+              className="sm:col-span-2 [&_textarea]:max-h-[70svh] [&_textarea]:min-h-28 [&_textarea]:resize-y [@supports(height:1lh)]:[&_textarea]:min-h-[calc(4lh+1.25rem+2px)]"
             />
 
             <div className="flex flex-col-reverse gap-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">

@@ -32,6 +32,10 @@
         } catch (e) {}
         var light = saved ? saved === 'light' : matchMedia('(prefers-color-scheme: light)').matches;
         document.documentElement.dataset.theme = light ? 'light' : 'dark';
+        // The desktop side index, collapsed or open (src/components/layout/PageIndex.jsx)
+        try {
+          if (localStorage.getItem('index') === 'min') document.documentElement.dataset.index = 'min';
+        } catch (e) {}
       })();
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -40,7 +44,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600..900&family=Manrope:wght@300..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600..900&family=JetBrains+Mono:wght@400..600&family=Manrope:wght@300..800&display=swap"
       rel="stylesheet"
     />
   </head>

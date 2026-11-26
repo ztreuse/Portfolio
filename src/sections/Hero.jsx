@@ -1,18 +1,18 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { TypeAnimation } from 'react-type-animation';
-import { LuArrowDown, LuArrowRight, LuClock, LuDownload, LuGraduationCap } from 'react-icons/lu';
+import { LuArrowDown, LuArrowRight, LuClock, LuFileDown, LuMapPin } from 'react-icons/lu';
 import Button from '../components/ui/Button';
 import Container from '../components/ui/Container';
+import DegreeTag from '../components/ui/DegreeTag';
 import FluidImage from '../components/ui/FluidImage';
 import LocalTime from '../components/ui/LocalTime';
+import Portrait from '../components/ui/Portrait';
 import SocialIcon from '../components/ui/SocialIcon';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import { imageReveal } from '../components/ui/revealVariants';
 import { profile, socials } from '../data/site';
-import { education } from '../data/experience';
 import heroBg from '../assets/images/hero-bg.jpg';
-import profileImg from '../assets/images/profile.webp';
 import { sectionLink } from '../hooks/useCleanAnchorLinks';
 import useTheme from '../hooks/useTheme';
 
@@ -74,10 +74,12 @@ const HeroBackground = ({ paused, ready, reduceMotion, theme }) => (
  * typing only once the hero is shown, so it isn't caught mid-word when the preloader lifts. `min-h` reserves the line
  * so the layout doesn't jump between roles.
  */
+// Exactly one line tall even while empty, between roles (`1lh`): its old 1.4em minimum was 2px short of the line, so
+// the content under it jumped up and back each time a role was erased
 const RoleLine = ({ ready }) => (
   <RevealItem
     as="p"
-    className="mt-4 flex min-h-[1.4em] items-center font-display text-item font-semibold text-accent-strong"
+    className="mt-4 flex min-h-[1lh] items-center font-display text-item font-semibold text-accent-strong"
   >
     <span className="sr-only">{profile.role}</span>
     {ready && (
@@ -94,7 +96,7 @@ const RoleLine = ({ ready }) => (
     {/* Slim taupe caret instead of the default "|" */}
     <span
       aria-hidden
-      className="ml-1.5 inline-block h-[0.95em] w-[2px] animate-caret rounded-full bg-accent motion-reduce:animate-none"
+      className="ml-1.5 inline-block h-[0.95em] w-[2px] animate-caret rounded-full bg-matcha motion-reduce:animate-none"
     />
   </RevealItem>
 );
@@ -104,10 +106,10 @@ const RoleLine = ({ ready }) => (
 const ScrollCue = () => (
   <a
     {...sectionLink('projects')}
-    className="group flex items-center gap-3 font-display text-label font-bold tracking-[0.14em] text-stone-400 uppercase transition-colors hover:text-accent-strong"
+    className="group flex items-center gap-3 font-mono text-label font-medium tracking-[0.08em] text-stone-400 uppercase transition-colors hover:text-matcha-strong"
   >
     See my work
-    <span className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-ink/40 transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+    <span className="flex size-9 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-ink/40 transition-colors duration-300 group-hover:border-matcha group-hover:bg-matcha group-hover:text-ink">
       {/* On hover the arrow drops out of the circle and a new one drops in from the top */}
       <span className="relative block size-4">
         <LuArrowDown
@@ -130,25 +132,12 @@ const Fact = ({ icon: Icon, children }) => (
   </li>
 );
 
-/** The grad photo in its card, twisting slightly on hover (no offset frame behind it: the owner removed it). */
-const Portrait = () => (
-  <RevealItem variants={imageReveal} className="group relative w-28 sm:w-36 lg:w-full">
-    <div className="relative overflow-hidden rounded-2xl border border-line transition-[rotate] duration-500 ease-out group-hover:-rotate-2 motion-reduce:transition-none">
-      <img
-        src={profileImg}
-        alt="Troy Bay in an FEU Tech graduation toga"
-        className="aspect-4/5 w-full object-cover object-[50%_25%]"
-      />
-    </div>
-  </RevealItem>
-);
-
 const [firstName, ...otherNames] = profile.name.split(' ');
 
 /**
  * The first screen answers who, what and how to reach me at once: name, cycling role, quick facts, a short introduction,
  * the resume and contact buttons, profiles and photo, over the rippling coffee photo. It took over the About section
- * (its text and photo), whose own screen was mostly empty; Education is a row in Experience.
+ * (its text and photo), whose own screen was mostly empty, and Education (the degree tag's card).
  */
 const Hero = ({ ready }) => {
   const ref = useRef(null);
@@ -156,8 +145,13 @@ const Hero = ({ ready }) => {
   const onScreen = useInView(ref);
   const { theme } = useTheme();
 
+  // In the light theme the text that's near-white in the dark one is near-black (the owner's request), not dark grey
   return (
-    <section ref={ref} id="hero" className="relative isolate flex min-h-svh items-center overflow-hidden pt-16">
+    <section
+      ref={ref}
+      id="hero"
+      className="relative isolate flex min-h-svh items-center overflow-hidden pt-16 light:[--color-stone-200:var(--color-white)] light:[--color-stone-300:var(--color-white)] xl:pt-0"
+    >
       <HeroBackground paused={!onScreen} ready={ready} reduceMotion={reduceMotion} theme={theme} />
 
       <Container className="py-12 pb-20 sm:pb-24">
@@ -165,16 +159,16 @@ const Hero = ({ ready }) => {
           play={ready}
           delay={0.15}
           stagger={0.07}
-          className="flex flex-col gap-8 lg:grid lg:grid-cols-12 lg:items-center lg:gap-16"
+          className="grid gap-8 sm:grid-cols-12 sm:items-start sm:gap-8 lg:items-center lg:gap-12"
         >
-          <div className="order-first lg:order-last lg:col-span-4">
+          <RevealItem variants={imageReveal} className="sm:order-last sm:col-span-5">
             <Portrait />
-          </div>
+          </RevealItem>
 
-          <div className="lg:col-span-8">
+          <div className="sm:col-span-7">
             <RevealItem
               as="p"
-              className="flex items-center gap-4 font-display text-label font-bold tracking-[0.14em] text-accent uppercase"
+              className="flex items-center gap-4 font-mono text-label font-medium tracking-[0.08em] text-accent uppercase"
             >
               <span aria-hidden className="h-px w-10 bg-linear-to-r from-accent/0 to-accent" />
               Hello there, I'm
@@ -191,18 +185,20 @@ const Hero = ({ ready }) => {
             </RevealItem>
 
             <RoleLine ready={ready} />
-            {/* The facts at a glance: degree, my time (no city) and that I'm available */}
+            {/* The facts at a glance: degree (its card has the rest), where I am, my time there, and that I'm available */}
             <RevealItem
               as="ul"
-              className="mt-4 flex flex-wrap gap-2 font-display text-label font-medium text-stone-300"
+              className="relative z-10 mt-4 flex flex-wrap gap-2 font-mono text-label font-medium text-stone-300"
             >
-              <Fact icon={LuGraduationCap}>{education[0].short}</Fact>
+              <DegreeTag />
+              <Fact icon={LuMapPin}>{profile.location}</Fact>
               <Fact icon={LuClock}>
                 <LocalTime />
               </Fact>
               {profile.availability && (
-                <li className="flex items-center gap-2 rounded-full border border-accent/50 bg-accent/15 px-3 py-1.5 text-accent-strong">
-                  <span aria-hidden className="size-1.5 rounded-full bg-accent-strong" />
+                // In the matcha green: available, go
+                <li className="flex items-center gap-2 rounded-full border border-matcha/50 bg-matcha/12 px-3 py-1.5 text-matcha">
+                  <span aria-hidden className="size-1.5 rounded-full bg-matcha" />
                   {profile.availability}
                 </li>
               )}
@@ -212,15 +208,13 @@ const Hero = ({ ready }) => {
               {profile.about}
             </RevealItem>
 
-            {/* Natural widths (short labels on phones); stretched into equal halves they looked odd */}
+            {/* Natural widths, the same labels on every screen (the owner didn't want them shortened on phones) */}
             <RevealItem className="mt-8 flex flex-wrap gap-3 sm:gap-4">
-              <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuDownload} nudge="y">
-                <span className="sm:hidden">Resume</span>
-                <span className="max-sm:hidden">Download Resume</span>
+              <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuFileDown} nudge="y">
+                Download Resume
               </Button>
               <Button {...sectionLink('contact')} variant="outline" icon={LuArrowRight}>
-                <span className="sm:hidden">Contact</span>
-                <span className="max-sm:hidden">Get in Touch</span>
+                Get in Touch
               </Button>
             </RevealItem>
 

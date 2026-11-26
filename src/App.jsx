@@ -4,11 +4,11 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
 import Band from './components/layout/Band';
+import Desk from './components/layout/Desk';
 import { introSeen, markIntroSeen } from './components/layout/intro';
 import useCleanAnchorLinks from './hooks/useCleanAnchorLinks';
 import useSmoothScroll, { getLenis, setScrollLocked } from './hooks/useSmoothScroll';
 import Hero from './sections/Hero';
-import Education from './sections/Education';
 import Experience from './sections/Experience';
 import Certifications from './sections/Certifications';
 import Skills from './sections/Skills';
@@ -52,21 +52,22 @@ const App = () => {
 
       <a
         href="#main"
-        className="sr-only z-60 rounded-full bg-accent px-5 py-2.5 font-display text-sm font-semibold text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-60 rounded-full bg-matcha px-5 py-2.5 font-display text-sm font-semibold text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         Skip to content
       </a>
       <Navbar ready={!loading} />
-      {/* overflow-x-clip stops slide-in reveals from widening the page on phones */}
-      <main id="main" tabIndex={-1} className="overflow-x-clip outline-none">
+      {/* On desktops the page sits beside the index (`--index-w`, its width, narrower when it's collapsed). overflow-x-clip stops slide-in reveals from widening the page on phones */}
+      <main id="main" tabIndex={-1} className="overflow-x-clip outline-none xl:ml-(--index-w) xl:transition-[margin-left] xl:duration-300">
         <Hero ready={!loading} />
         {/* Sections simply follow one another, alternating between the page and a shade off it. The only scroll-driven
             transition is the desk film from Skills into Contact. */}
         <Band wave>
-          <Projects />
+          <Experience />
         </Band>
-        <Experience />
-        <Education />
+        <Desk>
+          <Projects />
+        </Desk>
         <Band>
           <Certifications />
         </Band>

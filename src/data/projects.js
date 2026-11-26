@@ -5,12 +5,13 @@ import ecocool from '../assets/projects/ecocool.webp';
 import grooveGrounds from '../assets/projects/groove-grounds.webp';
 import nirvana from '../assets/projects/nirvana.webp';
 
-// `details` opens in place under the project ("View details"): the idea, what I did, the flow as short steps and what
-// makes it work. Keep it short and true (it comes from the resume and each project's own docs). Projects whose
-// description already says it all have none.
+// `year` is when it was made (a range when it ran across two). `details` opens in place under the project ("View details"): the idea, what I did, the flow as short steps and what
+// makes it work. Keep it short and true (it comes from the resume and each project's own docs). Every project
+// has `idea` and `did`; `flow` and `points` (the "How it works" tab) only where there's something to say.
 const projects = [
   {
     name: 'Nirvana',
+    year: '2026',
     role: 'UI/UX Designer & Full-Stack Developer',
     image: nirvana,
     description:
@@ -45,6 +46,7 @@ const projects = [
   },
   {
     name: 'Groove Grounds',
+    year: '2026',
     role: 'UI/UX Designer & Full-Stack Developer',
     image: grooveGrounds,
     description:
@@ -68,6 +70,7 @@ const projects = [
   },
   {
     name: 'Tourisla',
+    year: '2024–2025',
     role: 'Project Manager & Mobile Developer',
     image: tourisla,
     description:
@@ -78,7 +81,7 @@ const projects = [
       idea: 'One web and mobile platform for the visitors, local businesses and administrators of Bantayan, Cebu.',
       did: [
         'Managed the project and co-developed the platform.',
-        'Built the interactive attractions map, which hands off to Google Maps for navigation.',
+        'Built the mobile app for tourists, for easier access to Tourisla, and for tourism staff, who scan QR codes to track visitors.',
         'Implemented PayMongo registration and QR-code scanning.',
       ],
       flow: [
@@ -97,6 +100,7 @@ const projects = [
   },
   {
     name: 'Eco-Cool',
+    year: '2024',
     role: 'UI/UX Designer',
     image: ecocool,
     description:
@@ -118,21 +122,31 @@ const projects = [
   },
   {
     name: 'Tipsy Tavern',
+    year: '2023',
     role: 'Front-End Developer',
     image: tipsyTavern,
     description:
       'A responsive liquor retail website built for our Advanced Web Design course, showcasing whiskey, wine, beer, and other spirits, with a working add-to-cart system and a custom dark mode toggle.',
     tools: ['HTML', 'CSS', 'JavaScript'],
     link: 'https://seeejaay.github.io/Tipsy-Tavern/',
+    details: {
+      idea: 'A liquor retail website for our Advanced Web Design course.',
+      did: ['Built the front end in HTML, CSS and JavaScript.'],
+    },
   },
   {
     name: 'TICAP 20 Awards Night Certificate',
+    year: '2025',
     role: 'Graphic Designer',
     image: ticap,
     description:
       'An elegant certificate of recognition for the TICAP (Technology Innovation in Capstone Project) 20 Awards Night, designed for both FEU Institute of Technology and FEU Diliman.',
     tools: ['Canva', 'Photoshop'],
     link: 'https://www.canva.com/design/DAG0Jpo9hYg/irqoPNDgeEOC7DlISoi4eA/edit',
+    details: {
+      idea: 'One certificate of recognition for both FEU Institute of Technology and FEU Diliman.',
+      did: ['Designed the certificate in Canva and Photoshop.'],
+    },
   },
 ];
 

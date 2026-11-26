@@ -1,27 +1,33 @@
 import { RevealGroup, RevealItem } from './Reveal';
 
 /**
- * A section's heading: the title on the left, the section's number (from the eyebrow, "01 — Projects") small and
- * outlined on the right, over a hairline. `action` (the Projects view toggle) sits just before the number. The same
- * on every section, so the whole page reads as one system.
+ * A section's heading: the title on the left, over a hairline. `intro` is an optional line under the title in the
+ * owner's own words (from data/site.js). `action` (the Projects view toggle) sits on the right. The same on every
+ * section, so the whole page reads as one system. No section number: the outlined "01" on the right was removed (the
+ * owner found it a common template tell). The sections no longer pass an eyebrow.
  */
-const SectionHeading = ({ eyebrow, title, action }) => (
+const SectionHeading = ({ title, intro, action }) => (
   <RevealGroup className="flex items-end justify-between gap-6 border-b border-white/15 pb-5">
-    <RevealItem
-      as="h2"
-      className="font-heading text-title leading-none font-black tracking-[0.01em] text-balance text-white uppercase"
-    >
-      {title}
-    </RevealItem>
-    <RevealItem className="flex shrink-0 items-center gap-5">
-      {action}
-      <span
-        aria-hidden
-        className="font-heading text-title leading-none font-black text-transparent [-webkit-text-stroke:1px_var(--color-accent)] select-none"
+    {/* A green bar opens every heading, from the top of the title's capitals down to its subtitle (the same line as the
+        side index's current section); the title and the subtitle sit just right of it */}
+    <div className="relative pl-4 sm:pl-5">
+      <span aria-hidden className="absolute top-[-0.06em] -bottom-1.5 left-0 w-1 rounded-full bg-matcha text-title" />
+      <RevealItem
+        as="h2"
+        className="font-heading text-title leading-none font-black tracking-[0.01em] text-balance text-white uppercase"
       >
-        {eyebrow.split(' — ')[0]}
-      </span>
-    </RevealItem>
+        {title}
+      </RevealItem>
+      {intro && (
+        <RevealItem
+          as="p"
+          className="mt-3 max-w-2xl text-copy leading-relaxed text-pretty text-stone-400 light:text-white"
+        >
+          {intro}
+        </RevealItem>
+      )}
+    </div>
+    {action && <RevealItem className="shrink-0">{action}</RevealItem>}
   </RevealGroup>
 );
 

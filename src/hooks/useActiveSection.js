@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Returns the id of the section currently crossing the middle of the viewport. When several do, the one furthest down
+ * Returns the id of the section currently crossing a line a fifth down the viewport (high enough that a short section a
+ * link has just landed on still counts). When several do, the one furthest down
  * the page wins. An element with `data-section-of="<id>"` counts as part of that section (the desk film and the stretch
  * before it).
  */
@@ -21,7 +22,7 @@ const useActiveSection = (ids) => {
         const current = ids.findLast((id) => crossingIds.has(id));
         if (current) setActiveId(current);
       },
-      { rootMargin: '-45% 0px -50% 0px' },
+      { rootMargin: '-20% 0px -75% 0px' },
     );
 
     ids.forEach((id) => {

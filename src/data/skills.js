@@ -49,7 +49,7 @@ import pest from '../assets/brand-logos/pest.svg';
 
 // Brands use their original full-color `logo` (white versions for black marks like GitHub, so they
 // show on the dark theme; `mono` inverts those in the light theme, and `logoLight` replaces the rest). Generic skills use a Lucide `icon` instead. `color` tints the tile and drives the glow.
-// Shown in this order as the Skills category cards; upskilling comes last.
+// Shown in this order as the Tech stack cards, two per row, paired by size; what I'm still learning comes last.
 const skillGroups = [
   {
     title: 'Front-End',
@@ -67,17 +67,6 @@ const skillGroups = [
     ],
   },
   {
-    title: 'Design & Animation',
-    items: [
-      { name: 'Figma', description: 'UI/UX design', logo: figma, color: '#F24E1E' },
-      { name: 'Motion (Framer Motion)', description: 'Animation library', logo: framer, mono: true, color: '#E93DE0' },
-      { name: 'Photoshop', description: 'Image editing', logo: photoshop, color: '#31A8FF' },
-      { name: 'CapCut', description: 'Video editing', logo: capcut, mono: true, color: '#FFFFFF' },
-      { name: 'Canva', description: 'Graphic design', logo: canva, color: '#7D2AE7' },
-      { name: 'Design Systems', description: 'Tokens & components', icon: LuSwatchBook, color: '#C9BCAF' },
-    ],
-  },
-  {
     title: 'Back-End & Databases',
     items: [
       { name: 'PHP', description: 'Server-side language', logo: php, color: '#777BB4' },
@@ -91,6 +80,17 @@ const skillGroups = [
       { name: 'Supabase', description: 'Postgres backend', logo: supabase, color: '#3ECF8E' },
       { name: 'Neon', description: 'Serverless Postgres', logo: neon, color: '#00E599' },
       { name: 'Swagger UI', description: 'API documentation', logo: swagger, color: '#85EA2D' },
+    ],
+  },
+  {
+    title: 'Design & Animation',
+    items: [
+      { name: 'Figma', description: 'UI/UX design', logo: figma, color: '#F24E1E' },
+      { name: 'Motion (Framer Motion)', description: 'Animation library', logo: framer, mono: true, color: '#E93DE0' },
+      { name: 'Photoshop', description: 'Image editing', logo: photoshop, color: '#31A8FF' },
+      { name: 'CapCut', description: 'Video editing', logo: capcut, mono: true, color: '#FFFFFF' },
+      { name: 'Canva', description: 'Graphic design', logo: canva, color: '#7D2AE7' },
+      { name: 'Design Systems', description: 'Tokens & components', icon: LuSwatchBook, color: '#C9BCAF' },
     ],
   },
   {
@@ -117,7 +117,14 @@ const skillGroups = [
     title: 'Certified Foundations',
     items: [
       { name: 'Networking', description: 'Cisco CCNA', logo: cisco, wide: true, color: '#00BCEB' },
-      { name: 'Cybersecurity', description: 'CCST, CyberOps', logo: ccst, logoLight: ccstDark, wide: true, color: '#1B8AA0' },
+      {
+        name: 'Cybersecurity',
+        description: 'CCST, CyberOps',
+        logo: ccst,
+        logoLight: ccstDark,
+        wide: true,
+        color: '#1B8AA0',
+      },
       { name: 'Project Management', description: 'PMI certified', logo: pmi, logoLight: pmiDark, color: '#FF610F' },
     ],
   },
@@ -130,17 +137,15 @@ const skillGroups = [
     ],
   },
   {
-    title: 'Data & Analytics (Upskilling)',
+    title: 'Currently Learning',
+    learning: true,
     items: [
       { name: 'Power BI', description: 'Dashboards', logo: powerBi, color: '#F2C811' },
       { name: 'Tableau', description: 'Data visualization', logo: tableau, color: '#E97627' },
       { name: 'Azure Data Factory', description: 'Data pipelines', logo: azure, color: '#0078D4' },
       { name: 'Databricks', description: 'Data lakes & warehouses', logo: databricks, color: '#FF3621' },
+      { name: 'Three.js', description: '3D on the web', logo: threejs, mono: true, color: '#FFFFFF' },
     ],
-  },
-  {
-    title: '3D & WebGL (Upskilling)',
-    items: [{ name: 'Three.js', description: '3D on the web', logo: threejs, mono: true, color: '#FFFFFF' }],
   },
 ];
 

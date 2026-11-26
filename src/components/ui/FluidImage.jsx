@@ -163,10 +163,15 @@ const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
     let last = null;
     const start = performance.now();
 
-    const resize = () => {
+    // Resizing a canvas wipes it, and the browser calls this after the frame's drawing but before showing it, so it
+    // must redraw at once: otherwise every frame of dragging a window edge flashed the wiped (black) canvas.
+    const resize = (force = false) => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
-      canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      const width = Math.max(1, Math.round(canvas.clientWidth * dpr));
+      const height = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      if (!force && width === canvas.width && height === canvas.height && current.length) return;
+      canvas.width = width;
+      canvas.height = height;
       gl.viewport(0, 0, canvas.width, canvas.height);
       const canvasAspect = canvas.width / canvas.height;
       // object-cover: crop whichever side of the image overflows.
@@ -184,6 +189,7 @@ const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
       gl.uniform2f(uTexel, 1 / cols, 1 / rows);
       gl.uniform2f(uPixel, 1 / Math.max(canvas.clientWidth, 1), 1 / Math.max(canvas.clientHeight, 1));
       calm = false;
+      draw();
     };
 
     const disturb = (x, y, amount) => {
@@ -221,6 +227,11 @@ const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
 
     const render = () => {
       frame = visible && activeRef.current ? requestAnimationFrame(render) : 0;
+      draw();
+    };
+
+    // One frame: a step of the ripples (while there are any) and the picture
+    function draw() {
       if (!loaded) return;
       if (!calm) {
         // The effect's strength eases toward how big the waves still are, so the last ripples fade out smoothly.
@@ -242,7 +253,7 @@ const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
       gl.uniform3fv(uBase, baseRef.current);
       gl.uniform1f(uDim, dimRef.current);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    };
+    }
 
     const move = (e) => {
       const rect = canvas.getBoundingClientRect();
@@ -283,12 +294,12 @@ const FluidImage = ({ src, paused = false, dim = 0, base, ...props }) => {
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
       loaded = true;
-      resize();
+      resize(true);
     };
     img.src = src;
 
     resize();
-    const resizeObserver = new ResizeObserver(resize);
+    const resizeObserver = new ResizeObserver(() => resize());
     resizeObserver.observe(canvas);
     const wake = () => {
       if (visible && activeRef.current && !frame) frame = requestAnimationFrame(render);

@@ -1,5 +1,5 @@
 /**
- * The wave that leads the Projects band in over the hero: a strip twice the screen wide sliding slowly sideways in CSS,
+ * The wave that leads the first band (Experience) in over the hero: a strip twice the screen wide sliding slowly sideways in CSS,
  * so it costs no scroll and next to no work. It's one crest-to-crest wave repeated; sliding by half loops it.
  */
 const WAVE = 'M0 22 Q25 6 50 22 T100 22 T150 22 T200 22 T250 22 T300 22 T350 22 T400 22 V41 H0 Z';
@@ -16,7 +16,7 @@ const WaveTop = () => (
   </div>
 );
 
-/** A section a shade off the page, so neighbouring sections read apart. `wave` gives it a rolling top edge (Projects). */
+/** A section a shade off the page, so neighbouring sections read apart. `wave` gives it a rolling top edge (the first one, Experience). */
 const Band = ({ wave = false, children }) => (
   <div className="relative z-10 bg-band">
     {wave && <WaveTop />}

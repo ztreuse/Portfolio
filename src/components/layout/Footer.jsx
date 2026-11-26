@@ -11,7 +11,7 @@ const [taglineLead, taglineRest] =
 
 /** A compact sign-off on Contact's colour: the tagline, the copyright line and a way back to the top. */
 const Footer = () => (
-  <footer className="relative z-10 border-t border-accent/40 bg-ink">
+  <footer className="relative z-10 border-t border-accent/40 bg-ink xl:ml-(--index-w) xl:transition-[margin-left] xl:duration-300">
     <Container className="flex flex-col gap-6 py-10 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="font-display text-item leading-snug font-bold text-balance">

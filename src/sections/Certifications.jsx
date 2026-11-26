@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useReducedMotion, useSpring } from 'motion/react';
 import { LuArrowUpRight } from 'react-icons/lu';
+import { intros } from '../data/site';
 import Section from '../components/ui/Section';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import certifications from '../data/certifications';
@@ -65,10 +66,10 @@ const Credential = ({ cert }) => {
       aria-label={`Verify ${cert.name} on Credly`}
       onPointerMove={lean}
       onPointerLeave={settle}
-      className="group flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-2.5 pr-4 sm:p-3 sm:pr-4 transition-[border-color,box-shadow] duration-300 hover:border-accent/60 hover:shadow-[0_18px_40px_-24px_rgb(60_45_30/0.6)]"
+      className="group flex h-full items-stretch gap-4 rounded-2xl border border-line bg-surface p-2.5 pr-4 sm:p-3 sm:pr-4 transition-[border-color,box-shadow] duration-300 hover:border-matcha/60 hover:shadow-[0_18px_40px_-24px_rgb(60_45_30/0.6)]"
     >
       {/* A fixed warm paper white (in the light theme "white" is dark), so dark badges like CCST read too */}
-      <span className="flex size-16 shrink-0 items-center justify-center rounded-xl sm:size-20 bg-[radial-gradient(ellipse_at_50%_42%,#fffdf9_0%,#f4eee6_60%,#e9e0d4_100%)]">
+      <span className="flex size-16 shrink-0 items-center justify-center self-center rounded-xl sm:size-20 bg-[radial-gradient(ellipse_at_50%_42%,#fffdf9_0%,#f4eee6_60%,#e9e0d4_100%)]">
         <motion.span
           style={{ rotateX, rotateY, transformPerspective: 500 }}
           className="relative block size-13 sm:size-16"
@@ -82,16 +83,20 @@ const Credential = ({ cert }) => {
           />
         </motion.span>
       </span>
-      <span className="min-w-0 flex-1">
+      <span className="flex min-w-0 flex-1 flex-col gap-2 py-0.5">
         <span className="block font-display text-copy leading-snug font-semibold text-balance text-white">
           {cert.name}
         </span>
-        <span className="mt-1 block text-sm text-stone-400">{formatDate(cert.date)}</span>
+        <span className="-mt-1.5 block text-sm text-stone-400">{formatDate(cert.date)}</span>
+        {/* What clicking does, alone in the bottom-right corner of every card; it fills taupe while the card is pointed at */}
+        <span className="mt-auto inline-flex items-center gap-1 self-end rounded-full border border-white/15 px-3 py-1 text-sm font-medium whitespace-nowrap text-stone-300 transition-colors duration-300 group-hover:border-transparent group-hover:bg-matcha group-hover:text-ink group-focus-visible:border-transparent group-focus-visible:bg-matcha group-focus-visible:text-ink">
+          Verify credential
+          <LuArrowUpRight
+            aria-hidden
+            className="size-3.5 transition-[translate] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+          />
+        </span>
       </span>
-      <LuArrowUpRight
-        aria-hidden
-        className="size-4 shrink-0 self-start text-stone-500 transition-[translate,color] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-strong motion-reduce:transition-none"
-      />
     </a>
   );
 };
@@ -102,7 +107,7 @@ const Credential = ({ cert }) => {
  * card at a time and needed arrows, dragging and autoplay.
  */
 const Certifications = () => (
-  <Section id="certifications" eyebrow="04 — Certifications" title="Credentials I've earned">
+  <Section id="certifications" title="Credentials I've earned" intro={intros.certifications}>
     {issuers.map(({ issuer, items }) => (
       <div
         key={issuer}
@@ -110,11 +115,11 @@ const Certifications = () => (
       >
         <div className="flex items-baseline justify-between gap-4 lg:col-span-3 lg:block">
           <h3 className="font-display text-item leading-snug font-bold text-balance text-white">{issuer}</h3>
-          <p className="shrink-0 font-display text-label font-bold tracking-[0.14em] text-accent uppercase lg:mt-1">
+          <p className="shrink-0 font-mono text-label font-medium tracking-[0.08em] text-accent uppercase lg:mt-1">
             {items.length} {items.length === 1 ? 'credential' : 'credentials'}
           </p>
         </div>
-        <RevealGroup as="ul" stagger={0.05} className="grid gap-3 sm:grid-cols-2 lg:col-span-9">
+        <RevealGroup as="ul" stagger={0.05} className="grid gap-3 md:grid-cols-2 lg:col-span-9">
           {items.map((cert) => (
             <RevealItem as="li" key={cert.badgeId}>
               <Credential cert={cert} />

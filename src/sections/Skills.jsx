@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { intros } from '../data/site';
 import Section from '../components/ui/Section';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
 import SkillsBackdrop from './SkillsBackdrop';
@@ -20,7 +21,7 @@ const usedIn = (name) => {
  * One tool: its brand logo (or generic icon) and name; hovering tints it in the brand colour and shows what it is and
  * which projects used it. `wide` logos (Cisco's bridge, the CCST badge) use the box's full width, or they'd shrink to a
  * sliver. White marks are `mono` (inverted in the light theme) or have their own `logoLight`.
- * `flashDelay` (ms) plays the "lights on" flicker in its brand colour when its card appears.
+ * `flashDelay` (ms) plays the "lights on" flicker in its brand colour when its row appears.
  */
 const SkillChip = ({ name, description, logo, logoLight, mono, wide = false, icon: Icon, color, flashDelay }) => (
   <li
@@ -30,9 +31,9 @@ const SkillChip = ({ name, description, logo, logoLight, mono, wide = false, ico
       '--brand': color === '#FFFFFF' ? 'var(--color-white)' : color,
       animationDelay: flashDelay === undefined ? undefined : `${flashDelay}ms`,
     }}
-    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-white/10 py-1 pr-2.5 pl-1 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
+    className={`${flashDelay === undefined ? '' : 'animate-chip-flash motion-reduce:animate-none'} flex items-center gap-2 rounded-lg border border-line bg-ink/60 py-1.5 pr-2.5 pl-2 transition-[border-color,background-color,box-shadow] duration-300 hover:border-[color-mix(in_srgb,var(--brand)_55%,transparent)] hover:bg-[color-mix(in_srgb,var(--brand)_10%,transparent)] hover:shadow-[0_0_18px_-6px_var(--brand)]`}
   >
-    <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--brand)_14%,transparent)]">
+    <span className="flex size-4 shrink-0 items-center justify-center">
       {logo ? (
         <>
           <img
@@ -56,32 +57,35 @@ const SkillChip = ({ name, description, logo, logoLight, mono, wide = false, ico
   </li>
 );
 
-// A soft taupe spotlight follows the pointer across a card (position written straight to CSS variables).
-const trackSpotlight = (e) => {
-  const r = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
-  e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
-};
-
 /**
- * One category card: its title and its tools as chips. The first time it appears its chips flick on one after another
- * in their brand colours (once only).
+ * One group as a compact card: its name and how many tools along the top, the tools under it. Two per row, paired by
+ * size in data/skills.js. It rises a little and its border turns matcha green while it's pointed at, and what I'm still learning has a dashed
+ * matcha-green outline (still growing), like something not finished yet. The first time it appears its chips flick on one after another in their
+ * brand colours (once only).
  */
-const CategoryCard = ({ group }) => {
+const GroupCard = ({ group }) => {
   const [lit, setLit] = useState(false);
 
   return (
     <RevealItem
       as="li"
       onAnimationComplete={(state) => state === 'visible' && setLit(true)}
-      onPointerMove={trackSpotlight}
-      className="group relative isolate overflow-hidden rounded-2xl border border-line bg-surface/85 p-5 transition-[border-color] duration-300 hover:border-accent/35"
+      // Hover: it rises a little and only its outline turns plainly matcha green (both themes; no green fill). The
+      // lift is the CSS translate property, so it doesn't fight the reveal's transform
+      className={`rounded-2xl border bg-surface/90 p-5 transition-[translate,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-matcha hover:shadow-[0_18px_40px_-24px_rgb(0_0_0/0.5)] motion-reduce:hover:translate-y-0 ${
+        group.learning ? 'border-dashed border-matcha/55' : 'border-line'
+      }`}
     >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(320px_circle_at_var(--mx,50%)_var(--my,0%),rgb(159_143_129/0.14),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-      />
-      <h3 className="font-display text-item leading-snug font-bold text-white">{group.title}</h3>
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="font-display text-copy font-bold text-white">{group.title}</h3>
+        <span
+          className={`shrink-0 font-mono text-label font-medium tracking-[0.08em] uppercase ${
+            group.learning ? 'text-matcha' : 'text-accent'
+          }`}
+        >
+          {group.items.length} {group.items.length === 1 ? 'tool' : 'tools'}
+        </span>
+      </div>
       <ul className="mt-4 flex flex-wrap gap-2">
         {group.items.map((skill, i) => (
           <SkillChip key={skill.name} {...skill} flashDelay={lit ? i * 50 : undefined} />
@@ -107,8 +111,8 @@ const SkillsFade = ({ children }) => {
 };
 
 /**
- * Skills as category cards: each card has its title and its tools as brand-tinted chips. Adding skills or categories
- * in data/skills.js just adds chips or cards. The backdrop runs on past the section for half a screen, where it comes
+ * The tech stack: two columns of compact cards, one per group, with its tools as chips. Adding skills or groups in
+ * data/skills.js just adds chips or cards. The backdrop runs on past the section for half a screen, where it comes
  * into focus as the first frame of the Contact film (see SkillsBackdrop, ContactFilm).
  */
 const Skills = () => {
@@ -116,17 +120,11 @@ const Skills = () => {
   return (
     <div className="relative isolate">
       <SkillsBackdrop />
-      <Section id="skills" eyebrow="05 — Skills" title="Tools I build with">
-        {/* Desktop: 3 cards per row on a 6-track grid, so an incomplete last row (one or two cards) sits centred.
-          Tablet: 2 per row, and a lone last card spans both. */}
+      <Section id="skills" title="Tech stack" intro={intros.skills}>
         <SkillsFade>
-          <RevealGroup
-            as="ul"
-            stagger={0.05}
-            className="grid gap-4 sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2 lg:grid-cols-6 lg:[&>li]:[grid-column:span_2] lg:[&>li:last-child:nth-child(3n+1):not(:first-child)]:[grid-column:3/span_2] lg:[&>li:nth-last-child(2):nth-child(3n+1)]:[grid-column:2/span_2]"
-          >
+          <RevealGroup as="ul" stagger={0.05} className="grid gap-4 md:grid-cols-2">
             {skillGroups.map((group) => (
-              <CategoryCard key={group.title} group={group} />
+              <GroupCard key={group.title} group={group} />
             ))}
           </RevealGroup>
         </SkillsFade>

@@ -8,8 +8,8 @@ const timeFormat = new Intl.DateTimeFormat('en-US', {
   timeZoneName: 'shortOffset',
 });
 
-/** The current time where I am ("5:31 PM · GMT+8"), ticking over on the minute. */
-const LocalTime = () => {
+/** The current time where I am ("5:31 PM · GMT+8"), ticking over on the minute. `offset={false}` drops the "GMT+8". */
+const LocalTime = ({ offset = true }) => {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -22,7 +22,8 @@ const LocalTime = () => {
 
   return (
     <time dateTime={now.toISOString()} className="tabular-nums">
-      {part('hour')}:{part('minute')} {part('dayPeriod')} · {part('timeZoneName')}
+      {part('hour')}:{part('minute')} {part('dayPeriod')}
+      {offset && ` · ${part('timeZoneName')}`}
     </time>
   );
 };

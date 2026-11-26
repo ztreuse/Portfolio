@@ -10,6 +10,7 @@ export const experience = [
     logo: logoFor('simplevia'),
     initials: 'SV',
     period: 'Jan 2026 – Jul 2026',
+    type: 'Internship',
     tools: ['Tailwind CSS', 'Mantine UI', 'Figma', 'GitHub'],
     points: [
       'Developed and optimized responsive, production-ready user interfaces for internal software using Tailwind CSS and Mantine UI.',
@@ -22,7 +23,7 @@ export const experience = [
 export const education = [
   {
     role: 'BS Information Technology, Specialization in Web and Mobile Applications',
-    short: 'BS Information Technology · FEU Tech · 2026', // the hero's degree line
+    short: 'BSIT · Web & Mobile Applications', // the hero's degree tag; the rest is in its card
     organization: 'FEU Institute of Technology',
     logo: logoFor('feu-tech'),
     initials: 'FEU',

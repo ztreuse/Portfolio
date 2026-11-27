@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { TypeAnimation } from 'react-type-animation';
-import { LuArrowDown, LuArrowRight, LuClock, LuFileDown, LuMapPin } from 'react-icons/lu';
+import { LuArrowDown, LuArrowRight, LuClock, LuFileText, LuMapPin } from 'react-icons/lu';
 import Button from '../components/ui/Button';
+import ResumePeek from '../components/ui/ResumePeek';
 import Container from '../components/ui/Container';
 import DegreeTag from '../components/ui/DegreeTag';
 import FluidImage from '../components/ui/FluidImage';
@@ -210,9 +211,11 @@ const Hero = ({ ready = true }) => {
 
             {/* Natural widths, the same labels on every screen (the owner didn't want them shortened on phones) */}
             <RevealItem className="mt-8 flex flex-wrap gap-3 sm:gap-4">
-              <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuFileDown} nudge="y">
-                Download Resume
-              </Button>
+              <ResumePeek>
+                <Button href={profile.resume} target="_blank" rel="noopener noreferrer" icon={LuFileText} nudge="y">
+                  View Resume
+                </Button>
+              </ResumePeek>
               <Button {...sectionLink('contact')} variant="outline" icon={LuArrowRight}>
                 Get in Touch
               </Button>

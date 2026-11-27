@@ -110,25 +110,36 @@ const logoPlaces = ({ w, h, colours, solid, isSolid }, count) => {
   return { places, step };
 };
 
-/** The grid points (same spacing as the places) on the logo's edges: where any neighbour is empty. */
+/**
+ * The grid points (same spacing as the places) on or near the logo's edges: those with an empty grid point within
+ * `RING` steps, in any direction. Tested on the grid itself, not by pixel offsets: offsets rounded to whole pixels
+ * sometimes landed back on the solid side of a steep edge, so that row got no side and the wall showed thin slits.
+ * Two points deep, so the wall stays solid where the edge is ragged.
+ */
+const RING = 2;
 const edgePlaces = ({ w, h, colours, isSolid }, step) => {
   const half = h / 2;
-  const edges = [];
-  const reach = Math.max(1, Math.round(step));
+  // The grid, walked exactly as logoPlaces walks it, so each point's place matches its face tile's to the last digit
+  const grid = [];
   for (let y = step / 2; y < h; y += step) {
-    for (let x = step / 2; x < w; x += step) {
-      const [px, py] = [Math.floor(x), Math.floor(y)];
-      if (!isSolid(px, py)) continue;
-      // Any empty neighbour, sideways, up, down or diagonal: with only sideways ones, the gently sloping edges (the tops
-      // of the horns and ears) got a dashed side
-      const open = [-reach, 0, reach].some((dx) => [-reach, 0, reach].some((dy) => !isSolid(px + dx, py + dy)));
-      if (open)
-        edges.push({
-          at: [(x - w / 2) / half, (half - y) / half],
-          colour: colours.subarray((py * w + px) * 3, (py * w + px) * 3 + 3),
-        });
-    }
+    const row = [];
+    for (let x = step / 2; x < w; x += step) row.push({ x, y, solid: isSolid(Math.floor(x), Math.floor(y)) });
+    grid.push(row);
   }
+  const solidAt = (i, j) => Boolean(grid[j]?.[i]?.solid);
+  const edges = [];
+  grid.forEach((row, j) =>
+    row.forEach(({ x, y, solid }, i) => {
+      if (!solid) return;
+      let open = false;
+      for (let dj = -RING; dj <= RING && !open; dj += 1) {
+        for (let di = -RING; di <= RING && !open; di += 1) open = !solidAt(i + di, j + dj);
+      }
+      if (!open) return;
+      const p = Math.floor(y) * w + Math.floor(x);
+      edges.push({ at: [(x - w / 2) / half, (half - y) / half], colour: colours.subarray(p * 3, p * 3 + 3) });
+    }),
+  );
   return edges;
 };
 

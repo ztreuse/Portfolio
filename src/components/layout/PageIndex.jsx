@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { LuArrowRight, LuClock, LuFileDown, LuPanelLeftClose, LuPanelLeftOpen } from 'react-icons/lu';
 import CopyEmail from '../ui/CopyEmail';
+import ResumePeek from '../ui/ResumePeek';
 import ThemeToggle from '../ui/ThemeToggle';
 import LocalTime from '../ui/LocalTime';
 import { navLinks, profile, socials } from '../../data/site';
@@ -46,7 +47,7 @@ const startsMin = () => document.documentElement.dataset.index === 'min';
  * their headings. The current one sits in the phone menu's soft taupe box, which glides from row to row; a fainter box
  * glides to the row under the pointer (or keyboard focus). At the bottom the profiles, the résumé, the theme switch and
  * how to reach me. The button by the logo collapses it into a narrow rail: the mark, the numbers and round controls, each
- * showing its name in a small tooltip on hover. Over the night video (`dark`) it goes dark with the room in both themes.
+ * showing its name in a small tooltip on hover. Over the night video (`dark`) it goes dark with the room, in the dark theme only (the light theme stays light).
  * Phones and tablets have the top bar with the menu.
  */
 const PageIndex = ({ activeId, ready, dark, logo }) => {
@@ -135,7 +136,7 @@ const PageIndex = ({ activeId, ready, dark, logo }) => {
         min ? 'items-center px-3' : 'overflow-x-hidden overflow-y-auto px-4'
       } ${dark ? 'tone-dark' : ''}`}
     >
-      <div className={min ? 'flex flex-col items-center gap-5' : 'w-48 px-3'}>
+      <div className={min ? 'flex flex-col items-center gap-5' : 'w-48'}>
         <div className={min ? 'contents' : 'flex items-center justify-between'}>
           {logo}
           <button
@@ -145,7 +146,7 @@ const PageIndex = ({ activeId, ready, dark, logo }) => {
             aria-expanded={!min}
             title={min ? undefined : 'Collapse'}
             className={`group/tip relative flex size-9 shrink-0 items-center justify-center rounded-full text-stone-500 transition-colors duration-200 hover:bg-white/5 hover:text-white ${
-              min ? '' : '-mr-1.5'
+              min ? '' : '-mr-2.5'
             }`}
           >
             <ToggleIcon aria-hidden className="size-4" />
@@ -289,16 +290,18 @@ const PageIndex = ({ activeId, ready, dark, logo }) => {
               <Tip show>{label}</Tip>
             </a>
           ))}
-          <a
-            href={profile.resume}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Résumé"
-            className={`group/tip relative ${circle}`}
-          >
-            <LuFileDown aria-hidden className="size-3.5" />
-            <Tip show>Résumé</Tip>
-          </a>
+          {/* The résumé card stands in for the tooltip here */}
+          <ResumePeek placement="right">
+            <a
+              href={profile.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Resume"
+              className={`relative ${circle}`}
+            >
+              <LuFileDown aria-hidden className="size-3.5" />
+            </a>
+          </ResumePeek>
           <span aria-hidden className="my-2 h-px w-8 bg-white/10" />
           <ThemeToggle vertical />
           <span aria-hidden className="my-2 h-px w-8 bg-white/10" />
@@ -321,15 +324,17 @@ const PageIndex = ({ activeId, ready, dark, logo }) => {
                 <Icon aria-hidden className="size-3.5" />
               </a>
             ))}
-            <a
-              href={profile.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 flex-1 items-center justify-center gap-2 rounded-full border border-white/15 font-display text-sm font-medium whitespace-nowrap text-stone-300 transition-colors duration-200 hover:border-matcha hover:bg-matcha hover:text-ink"
-            >
-              <LuFileDown aria-hidden className="size-3.5" />
-              Résumé
-            </a>
+            <ResumePeek placement="right" className="flex-1">
+              <a
+                href={profile.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 flex-1 items-center justify-center gap-2 rounded-full border border-white/15 font-display text-sm font-medium whitespace-nowrap text-stone-300 transition-colors duration-200 hover:border-matcha hover:bg-matcha hover:text-ink"
+              >
+                <LuFileDown aria-hidden className="size-3.5" />
+                Resume
+              </a>
+            </ResumePeek>
           </div>
 
           <ThemeToggle stretch />

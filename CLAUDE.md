@@ -50,12 +50,12 @@ src/
 │                          # Contact (+ ContactFilm, filmGrade.js)
 ├── components/layout/     # Navbar (top bar + phone menu), PageIndex (desktop side index), Footer, Band, Desk
 ├── components/ui/         # Section, SectionHeading, Button, IconButton, SocialIcon, ThemeToggle, CopyEmail,
-│                          # LocalTime, DegreeTag, Timeline, Portrait, FluidImage, Reveal, revealVariants.js
+│                          # LocalTime, DegreeTag, ResumePeek, Timeline, Portrait, FluidImage, Reveal, revealVariants.js
 ├── hooks/                 # useTheme, useSmoothScroll, useCleanAnchorLinks, useActiveSection
 ├── data/                  # ALL content: site, experience, projects, certifications, skills
 ├── three/                 # tamaraw (the photo's particle logo)
 └── assets/                # images, projects, certifications, logos, brand-logos (kebab-case names)
-public/                    # resume.pdf, favicon.svg, og.jpg, contact-film/ (wide/ and tall/ WebP frames)
+public/                    # resume.pdf (+ resume-preview.webp), favicon.svg, og.jpg, contact-film/ (wide/ and tall/ WebP frames)
 ```
 
 ## Page order
@@ -87,11 +87,11 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 | `surface` | `#24211d` | `#f7f2eb` | cards |
 | `line` | `#37322d` | `#cfc3b5` | borders |
 | `accent` / `accent-strong` | `#a89888` / `#c9bcaf` | `#6a5b4e` / `#4b3f36` | taupe: labels, dates, roles, "BAY" |
-| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#3f7417` / `#2e6410` | green: interactive and live |
-| `matcha-fill` / `on-matcha` | `#a3b97c` / `#161513` | `#3f7417` / `#f6f1e8` | primary button hover fill / its text |
+| `matcha` / `matcha-strong` | `#a3b97c` / `#c4d4a2` | `#557000` / `#4a6600` | green: interactive and live |
+| `matcha-fill` / `on-matcha` | `#a3b97c` / `#161513` | `#557000` / `#f6f1e8` | primary button hover fill / its text |
 | `dimension` | `#403b37` | `#dfd4c7` | the veil over the desk photo |
 
-- The light greens are saturated on purpose (the owner found the old olive `#557538` hard to see on crema): they keep
+- The light greens are saturated on purpose (the owner found the old olive `#557538` hard to see on crema; `#557000` is the lime of their pick `#8caf00`, darkened to pass as text): they keep
   AA contrast on every light background and read as clearly green, as the pistachio does on espresso.
 - **Brown** (the surfaces, text, `accent`) is the structure: backgrounds, cards, lines, labels, dates, roles, outlines,
   the Experience dashes, the hero's name accent and photo frame. **Every background and card stays brown**: matcha
@@ -101,7 +101,7 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   theme switch's pill, the Projects view toggle and detail tabs, the open degree chip, the typing caret, the photo's
   Hold dial, the menu icon's dot, section-title bars, the focus ring, `::selection`, the skip link, and status touches
   (the availability chip, the "Currently Learning" card, the copied tick, the sent message).
-- `.tone-dark` keeps a part dark in both themes (the side index and top bar over the night film). The `light:` variant
+- `.tone-dark` keeps a part dark in both themes (only used by the side index and top bar over the night film, in the dark theme). The `light:` variant
   handles exceptions; in the Hero, Contact and the desk section, `light:[--color-stone-300:var(--color-white)]` makes the
   dark theme's near-white text near-black in light (not dark grey).
 - Brand logos that are white are `mono` in `data/skills.js` (inverted in light) or have a `logoLight`.
@@ -113,7 +113,7 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 - Scale (`@theme`): `text-name` (hero), `text-title` (section titles), `text-item` (19px: project, job, issuer and group
   titles, the role line), `text-copy` (15px body), `text-label` (13px). Use only these plus `text-sm`.
 - Every label is `font-mono text-label font-medium tracking-[0.08em]`, plus `uppercase` where it's a label.
-  One exception: the Issued / Expires labels on the certification cards are 11px (`text-[0.6875rem]`), set tight over
+  Two exceptions: the Issued / Expires labels on the certification cards and the "N tools" counts on the Tech stack cards are 11px (`text-[0.6875rem]`), set tight over
   their dates (the owner asked for them smaller).
 - No gradient text on the name (a browser clipped the "y"); no per-letter effects; no cursive or extra fonts.
 
@@ -124,7 +124,7 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   them step down to `rounded-lg` (the badge tile, menu options). Only the hero photo frame keeps `rounded-2xl`.
 - Controls are round: buttons are pills, icon buttons and toggles circles (`border-white/20 bg-ink/40`). The one
   exception is the skill chips (`rounded-lg`), which are labels.
-- **`Button`** (`ui/Button.jsx`), used by Download Resume, Get in Touch, Send message and Back to top: a 40px pill, the
+- **`Button`** (`ui/Button.jsx`), used by View Resume, Get in Touch, Send message and Back to top: a 40px pill, the
   label left and the icon in its own 32px circle with a 4px rim (sized after the photo's Hold pill). `primary` is a
   green outline (border, label, circle and icon in matcha, no fill); on hover it fills `matcha-fill` and everything
   inside turns `on-matcha` (black in dark, white in light). `outline` is neutral; on hover its border, label and circle
@@ -135,18 +135,20 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   `rule={false}`, the owner asked for the line gone there). **No section numbers or eyebrow labels on headings** (the
   owner finds them an AI-template tell).
 - One global `:focus-visible` outline (2px matcha). `Button` presses to 0.97, `IconButton` to 0.94.
-- Icons: decorative ones get `aria-hidden`; icon-only controls an `aria-label`. The theme icons, the menu button and the
-  section dots are our own SVGs.
+- Icons: decorative ones get `aria-hidden`; icon-only controls an `aria-label`. The theme icons, the menu button, the
+  section dots and the Certifications filter icons (`ui/FilterIcons.jsx`: issuer, year, check, chevron) are our own SVGs,
+  drawn alike: a 1.75 line, round ends, one solid part as the accent.
 
 ## Navigation
 
 - **Desktop (`xl`, 1280px up): `layout/PageIndex.jsx`,** a 224px column down the left that the page sits beside
   (`main`, the footer and the fixed photos use `--index-w`).
-  - Top: the logo (links to the top), `profile.headline` ("Full-Stack Developer") and the local time.
+  - Top: the logo (links to the top), `profile.headline` ("Full-Stack Developer") and the local time, flush with the
+    bottom block's left edge (16px); the collapse icon lines up with its right edge.
   - Rows: a mono number and the name. The current section sits in a green-tinted box shaped like a tab (square on the
     left with a 3px green line its full height, rounded on the right) that glides between rows; a fainter box glides to
     the row under the pointer or keyboard focus, whose number turns green while a small arrow slides in.
-  - Bottom: LinkedIn and GitHub circles beside a Résumé pill, the theme switch stretched into three equal segments,
+  - Bottom: LinkedIn and GitHub circles beside a Resume pill (hovering it shows the résumé card to its right, like the hero's), the theme switch stretched into three equal segments,
     then a Contact block: a label with a copy button, `profile.reachOut`, and the email as **plain text** (not a mailto
     link; one click selects it; it turns green on hover).
   - **Collapsible:** the button by the logo shrinks it to a 72px rail (`html[data-index='min']`, remembered in
@@ -156,7 +158,7 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
     glide every frame from a rAF loop that writes straight to the elements (no React renders).
 - **Below `xl`: the top bar** (logo and our drawn menu button: a long line over a shorter one led by a green dot,
   swinging into an X) and a dropdown panel that is a pocket copy of the open side index: headline and time, numbered
-  rows, profiles and Résumé, the theme switch, and the email with a copy button. Not full-screen (rejected); no dock
+  rows, profiles and Resume, the theme switch, and the email with a copy button. Not full-screen (rejected); no dock
   dots (touch has no hover).
 - Links use `{...sectionLink('id')}` from `hooks/useCleanAnchorLinks.js`: sections are `#id` anchors, except Introduction,
   which goes to the plain site URL and clears the hash.
@@ -165,15 +167,24 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
 
 - **Hero** (doubles as About): "Hello there, I'm", the name, the typed role line (one line tall even while empty), fact
   chips (degree `DegreeTag`, location `profile.location` "Manila, PH", local time, availability in green), the About
-  paragraph, Download Resume and Get in Touch (full labels on every screen), socials (LinkedIn, GitHub, Email) and "See
+  paragraph, View Resume (opens the PDF in a new tab) and Get in Touch (full labels on every screen), socials (LinkedIn, GitHub, Email) and "See
   my work" (to Projects). Behind it a photo in `FluidImage` (WebGL coffee ripples where the cursor moves, faded into the
   page colour in the shader) with rising particles on desktops.
   - **Portrait** (`ui/Portrait.jsx`): the grad photo in a thin frame. **Press and hold** (mouse, touch or Space/Enter)
     and it breaks into particles that gather into the FEU Tech tamaraw (`three/tamaraw.js`, from
     `assets/images/feu-tamaraw.png`): an even grid of square tiles so the circuit lines stay crisp, swaying gently, with
-    near-black sides like a thick badge (dark layers behind its edges, each appearing as the tile in front lands). The
+    near-black sides like a thick badge (dark layers behind its edges, each appearing as the tile in front lands; edge points are found on the grid itself, two points deep, because pixel-offset tests missed rows and left slits in the wall). The
     hint is a dial in the corner whose green ring fills over the 1.9 s the logo takes. Plain photo without WebGL or with
     reduced motion.
+  - **Resume preview** (`ui/ResumePeek.jsx`): resting the mouse on View Resume (or tabbing to it) shows a card above it
+    (below when there's no room): the résumé's page as an image, "Résumé · PDF · 1 page", and two pills, **New tab** and
+    **Download** (saves `Troy-Bay-Resume.pdf` at once). Opening is the main action because most visitors only want to
+    look (a download leaves a file to clean up); the button was renamed from "Download Resume" since it never
+    downloaded. The card stays open while the pointer crosses into it (the gap is its padding) and closes once it has
+    left both; Escape closes it. Mouse and keyboard only; on touch the tap opens the PDF. The card is portalled to the
+    body and fixed to the window (it was covered by the Experience band when it opened below the button), so it sits on
+    top of every section. The side index's Resume pill and the rail's resume circle use it too (`placement="right"`;
+    on the rail it replaces the tooltip). Visible labels say **Resume**, without accents (the owner's call).
   - The location appears **only here** (city and country), nowhere else on the site.
 - **Experience** (`ui/Timeline.jsx`): one row per job between hairlines. Left: the company logo (`OrgBadge`, from
   `assets/logos/`, initials as fallback), the dates, the organisation, the length and type ("7 mos · Internship"); right:
@@ -193,20 +204,23 @@ either theme (near-black in light), `bg-ink` the page, `white/15` a faint line.
   `data/certifications.js`, from Credly's records; "No expiry" when absent), and a full-width "Verify credential" pill
   that fills green only while it is hovered itself (hovering the card lifts it 4px and outlines it green, no shadow). Six show, the rest fold behind "View all" / "Show fewer" (styled like Projects' View details pill). The issuer
   groups were dropped: their side column and one-card rows left holes. No carousel.
-  Above the grid, two dropdown filters (`Filter`): Issuer (building icon) and Year (calendar icon). Each is a pill
-  reading "Issuer All" that opens a small menu (check on the chosen option, a count per option, options that would
-  leave nothing disabled, so the grid is never empty); a set filter outlines its pill green and greens its value.
+  Above the grid, two dropdown filters (`Filter`): Issuer (our institution icon) and Year (our calendar icon). Each is a pill
+  reading "Issuer All" that opens a small card built like the hero's school card (the icon in a circle, "Filter by
+  issuer" over a mono label such as "3 issuers · 11 credentials", a hairline, then the options: check on the chosen one,
+  a mono count per option, options that would leave nothing disabled, so the grid is never empty); a set filter outlines its pill green and greens its value.
   Arrows move through the menu, Escape closes it. Options come from the data (`SHORT` gives PMI its short pill label).
   A row of segmented pills was tried first and replaced.
-- **Tech stack** (`Skills.jsx`): two columns of group cards (name, "N tools", brand-logo chips). In the light theme the cards are a see-through crema (`light:bg-ink/55`, chips `light:bg-surface/40`) so the
+- **Tech stack** (`Skills.jsx`): two columns of group cards (name, "N tools", brand-logo chips). In the light theme the cards are a see-through crema (`light:bg-ink/55`, chips `light:bg-surface/40`, edges a see-through dark `light:border-white/15`: the solid `line` colour looked white over the darker top of the photo and vanished lower down) so the
   blurred desk photo tints them, not bright white. On hover a card lifts
   4px and only its outline turns green (no shadow, like the certification cards). "Currently Learning" has a dashed green outline. Chips flick on in their brand
   colours once, the first time a card appears; tooltips list the projects that used each tool. The background
   (`SkillsBackdrop`) is the desk film's first frame, coming into focus as the section ends.
 - **Contact:** the desk film (`ContactFilm.jsx`): a scroll-scrubbed clip of the owner's desk at night (120 WebP frames per
-  orientation), the only scroll transition; Contact is pulled up over its end and fades in. Then "Reach me directly"
+  orientation), the only scroll transition, the same night clip in both themes. A light-theme version was tried many
+  ways (crema overlays, relit frames, a recoloured wall) and the owner rejected them all: don't redo it from these
+  frames; only a real daytime clip would do. In the light theme the side index and top bar stay light over it; Contact is pulled up over its end and fades in. Then "Reach me directly"
   (email with copy, phone, LinkedIn, GitHub, local time) beside the form (`user_name`, `user_email`, `subject`,
-  `message`; the message box resizes vertically, never below four lines).
+  `message`; the message box resizes vertically, never below four lines; a focused field gets a double border: its border a faint green and a thicker 2px green outline 3px outside it, which slides out).
 - **Footer:** the tagline (first sentence muted), the copyright, "Built with React, Vite and Tailwind CSS." and Back to
   top.
 - **No loader** (the owner removed the coffee intro and its 3D cup: a 2 s wait on every first visit, the heaviest file,
@@ -262,5 +276,7 @@ ignores `ctx.filter`). Size the film, Skills backdrop and Contact overlap in `lv
 - After changing `vite.config.js` or installing packages, restart the dev server. New `three` entry points go in
   `optimizeDeps.include`.
 - Images are WebP with `width`/`height` set; `loading="lazy"` below the fold.
+- `public/resume-preview.webp` is page 1 of `resume.pdf` rendered at 720px wide (PyMuPDF, then WebP). Re-make it whenever
+  the PDF changes, or the hover preview shows the old résumé.
 - The link preview is `public/og.jpg` (1200×630: name, role, portrait); re-make it if those change. `%SITE_URL%` in
   `index.html` is filled in by `vite.config.js`.

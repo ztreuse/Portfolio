@@ -11,7 +11,7 @@ export const experience = [
     initials: 'SV',
     period: 'Jan 2026 – Jul 2026',
     type: 'Internship',
-    tools: ['Tailwind CSS', 'Mantine UI', 'Figma', 'GitHub'],
+    tools: ['React', 'Tailwind CSS', 'Mantine UI', 'Swagger UI', 'Figma', 'GitHub'],
     points: [
       'Developed and optimized responsive, production-ready user interfaces for internal software using Tailwind CSS and Mantine UI.',
       'Built reusable components from Figma designs within a cross-functional team to maintain front-end consistency.',

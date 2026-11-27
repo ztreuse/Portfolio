@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion, useSpring } from 'motion/react';
-import { LuArrowUpRight, LuBuilding2, LuCalendar, LuCheck, LuChevronDown } from 'react-icons/lu';
+import { LuArrowUpRight, LuChevronDown } from 'react-icons/lu';
+import { CheckIcon, ChevronIcon, IssuerIcon, YearIcon } from '../components/ui/FilterIcons';
 import { intros } from '../data/site';
 import Section from '../components/ui/Section';
 import { RevealGroup, RevealItem } from '../components/ui/Reveal';
@@ -21,7 +22,9 @@ const yearOf = (cert) => cert.date.slice(0, 4);
 const SHORT = { 'Project Management Institute': 'PMI' };
 const issuerOptions = [...new Set(sorted.map((c) => c.issuer))]
   .map((issuer) => ({ value: issuer, label: SHORT[issuer] ?? issuer, full: issuer }))
-  .sort((a, b) => sorted.filter((c) => c.issuer === b.value).length - sorted.filter((c) => c.issuer === a.value).length);
+  .sort(
+    (a, b) => sorted.filter((c) => c.issuer === b.value).length - sorted.filter((c) => c.issuer === a.value).length,
+  );
 const yearOptions = [...new Set(sorted.map(yearOf))].map((year) => ({ value: year, label: year }));
 const matches = (cert, issuer, year) => (!issuer || cert.issuer === issuer) && (!year || yearOf(cert) === year);
 const SHOWN = 6; // cards before the rest fold behind "View all" (even, so no row is left half empty)
@@ -149,7 +152,7 @@ const CredentialGrid = ({ items }) => (
  * leave none is disabled, so a choice never ends on an empty grid. While a filter is set its pill is outlined green.
  * Keyboard: the arrows move through the options, Escape closes and returns to the pill; a click outside closes it.
  */
-const Filter = ({ id, label, icon: Icon, options, value, onChange, count }) => {
+const Filter = ({ id, label, plural, icon: Icon, options, value, onChange, count }) => {
   const [open, setOpen] = useState(false);
   const root = useRef(null);
   const trigger = useRef(null);
@@ -196,53 +199,69 @@ const Filter = ({ id, label, icon: Icon, options, value, onChange, count }) => {
           value || open ? 'border-matcha' : 'border-white/15'
         }`}
       >
-        <Icon aria-hidden className="size-4 text-accent transition-colors duration-200 group-hover:text-matcha-strong" />
+        <Icon className="size-4 text-accent transition-colors duration-200 group-hover:text-matcha-strong" />
         <span className="text-stone-400">{label}</span>
         <span className={`font-medium ${value ? 'text-matcha-strong' : 'text-white'}`}>{current.label}</span>
-        <LuChevronDown
-          aria-hidden
+        <ChevronIcon
           className={`size-3.5 text-stone-400 transition-transform duration-300 motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
         />
       </button>
       <AnimatePresence>
         {open && (
+          // Built like the hero's school card: a title over a mono label, a hairline, then the choices. The padding
+          // on top bridges the gap from the pill, so a pointer crossing it never falls through to the page
           <motion.div
             id={`${id}-menu`}
             role="group"
-            aria-label={label}
-            initial={{ opacity: 0, y: -4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.98 }}
-            transition={{ duration: 0.16, ease: 'easeOut' }}
-            className="absolute top-full left-0 z-30 mt-2 min-w-52 origin-top-left rounded-xl border border-line bg-surface p-1.5 shadow-[0_18px_40px_-20px_rgb(0_0_0/0.45)]"
+            aria-label={`Filter by ${label.toLowerCase()}`}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-full left-0 z-30 w-80 max-w-[calc(100vw-2.5rem)] pt-2"
           >
-            {all.map((option, i) => {
-              const active = option.value === value;
-              const n = count(option.value);
-              return (
-                <button
-                  key={option.label}
-                  ref={(node) => {
-                    items.current[i] = node;
-                  }}
-                  type="button"
-                  aria-pressed={active}
-                  disabled={!n}
-                  title={option.full}
-                  onClick={() => {
-                    onChange(option.value);
-                    close();
-                  }}
-                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150 enabled:hover:bg-white/5 enabled:hover:text-matcha-strong disabled:cursor-not-allowed disabled:opacity-35 focus-visible:bg-white/5 ${
-                    active ? 'text-matcha-strong' : 'text-stone-300'
-                  }`}
-                >
-                  <LuCheck aria-hidden className={`size-3.5 shrink-0 text-matcha ${active ? '' : 'invisible'}`} />
-                  <span className="flex-1 whitespace-nowrap">{option.full ?? option.label}</span>
-                  <span className="font-mono text-[0.6875rem] text-stone-500">{n}</span>
-                </button>
-              );
-            })}
+            <div className="rounded-xl border border-line bg-surface p-4 shadow-[0_24px_50px_-24px_rgb(0_0_0/0.55)]">
+              <div className="flex items-center gap-3 px-1">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line bg-ink/40">
+                  <Icon className="size-[1.125rem] text-accent" />
+                </span>
+                <div>
+                  <p className="text-copy font-semibold text-white">Filter by {label.toLowerCase()}</p>
+                  <p className="mt-0.5 font-mono text-label font-medium tracking-[0.08em] whitespace-nowrap text-accent uppercase">
+                    {options.length} {plural} · {count(null)} credentials
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 space-y-0.5 border-t border-white/10 pt-2">
+                {all.map((option, i) => {
+                  const active = option.value === value;
+                  const n = count(option.value);
+                  return (
+                    <button
+                      key={option.label}
+                      ref={(node) => {
+                        items.current[i] = node;
+                      }}
+                      type="button"
+                      aria-pressed={active}
+                      disabled={!n}
+                      title={option.full}
+                      onClick={() => {
+                        onChange(option.value);
+                        close();
+                      }}
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left text-sm leading-snug transition-colors duration-150 enabled:hover:bg-white/5 enabled:hover:text-matcha-strong disabled:cursor-not-allowed disabled:opacity-35 focus-visible:bg-white/5 ${
+                        active ? 'font-medium text-matcha-strong' : 'text-stone-300'
+                      }`}
+                    >
+                      <CheckIcon className={`size-3.5 shrink-0 text-matcha ${active ? '' : 'invisible'}`} />
+                      <span className="flex-1 text-pretty">{option.full ?? option.label}</span>
+                      <span className="font-mono text-label font-medium tracking-[0.08em] text-accent">{n}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -270,7 +289,8 @@ const Certifications = () => {
         <Filter
           id="cert-issuer"
           label="Issuer"
-          icon={LuBuilding2}
+          plural="issuers"
+          icon={IssuerIcon}
           options={issuerOptions}
           value={issuer}
           onChange={setIssuer}
@@ -279,7 +299,8 @@ const Certifications = () => {
         <Filter
           id="cert-year"
           label="Year"
-          icon={LuCalendar}
+          plural="years"
+          icon={YearIcon}
           options={yearOptions}
           value={year}
           onChange={setYear}

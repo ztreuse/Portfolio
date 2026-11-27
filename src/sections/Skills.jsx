@@ -73,13 +73,13 @@ const GroupCard = ({ group }) => {
       // Hover: it rises a little and only its outline turns plainly matcha green (both themes; no green fill, no shadow). The
       // lift is the CSS translate property, so it doesn't fight the reveal's transform
       className={`rounded-xl border bg-surface/90 p-5 light:bg-ink/55 transition-[translate,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-matcha motion-reduce:hover:translate-y-0 ${
-        group.learning ? 'border-dashed border-matcha/55' : 'border-line'
+        group.learning ? 'border-dashed border-matcha/55' : 'border-line light:border-white/15'
       }`}
     >
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="font-display text-copy font-bold text-white">{group.title}</h3>
         <span
-          className={`shrink-0 font-mono text-label font-medium tracking-[0.08em] uppercase ${
+          className={`shrink-0 font-mono text-[0.6875rem] font-medium tracking-[0.08em] uppercase ${
             group.learning ? 'text-matcha' : 'text-accent'
           }`}
         >

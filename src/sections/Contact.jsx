@@ -39,9 +39,10 @@ const statusMessages = {
 // rounded-lg like the chips): a transparent box with a thin taupe
 // Text at the body size (15px; 16px on touch screens, where iPhones zoom into smaller fields). Border that strengthens on hover and focus (the owner asked for boxes instead of underlines, then for no fill, which
 // looked like a generic form). Autofill: browsers paint their own white or blue fill on autofilled fields, so an inset
-// shadow in the page colour covers it and the text keeps its colour.
+// shadow in the page colour covers it and the text keeps its colour. On focus the border turns a faint green and a
+// thicker, stronger green line (2px) opens 3px outside it (an outline, so the gap shows whatever is behind): a double border.
 const inputClass =
-  'mt-2 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-copy [@media(pointer:coarse)]:text-base text-white placeholder:text-stone-500 transition-colors outline-none hover:border-matcha/70 focus:border-matcha-strong autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
+  'mt-2 block w-full rounded-lg border border-accent/35 bg-transparent px-4 py-2.5 text-copy [@media(pointer:coarse)]:text-base text-white placeholder:text-stone-500 outline-2 outline-offset-0 outline-transparent transition-[border-color,outline-color,outline-offset] duration-200 hover:border-matcha/70 focus:border-matcha/55 focus:outline-offset-[3px] focus:outline-matcha-strong motion-reduce:transition-colors autofill:shadow-[inset_0_0_0_1000px_var(--color-ink)] autofill:[-webkit-text-fill-color:var(--color-white)]';
 
 /**
  * One conversational form field ("What's your name?").

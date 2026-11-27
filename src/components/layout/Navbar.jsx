@@ -37,9 +37,11 @@ const menuItemVariants = {
 /**
  * Whether the night video (or its first frame, behind the end of Skills) is at this height on the screen: those mark
  * themselves `data-nav-dark` while they show; `data-nav-clear` is the video once it has settled on Contact's colour, on
- * top of them. The bar and the index stay light-on-dark over the night in both themes.
+ * top of them. Only the dark theme follows it: in the light theme the bar and the index stay light all the way into
+ * Contact (the owner didn't want them flipping dark over the film and back).
  */
 const nightAt = (y) => {
+  if (document.documentElement.dataset.theme === 'light') return false;
   const under = (selector) =>
     [...document.querySelectorAll(selector)].some((el) => {
       const r = el.getBoundingClientRect();
@@ -221,7 +223,7 @@ const MobileMenu = ({ activeId, onNavigate }) => {
             className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-white/15 font-display text-sm font-medium text-stone-300 transition-colors duration-200 hover:border-matcha hover:bg-matcha hover:text-ink"
           >
             <LuFileDown aria-hidden className="size-4" />
-            Résumé
+            Resume
           </a>
         </div>
 
@@ -253,8 +255,8 @@ const Navbar = ({ ready = true }) => {
   const activeId = useActiveSection(sectionIds);
   const { scrollY } = useScroll();
 
-  // Switch from transparent to frosted glass once the page leaves the top, and to dark glass over the night video in
-  // the light theme (checked once per frame at most)
+  // Switch from transparent to frosted glass once the page leaves the top (and note the night video under it, which
+  // only matters in the dark theme; checked once per frame at most)
   const checking = useRef(false);
   useMotionValueEvent(scrollY, 'change', (y) => {
     setScrolled(y > 24);

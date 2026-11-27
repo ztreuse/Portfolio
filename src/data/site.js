@@ -23,6 +23,8 @@ export const profile = {
   location: 'Manila, PH',
   // BASE_URL keeps the link working under the /Portfolio/ GitHub Pages path.
   resume: `${import.meta.env.BASE_URL}resume.pdf`,
+  // Page 1 of the résumé as an image, shown when the View Resume button is pointed at (re-make it when the PDF changes)
+  resumePreview: `${import.meta.env.BASE_URL}resume-preview.webp`,
 };
 
 // The short line under a section's title, in my own words (only what's true)

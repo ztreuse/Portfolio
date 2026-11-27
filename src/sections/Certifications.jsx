@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion, useSpring } from 'motion/react';
 import { LuArrowUpRight, LuChevronDown } from 'react-icons/lu';
 import { CheckIcon, ChevronIcon, IssuerIcon, YearIcon } from '../components/ui/FilterIcons';
@@ -157,6 +157,22 @@ const Filter = ({ id, label, plural, icon: Icon, options, value, onChange, count
   const root = useRef(null);
   const trigger = useRef(null);
   const items = useRef([]);
+  const menu = useRef(null);
+  // How far the menu shifts left so it stays 16px inside the screen (the Year pill sits far enough right on a phone that
+  // a menu opening from its left edge would run off the side)
+  const [shift, setShift] = useState(0);
+  useLayoutEffect(() => {
+    if (!open) return undefined;
+    const fit = () => {
+      const pill = root.current?.getBoundingClientRect();
+      const width = menu.current?.offsetWidth ?? 0;
+      if (!pill) return;
+      setShift(Math.min(0, document.documentElement.clientWidth - 16 - (pill.left + width)));
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [open]);
   const all = [{ value: null, label: 'All' }, ...options];
   const current = all.find((o) => o.value === value) ?? all[0];
 
@@ -211,6 +227,7 @@ const Filter = ({ id, label, plural, icon: Icon, options, value, onChange, count
           // Built like the hero's school card: a title over a mono label, a hairline, then the choices. The padding
           // on top bridges the gap from the pill, so a pointer crossing it never falls through to the page
           <motion.div
+            ref={menu}
             id={`${id}-menu`}
             role="group"
             aria-label={`Filter by ${label.toLowerCase()}`}
@@ -218,7 +235,8 @@ const Filter = ({ id, label, plural, icon: Icon, options, value, onChange, count
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4, transition: { duration: 0.12 } }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-full left-0 z-30 w-80 max-w-[calc(100vw-2.5rem)] pt-2"
+            style={{ left: shift }}
+            className="absolute top-full left-0 z-30 w-80 max-w-[calc(100vw-2rem)] pt-2"
           >
             <div className="rounded-xl border border-line bg-surface p-4 shadow-[0_24px_50px_-24px_rgb(0_0_0/0.55)]">
               <div className="flex items-center gap-3 px-1">
